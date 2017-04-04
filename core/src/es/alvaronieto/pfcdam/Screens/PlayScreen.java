@@ -3,17 +3,26 @@ package es.alvaronieto.pfcdam.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import es.alvaronieto.pfcdam.Juego;
+import es.alvaronieto.pfcdam.Scenes.DebugHud;
 
 public class PlayScreen implements Screen {
 
@@ -26,16 +35,50 @@ public class PlayScreen implements Screen {
     private OrthogonalTiledMapRenderer renderer;
     private float mapWidth;
     private float mapHeight;
+    
+    // Box2D
+    private World world;
+    private Box2DDebugRenderer b2dr;
+    
+    // Hud
+    private DebugHud debugHud;
+	private boolean debugHudRendering = true;
 	
 	public PlayScreen(Juego juego) {
         this.juego = juego;
+        
         // SET CAMERA
         gamecam = new OrthographicCamera();
         gamePort = new FitViewport(Juego.V_WIDTH / Juego.PPM,Juego.V_HEIGHT / Juego.PPM, gamecam);
         
         // LOAD TILED MAP
         loadMap();
+        
+        // Box2D
+        world = new World(Vector2.Zero, true);
+        b2dr = new Box2DDebugRenderer();
 	
+        box2DTest();
+        
+        // Hud
+        debugHud = new DebugHud(juego.batch);
+	}
+
+	private void box2DTest() {
+		BodyDef bdef = new BodyDef();	
+		PolygonShape shape = new PolygonShape();
+		FixtureDef fdef = new FixtureDef();
+		Body body;
+		
+		bdef.type = BodyDef.BodyType.DynamicBody;
+		bdef.position.set(new Vector2(mapWidth / 2 , mapHeight / 2 ));
+		//bdef.position.set(new Vector2(0 , 0 ));
+		
+		shape.setAsBox(16 / Juego.PPM, 16 / Juego.PPM);
+		fdef.shape = shape;
+		
+		body = world.createBody(bdef);
+		body.createFixture(fdef);
 	}
 
 	private void loadMap() {
@@ -65,6 +108,11 @@ public class PlayScreen implements Screen {
 
 	public void update(float dt) {
 		handleInput(dt);
+		
+		world.step(1/60, 6, 2);
+		
+		debugHud.update(dt);
+		
 		gamecam.update();
 		renderer.setView(gamecam);
 	}
@@ -94,10 +142,13 @@ public class PlayScreen implements Screen {
 				gamecam.position.y = 0 + gamePort.getWorldHeight()/2;
         }
         	
+        if(Gdx.input.isKeyJustPressed(Input.Keys.F12))
+        	debugHudRendering = !debugHudRendering;
+        
         /*System.out.println(gamecam.position.y*Juego.PPM 
         		+ ":" + gamePort.getWorldHeight()*Juego.PPM 
         		+ ":" + mapHeight*Juego.PPM);*/
-        System.out.println(gamecam.position.y + " : " + (mapHeight - gamePort.getWorldHeight()/2));
+        //System.out.println(gamecam.position.y + " : " + (mapHeight - gamePort.getWorldHeight()/2));
 	}
 
 	@Override
@@ -109,10 +160,18 @@ public class PlayScreen implements Screen {
         
         renderer.render();
         
+        b2dr.render(world, gamecam.combined);
+        
         juego.batch.setProjectionMatrix(gamecam.combined);
         juego.batch.begin();
         
         juego.batch.end();
+        
+        if(debugHudRendering ){
+        	juego.batch.setProjectionMatrix(debugHud.stage.getCamera().combined);
+            debugHud.stage.draw();
+        }
+        
 	}
 
 	@Override
@@ -144,7 +203,8 @@ public class PlayScreen implements Screen {
 		// TODO Auto-generated method stub
 		map.dispose();
 		renderer.dispose();
-		
-		
+		world.dispose();
+		b2dr.dispose();
+		debugHud.dispose();
 	}
 }
