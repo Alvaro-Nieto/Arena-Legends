@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.Scenes.DebugHud;
+import es.alvaronieto.pfcdam.Sprites.Player;
 
 public class PlayScreen implements Screen {
 
@@ -42,7 +43,10 @@ public class PlayScreen implements Screen {
     
     // Hud
     private DebugHud debugHud;
-	private boolean debugHudRendering = true;
+	private boolean debugModeEnabled = true;
+	
+	// Player
+	private Player player;
 	
 	public PlayScreen(Juego juego) {
         this.juego = juego;
@@ -58,12 +62,14 @@ public class PlayScreen implements Screen {
         world = new World(Vector2.Zero, true);
         b2dr = new Box2DDebugRenderer();
 	
-        box2DTest();
+        // Player
+        player = new Player(world, mapWidth / 2, mapHeight / 2);
         
         // Hud
         debugHud = new DebugHud(juego.batch);
 	}
-
+	
+	/*
 	private void box2DTest() {
 		BodyDef bdef = new BodyDef();	
 		PolygonShape shape = new PolygonShape();
@@ -80,6 +86,7 @@ public class PlayScreen implements Screen {
 		body = world.createBody(bdef);
 		body.createFixture(fdef);
 	}
+	*/
 
 	private void loadMap() {
 		mapLoader = new TmxMapLoader();
@@ -118,32 +125,39 @@ public class PlayScreen implements Screen {
 	}
 	
 	private void handleInput(float dt) {
-		if(Gdx.input.isKeyPressed(Input.Keys.UP)){
-			gamecam.position.y += 10 * dt;
-			if(gamecam.position.y > mapHeight - gamePort. getWorldHeight()/2)
-				gamecam.position.y = mapHeight - gamePort.getWorldHeight()/2;
+		if(debugModeEnabled){
+			if(Gdx.input.isKeyPressed(Input.Keys.UP)){
+				gamecam.position.y += 10 * dt;
+				if(gamecam.position.y > mapHeight - gamePort. getWorldHeight()/2)
+					gamecam.position.y = mapHeight - gamePort.getWorldHeight()/2;
+			}
+	            
+	        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+	        	gamecam.position.x += 10 * dt;
+	        	if(gamecam.position.x > mapWidth - gamePort. getWorldWidth()/2)
+					gamecam.position.x = mapWidth - gamePort.getWorldWidth()/2;
+	        }
+	        	
+	        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+	        	gamecam.position.x -= 10 * dt;
+	        	if(gamecam.position.x < 0 + gamePort.getWorldWidth()/2)
+					gamecam.position.x = 0 + gamePort.getWorldWidth()/2;
+	        }
+	        	
+	        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+	        	gamecam.position.y -= 10 * dt;
+	        	if(gamecam.position.y < 0 + gamePort.getWorldHeight()/2)
+					gamecam.position.y = 0 + gamePort.getWorldHeight()/2;
+	        }
+		} else {
+			
+			// TODO movimiento jugador
 		}
-            
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
-        	gamecam.position.x += 10 * dt;
-        	if(gamecam.position.x > mapWidth - gamePort. getWorldWidth()/2)
-				gamecam.position.x = mapWidth - gamePort.getWorldWidth()/2;
-        }
-        	
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
-        	gamecam.position.x -= 10 * dt;
-        	if(gamecam.position.x < 0 + gamePort.getWorldWidth()/2)
-				gamecam.position.x = 0 + gamePort.getWorldWidth()/2;
-        }
-        	
-        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-        	gamecam.position.y -= 10 * dt;
-        	if(gamecam.position.y < 0 + gamePort.getWorldHeight()/2)
-				gamecam.position.y = 0 + gamePort.getWorldHeight()/2;
-        }
+		
+		
         	
         if(Gdx.input.isKeyJustPressed(Input.Keys.F12))
-        	debugHudRendering = !debugHudRendering;
+        	debugModeEnabled = !debugModeEnabled;
         
         /*System.out.println(gamecam.position.y*Juego.PPM 
         		+ ":" + gamePort.getWorldHeight()*Juego.PPM 
@@ -167,7 +181,7 @@ public class PlayScreen implements Screen {
         
         juego.batch.end();
         
-        if(debugHudRendering ){
+        if(debugModeEnabled ){
         	juego.batch.setProjectionMatrix(debugHud.stage.getCamera().combined);
             debugHud.stage.draw();
         }
