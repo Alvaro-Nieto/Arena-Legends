@@ -1,8 +1,5 @@
 package es.alvaronieto.pfcdam.Sprites;
 
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -22,7 +19,6 @@ public class Player {
 		BodyDef bdef = new BodyDef();	
 		PolygonShape shape = new PolygonShape();
 		FixtureDef fdef = new FixtureDef();
-		Body body;
 		
 		bdef.type = BodyDef.BodyType.DynamicBody;
 		//bdef.position.set(new Vector2(x + 16 / Juego.PPM , y + 16 / Juego.PPM)); // Desde esquina inferior izquierda (Coordenadas b2d) 
@@ -33,6 +29,7 @@ public class Player {
 		
 		body = world.createBody(bdef);
 		body.createFixture(fdef);	
+		body.setLinearDamping(10f);
 	}
 	
 	public void update(float delta){
@@ -49,6 +46,10 @@ public class Player {
 	
 	public void setPosition(Vector2 position) {
 		this.body.getPosition().set(position);
+	}
+	
+	public PlayerState getPlayerState(){
+		return new PlayerState(this.getPosition());
 	}
 
 
