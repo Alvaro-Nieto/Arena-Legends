@@ -17,7 +17,7 @@ public class Juego extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		newGame();
+		setScreen(new MainScreen(this));
 	}
 
 	@Override
@@ -30,8 +30,4 @@ public class Juego extends Game {
 		batch.dispose();
 	}
 	
-	public void newGame () {
-		//setScreen(new PlayScreen(this));
-		setScreen(new MainScreen(this));
-	}
 }

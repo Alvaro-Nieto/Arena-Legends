@@ -80,25 +80,6 @@ public class PlayScreen implements Screen, ClientListener {
         
 	}
 	
-	/*
-	private void box2DTest() {
-		BodyDef bdef = new BodyDef();	
-		PolygonShape shape = new PolygonShape();
-		FixtureDef fdef = new FixtureDef();
-		Body body;
-		
-		bdef.type = BodyDef.BodyType.DynamicBody;
-		bdef.position.set(new Vector2(mapWidth / 2 , mapHeight / 2 ));
-		//bdef.position.set(new Vector2(0 , 0 ));
-		
-		shape.setAsBox(16 / Juego.PPM, 16 / Juego.PPM);
-		fdef.shape = shape;
-		
-		body = world.createBody(bdef);
-		body.createFixture(fdef);
-	}
-	*/
-
 	private void loadMap() {
 		mapLoader = new TmxMapLoader();
         map = mapLoader.load("testlevel.tmx");

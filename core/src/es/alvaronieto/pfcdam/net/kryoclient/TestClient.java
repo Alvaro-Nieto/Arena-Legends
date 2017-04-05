@@ -45,6 +45,8 @@ public class TestClient {
 			clientListener.couldNotConnect();
 		}
 		
+		// TODO Remove
+		// Prueba 
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -66,16 +68,5 @@ public class TestClient {
 		Util.registerPackets(client.getKryo());
 	}
 
-	public PlayerState getPlayer() {
-		if(playerState == null){
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return getPlayer();
-		}
-		return playerState;
-	}
+
 }
