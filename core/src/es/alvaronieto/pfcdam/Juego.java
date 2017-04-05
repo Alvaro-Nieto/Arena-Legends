@@ -3,6 +3,7 @@ package es.alvaronieto.pfcdam;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import es.alvaronieto.pfcdam.Screens.MainScreen;
 import es.alvaronieto.pfcdam.Screens.PlayScreen;
 
 public class Juego extends Game {
@@ -30,6 +31,7 @@ public class Juego extends Game {
 	}
 	
 	public void newGame () {
-		setScreen(new PlayScreen(this));
+		//setScreen(new PlayScreen(this));
+		setScreen(new MainScreen(this));
 	}
 }

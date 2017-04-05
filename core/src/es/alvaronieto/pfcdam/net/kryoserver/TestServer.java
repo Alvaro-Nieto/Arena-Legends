@@ -1,4 +1,4 @@
-package es.alvaronieto.pfcdam.net;
+package es.alvaronieto.pfcdam.net.kryoserver;
 
 import java.io.IOException;
 import java.net.BindException;
@@ -11,7 +11,11 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Server;
 
-import es.alvaronieto.pfcdam.Sprites.PlayerState;
+import es.alvaronieto.pfcdam.States.PlayerState;
+import es.alvaronieto.pfcdam.net.Util;
+import es.alvaronieto.pfcdam.net.Packets.Packet01Message;
+import es.alvaronieto.pfcdam.net.Packets.Packet02ConnectionRequest;
+import es.alvaronieto.pfcdam.net.Packets.Packet03ConnectionResponse;
 
 
 
@@ -22,22 +26,22 @@ public class TestServer {
 	
 	// Kyonet "Server" object
 	private Server server;
-	ServerNetworkListener snl;
+	ServerKryoListener snl;
 	
 	//
 	private List<Connection> clients;
 	
 	private World world;
 	
-	public TestServer() {
+	public TestServer(int maxClients) {
 		clients = new ArrayList<Connection>();
 		server = new Server();
-		snl = new ServerNetworkListener(clients);
+		snl = new ServerKryoListener(clients, maxClients);
 		
 		server.addListener(snl);
-		
+
 		try {
-			server.bind(serverPort);
+			server.bind(serverPort, serverPort);
 		} catch(BindException be){
 			System.err.println("en uso");
 		} catch (IOException e) {
@@ -51,10 +55,6 @@ public class TestServer {
 	}
 	
 	private void registerPackets(){
-		Kryo kryo = server.getKryo();
-		
-		kryo.register(Packets.Packet01Message.class);
-		kryo.register(PlayerState.class);
-		kryo.register(Vector2.class);
+		Util.registerPackets(server.getKryo());
 	}
 }

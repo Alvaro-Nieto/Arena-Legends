@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
 import es.alvaronieto.pfcdam.Juego;
+import es.alvaronieto.pfcdam.States.PlayerState;
 
 public class Player {
 	

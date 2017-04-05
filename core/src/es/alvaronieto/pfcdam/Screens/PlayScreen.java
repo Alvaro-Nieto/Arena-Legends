@@ -18,10 +18,13 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.Scenes.DebugHud;
 import es.alvaronieto.pfcdam.Sprites.Player;
-import es.alvaronieto.pfcdam.net.TestClient;
-import es.alvaronieto.pfcdam.net.TestServer;
+import es.alvaronieto.pfcdam.States.GameState;
+import es.alvaronieto.pfcdam.States.PlayerState;
+import es.alvaronieto.pfcdam.net.ClientListener;
+import es.alvaronieto.pfcdam.net.kryoclient.TestClient;
+import es.alvaronieto.pfcdam.net.kryoserver.TestServer;
 
-public class PlayScreen implements Screen {
+public class PlayScreen implements Screen, ClientListener {
 
 	private Juego juego;
 	private OrthographicCamera gamecam;
@@ -46,8 +49,9 @@ public class PlayScreen implements Screen {
 	
 	// Testing Server
 	private TestServer server;
+	private GameState gameState;
 	
-	public PlayScreen(Juego juego) {
+	public PlayScreen(Juego juego, boolean createServer) {
         this.juego = juego;
         
         // SET CAMERA
@@ -68,8 +72,12 @@ public class PlayScreen implements Screen {
         debugHud = new DebugHud(juego.batch, player);
         
         // Testing Server
-        server = new TestServer();
-        new TestClient(player.getPlayerState(), world);
+        gameState = new GameState();
+        if(createServer){
+        	server = new TestServer(3);
+        }
+        TestClient testClient = new TestClient(player.getPlayerState(), this);
+        
 	}
 	
 	/*
@@ -274,5 +282,15 @@ public class PlayScreen implements Screen {
 		world.dispose();
 		b2dr.dispose();
 		debugHud.dispose();
+	}
+
+	@Override
+	public void PlayerStateReceived(PlayerState playerState) {
+				
+	}
+
+	@Override
+	public void couldNotConnect() {
+		System.exit(0);
 	}
 }
