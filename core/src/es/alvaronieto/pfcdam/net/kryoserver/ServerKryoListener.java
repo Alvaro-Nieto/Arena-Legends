@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
+import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
@@ -12,8 +13,9 @@ import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.net.Packets;
 import es.alvaronieto.pfcdam.net.Packets.Packet01Message;
 import es.alvaronieto.pfcdam.net.Packets.Packet02ConnectionRequest;
-import es.alvaronieto.pfcdam.net.Packets.Packet03ConnectionResponse;
-import es.alvaronieto.pfcdam.net.Packets.Packet04ClientConnected;
+import es.alvaronieto.pfcdam.net.Packets.Packet03ConnectionAccepted;
+import es.alvaronieto.pfcdam.net.Packets.Packet04ConnectionRejected;
+import es.alvaronieto.pfcdam.net.Packets.Packet05ClientConnected;
 
 public class ServerKryoListener extends Listener {
 
@@ -52,28 +54,34 @@ public class ServerKryoListener extends Listener {
 			System.out.println(dateFormat.format(new Date((p.timeStamp)))+" : [S](CLIENT) >> " + p.message);
 		}
 		
-		if( obj instanceof Packet02ConnectionRequest ){
+		else if( obj instanceof Packet02ConnectionRequest ){
 			Packet02ConnectionRequest r = (Packet02ConnectionRequest)obj;
-			Packet03ConnectionResponse response = new Packet03ConnectionResponse();
-			response.accepted = clients.size() < MAX_CLIENTS;
-			response.userID = response.accepted ? rnd.nextLong() : 0;
-			response.timeStamp = new Date().getTime();
-			connection.sendTCP(response);
-			if(!response.accepted){
+			
+			if(clients.size() < MAX_CLIENTS){
+				Packet03ConnectionAccepted accepted = new Packet03ConnectionAccepted();
+				accepted.userID = rnd.nextLong();
+				accepted.timeStamp = new Date().getTime();
+				accepted.playerState = new PlayerState(new Vector2(1,1),accepted.userID);
+				connection.sendTCP(accepted);
+				
+				System.out.println("[S] Conectado cliente con ID: "+ accepted.userID);
+				clients.add(connection);
+				Packet05ClientConnected clientConnected = new Packet05ClientConnected();
+				clientConnected.userID = accepted.userID;
+				clientConnected.timeStamp = new Date().getTime();
+				clientConnected.playerState = accepted.playerState;
+				TCPBroadcastExcept(clientConnected, connection);
+			} 
+			else {
+				Packet04ConnectionRejected rejected = new Packet04ConnectionRejected();
+				rejected.timeStamp = new Date().getTime();
 				System.out.println("[S] Conexión rechazada a un cliente");
 				connection.close();
 			}
-			else{
-				System.out.println("[S] Conectado cliente con ID: "+ response.userID);
-				clients.add(connection);
-				Packet04ClientConnected clientConnected = new Packet04ClientConnected();
-				clientConnected.userID = response.userID;
-				clientConnected.timeStamp = new Date().getTime();
-				TCPBroadcastExcept(clientConnected, connection);
-			}
+			
 		}
 		
-		if( obj instanceof PlayerState ){
+		else if( obj instanceof PlayerState ){
 			PlayerState playerState = (PlayerState)obj;
 			for(Connection client : clients){
 				if(!client.equals(connection)){

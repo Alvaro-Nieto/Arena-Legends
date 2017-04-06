@@ -1,5 +1,8 @@
 package es.alvaronieto.pfcdam.net;
 
+import es.alvaronieto.pfcdam.States.GameState;
+import es.alvaronieto.pfcdam.States.PlayerState;
+
 public class Packets {
 	public static class Packet01Message { 
 		public long timeStamp;
@@ -12,19 +15,33 @@ public class Packets {
 		public String clientName;
 	} 
 	
-	public static class Packet03ConnectionResponse { 
+	public static class Packet03ConnectionAccepted { 
 		public long timeStamp;
 		public long userID;
-		public boolean accepted;
+		public PlayerState playerState;
+		public GameState gameState;
+	}
+	
+	public static class Packet04ConnectionRejected { 
+		public long timeStamp;
 	} 
 	
-	public static class Packet04ClientConnected { 
+	public static class Packet05ClientConnected { 
+		public long timeStamp;
+		public long userID;
+		public PlayerState playerState;
+	} 
+	
+	public static class Packet06ClientDisconnected { 
 		public long timeStamp;
 		public long userID;
 	} 
 	
-	public static class Packet05ClientDisconnected { 
-		public long timeStamp;
-		public long userID;
+	public static class Packet07PlayerUpdate { 
+		PlayerState playerState;
+	} 
+	
+	public static class Packet08GameUpdate { 
+		GameState gameState;
 	} 
 }

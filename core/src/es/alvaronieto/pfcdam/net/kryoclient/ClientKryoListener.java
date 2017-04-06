@@ -13,18 +13,18 @@ import es.alvaronieto.pfcdam.net.ClientListener;
 import es.alvaronieto.pfcdam.net.Packets;
 import es.alvaronieto.pfcdam.net.Packets.Packet01Message;
 import es.alvaronieto.pfcdam.net.Packets.Packet02ConnectionRequest;
-import es.alvaronieto.pfcdam.net.Packets.Packet03ConnectionResponse;
-import es.alvaronieto.pfcdam.net.Packets.Packet04ClientConnected;
+import es.alvaronieto.pfcdam.net.Packets.Packet03ConnectionAccepted;
+import es.alvaronieto.pfcdam.net.Packets.Packet04ConnectionRejected;
+import es.alvaronieto.pfcdam.net.Packets.Packet05ClientConnected;
 
 public class ClientKryoListener extends Listener{
 	private Client client;
-	private PlayerState playerState;
 	private ClientListener clientListener;
 	
-	public void init(Client client, PlayerState playerState, ClientListener clientListener){
+	public void init(Client client, ClientListener clientListener){
 		this.clientListener = clientListener;
 		this.client = client;
-		this.playerState = playerState;
+
 	}
 	
 	@Override
@@ -57,31 +57,25 @@ public class ClientKryoListener extends Listener{
 			System.out.println("[C](SERVER) >> " + p.message);
 		}
 		
-		if( obj instanceof Packet03ConnectionResponse ){
-			Packet03ConnectionResponse r = (Packet03ConnectionResponse)obj;
-			
-			if(r.accepted){
-				System.out.println("[C] >> " + "Conexión aceptada");
-			} else {
-				System.err.println("[C] >> " + "Conexión rechazada");
-				System.exit(1);
-			}
+		else if( obj instanceof Packet03ConnectionAccepted ){
+			Packet03ConnectionAccepted accepted = (Packet03ConnectionAccepted)obj;
+			System.out.println("[C] >> " + "Conexión aceptada");
+			clientListener.connectionAccepted(accepted.playerState, accepted.gameState);
+		}
+		
+		else if( obj instanceof Packet04ConnectionRejected ){
+			Packet04ConnectionRejected rejected = (Packet04ConnectionRejected)obj;
+			System.err.println("[C] >> " + "Conexión rechazada");
+			System.exit(1);
 		}
 		
 		
-		if( obj instanceof Packet04ClientConnected ){
-			Packet04ClientConnected c = (Packet04ClientConnected)obj;
-			
-			System.out.println("[C]Cliente conectado con ID: " + c.userID);
+		else if( obj instanceof Packet05ClientConnected ){
+			Packet05ClientConnected connected = (Packet05ClientConnected)obj;
+			clientListener.newPlayerConnected(connected.playerState);
+			System.out.println("[C]Cliente conectado con ID: " + connected.userID);
 		}
 		
-		if( obj instanceof PlayerState ){
-			PlayerState playerState = (PlayerState)obj;
-			clientListener.PlayerStateReceived(playerState);
-			
-			//new Player(world, playerState.getPosition().x, playerState.getPosition().y);
-			//System.out.println("[C]Añadido player: " + playerState.toString());
-		}
 	}
 	
 	

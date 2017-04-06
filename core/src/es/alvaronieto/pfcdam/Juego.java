@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import es.alvaronieto.pfcdam.Screens.MainScreen;
 import es.alvaronieto.pfcdam.Screens.PlayScreen;
+import es.alvaronieto.pfcdam.Screens.ScreenManager;
 
 public class Juego extends Game {
 	
@@ -17,7 +18,7 @@ public class Juego extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		setScreen(new MainScreen(this));
+		new ScreenManager(this);
 	}
 
 	@Override

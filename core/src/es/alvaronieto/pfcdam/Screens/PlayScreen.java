@@ -1,10 +1,14 @@
 package es.alvaronieto.pfcdam.Screens;
 
+import java.awt.Cursor;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Cursor.SystemCursor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -17,6 +21,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.Scenes.DebugHud;
+import es.alvaronieto.pfcdam.Sprites.Game;
 import es.alvaronieto.pfcdam.Sprites.Player;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.PlayerState;
@@ -24,7 +29,7 @@ import es.alvaronieto.pfcdam.net.ClientListener;
 import es.alvaronieto.pfcdam.net.kryoclient.TestClient;
 import es.alvaronieto.pfcdam.net.kryoserver.TestServer;
 
-public class PlayScreen implements Screen, ClientListener {
+public class PlayScreen implements Screen {
 
 	private Juego juego;
 	private OrthographicCamera gamecam;
@@ -49,9 +54,10 @@ public class PlayScreen implements Screen, ClientListener {
 	
 	// Testing Server
 	private TestServer server;
-	private GameState gameState;
+	//private GameState gameState;
+	private Game game;
 	
-	public PlayScreen(Juego juego, boolean createServer) {
+	public PlayScreen(Juego juego, PlayerState playerState, GameState gameState) {
         this.juego = juego;
         
         // SET CAMERA
@@ -66,18 +72,20 @@ public class PlayScreen implements Screen, ClientListener {
         b2dr = new Box2DDebugRenderer();
 	
         // Player
-        player = new Player(world, mapWidth / 2, mapHeight / 2);
+        player = new Player(world, playerState);
         
         // Hud
         debugHud = new DebugHud(juego.batch, player);
         
         // Testing Server
-        gameState = new GameState();
-        if(createServer){
+        //gameState = new GameState();
+        game = new Game(world, gameState);
+        game.addPlayer(player);
+        /*if(createServer){
         	server = new TestServer(3);
         }
         TestClient testClient = new TestClient(player.getPlayerState(), this);
-        
+              */
 	}
 	
 	private void loadMap() {
@@ -209,10 +217,15 @@ public class PlayScreen implements Screen, ClientListener {
         		+ ":" + mapHeight*Juego.PPM);*/
         //System.out.println(gamecam.position.y + " : " + (mapHeight - gamePort.getWorldHeight()/2));
 	}
+	
+	public void newNetworkPlayer(PlayerState playerState){
+		game.addPlayer(new Player(world, playerState));
+	}
 
 	@Override
 	public void render(float delta) {
 		update(delta);
+		
 		// TODO Auto-generated method stub
 		Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -264,9 +277,9 @@ public class PlayScreen implements Screen, ClientListener {
 		b2dr.dispose();
 		debugHud.dispose();
 	}
-
+	/*
 	@Override
-	public void PlayerStateReceived(PlayerState playerState) {
+	public void playerStateReceived(PlayerState playerState) {
 				
 	}
 
@@ -274,4 +287,5 @@ public class PlayScreen implements Screen, ClientListener {
 	public void couldNotConnect() {
 		System.exit(0);
 	}
+	*/
 }

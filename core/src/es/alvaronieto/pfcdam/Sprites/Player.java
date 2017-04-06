@@ -13,9 +13,10 @@ import es.alvaronieto.pfcdam.States.PlayerState;
 public class Player {
 	
 	private Body body;
+	private long playerID;
 
 
-	public Player(World world, float x, float y){
+	public Player(World world, float x, float y, long userID){
 		
 		BodyDef bdef = new BodyDef();	
 		PolygonShape shape = new PolygonShape();
@@ -33,8 +34,21 @@ public class Player {
 		body.setLinearDamping(10f);
 	}
 	
+	public Player(World world, PlayerState playerState){
+		this(world, playerState.getPosition().x, playerState.getPosition().y, playerState.getUserID());
+	}
+	
 	public void update(float delta){
 		
+	}
+
+	
+	public long getUserID() {
+		return playerID;
+	}
+
+	public void setUserID(long userID) {
+		this.playerID = userID;
 	}
 
 	public Body getBody() {

@@ -23,9 +23,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.esotericsoftware.kryonet.Server;
 
 import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.Scenes.DebugHud;
+import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
 import es.alvaronieto.pfcdam.Sprites.Player;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.PlayerState;
@@ -40,9 +42,27 @@ public class MainScreen implements Screen {
     private Viewport viewPort;
     private Stage stage;
 	private Skin skin;
+	private TestServer server;
+	private ScreenManager screenManager;
+	private boolean readyToLaunch = false;
+	private PlayerState playerState;
+	private GameState gameState;
 
-	public MainScreen(final Juego juego) {
-        this.juego = juego;
+	public boolean isReadyToLaunch() {
+		return readyToLaunch;
+	}
+
+
+
+	public void setReadyToLaunch(boolean readyToLaunch) {
+		this.readyToLaunch = readyToLaunch;
+	}
+
+
+
+	public MainScreen(final ScreenManager screenManager) {
+		this.screenManager = screenManager;
+        this.juego = screenManager.getJuego();
         
         // SET CAMERA
         gamecam = new OrthographicCamera();
@@ -58,17 +78,17 @@ public class MainScreen implements Screen {
         clienteBtn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				juego.setScreen(new PlayScreen(juego, false));
-				System.out.println("funci");
+				screenManager.launchGameClient(false);
 				return false;
 			}
+
+			
         });
         TextButton serverBtn = new TextButton("Server", getSkin());
         serverBtn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				juego.setScreen(new PlayScreen(juego, true));
-				System.out.println("funci");
+				screenManager.launchGameClient(true);
 				return false;
 			}
         });
@@ -83,6 +103,8 @@ public class MainScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
         
 	}
+	
+	
 	
 	protected Skin getSkin() {
 		if(skin == null){
@@ -110,6 +132,15 @@ public class MainScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     	juego.batch.setProjectionMatrix(stage.getCamera().combined);
         stage.draw();
+        /*
+         * TODO Buscar un metodo de hacer esto desde el screen manager sin que sea llamado por el hilo del kryoclient
+         */
+        if(readyToLaunch){
+        	screenManager.setPlayScreen(new PlayScreen(juego, this.playerState, this.gameState));
+        	screenManager.setCurrentScreen(Screens.PlayScreen);
+        	juego.getScreen().dispose();
+    		juego.setScreen(screenManager.getPlayScreen());
+        }
 	}
 
 	@Override
@@ -138,7 +169,22 @@ public class MainScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
+		stage.dispose();
 	}
+
+
+
+	public void setPlayerState(PlayerState playerState) {
+		this.playerState = playerState;		
+	}
+
+
+
+	public void setGameState(GameState gameState) {
+		this.gameState = gameState;
+		
+	}
+
+
 
 }

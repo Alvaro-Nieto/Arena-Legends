@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class PlayerState implements Serializable {
 	
-	private long playerID;
+	private long userID;
 	private Vector2 position;
 	
 	public PlayerState(){
@@ -15,6 +15,18 @@ public class PlayerState implements Serializable {
 	
 	public PlayerState(Vector2 position){
 		this.position = position;
+	}
+	
+	public PlayerState(Vector2 position, long playerID){
+		this.position = position;
+	}
+
+	public long getUserID() {
+		return userID;
+	}
+
+	public void setUserID(long userID) {
+		this.userID = userID;
 	}
 
 	public Vector2 getPosition() {
