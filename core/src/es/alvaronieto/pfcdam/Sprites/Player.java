@@ -13,11 +13,12 @@ import es.alvaronieto.pfcdam.States.PlayerState;
 public class Player {
 	
 	private Body body;
-	private long playerID;
+	private long userID;
 
 
 	public Player(World world, float x, float y, long userID){
 		
+		this.userID = userID;
 		BodyDef bdef = new BodyDef();	
 		PolygonShape shape = new PolygonShape();
 		FixtureDef fdef = new FixtureDef();
@@ -44,11 +45,11 @@ public class Player {
 
 	
 	public long getUserID() {
-		return playerID;
+		return userID;
 	}
 
 	public void setUserID(long userID) {
-		this.playerID = userID;
+		this.userID = userID;
 	}
 
 	public Body getBody() {
@@ -64,7 +65,7 @@ public class Player {
 	}
 	
 	public PlayerState getPlayerState(){
-		return new PlayerState(this.getPosition());
+		return new PlayerState(this.getPosition(),userID);
 	}
 
 

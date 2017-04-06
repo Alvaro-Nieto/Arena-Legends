@@ -136,7 +136,7 @@ public class MainScreen implements Screen {
          * TODO Buscar un metodo de hacer esto desde el screen manager sin que sea llamado por el hilo del kryoclient
          */
         if(readyToLaunch){
-        	screenManager.setPlayScreen(new PlayScreen(juego, this.playerState, this.gameState));
+        	screenManager.setPlayScreen(new PlayScreen(screenManager, this.playerState, this.gameState));
         	screenManager.setCurrentScreen(Screens.PlayScreen);
         	juego.getScreen().dispose();
     		juego.setScreen(screenManager.getPlayScreen());

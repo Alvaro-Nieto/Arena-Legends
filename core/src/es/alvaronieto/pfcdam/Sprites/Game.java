@@ -29,6 +29,10 @@ public class Game {
 	public boolean removePlayer(long playerID){
 		return players.remove(playerID) != null;
 	}
+	
+	public Player getPlayer(long userID){
+		return players.get(userID);
+	}
 
 	public HashMap<Long, Player> getPlayers() {
 		return players;

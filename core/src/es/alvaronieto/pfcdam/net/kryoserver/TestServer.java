@@ -5,10 +5,14 @@ import java.net.BindException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
@@ -17,6 +21,7 @@ import com.esotericsoftware.kryonet.Server;
 
 import es.alvaronieto.pfcdam.Sprites.Game;
 import es.alvaronieto.pfcdam.Sprites.Player;
+import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.net.Util;
 import es.alvaronieto.pfcdam.net.Packets.Packet01Message;
@@ -24,6 +29,7 @@ import es.alvaronieto.pfcdam.net.Packets.Packet02ConnectionRequest;
 import es.alvaronieto.pfcdam.net.Packets.Packet03ConnectionAccepted;
 import es.alvaronieto.pfcdam.net.Packets.Packet04ConnectionRejected;
 import es.alvaronieto.pfcdam.net.Packets.Packet05ClientConnected;
+import es.alvaronieto.pfcdam.net.Packets.Packet09UserInput;
 
 
 
@@ -55,6 +61,14 @@ public class TestServer extends Listener {
 		
 		world = new World(Vector2.Zero, true);
 		game = new Game();
+		
+		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new Runnable(){
+			@Override
+			public void run() {
+				world.step(1/60f, 6, 2);
+			}
+		}, 0, (long) (1000/60f), TimeUnit.MILLISECONDS);
+		System.out.println((long)(1000/30f));
 		
 		//snl = new ServerKryoListener(clients, maxClients);
 		this.rnd = new Random();
@@ -114,6 +128,13 @@ public class TestServer extends Listener {
 				accepted.playerState = new PlayerState(new Vector2(1,1),accepted.userID);
 				accepted.gameState = game.getGameState();
 				
+				/*System.out.println("Estados enviados:");
+				HashMap<Long, PlayerState> playerStates = accepted.gameState.getPlayers();
+				for(Long userID : playerStates.keySet()){
+					PlayerState playerState = playerStates.get(userID);
+					System.out.println(playerState.getUserID() + " : " +  playerState.getPosition().toString());
+				}*/
+				
 				game.addPlayer(new Player(world, accepted.playerState));
 				connection.sendTCP(accepted);
 				
@@ -133,7 +154,46 @@ public class TestServer extends Listener {
 			}
 			
 		}
+		else if( obj instanceof Packet09UserInput ){
+			Packet09UserInput inputPacket = (Packet09UserInput)obj;
+			//System.out.println(inputPacket.userID + " INPUT >> "+ inputPacket.inputState);
+			Body body = game.getPlayer(inputPacket.userID).getBody();
+			InputState input = inputPacket.inputState;
+			if(input.isUpKey()){
+				if(input.isRightKey()){
+					body.applyLinearImpulse(new Vector2(0.4f,0.4f),body.getWorldCenter(), true);
+				} 
+				else if(input.isLeftKey()){
+					body.applyLinearImpulse(new Vector2(-0.4f,0.4f),body.getWorldCenter(), true);
+				} 
+				else{
+					body.applyLinearImpulse(new Vector2(0,0.8f),body.getWorldCenter(), true);
+				}
+			} 
+			else if(input.isDownKey()){
+				if(input.isRightKey()){
+					body.applyLinearImpulse(new Vector2(0.4f,-0.4f),body.getWorldCenter(), true);
+		        } 
+				else if(input.isLeftKey()){
+					body.applyLinearImpulse(new Vector2(-0.4f,-0.4f),body.getWorldCenter(), true);
+		        } else{
+		        	body.applyLinearImpulse(new Vector2(0,-0.8f),body.getWorldCenter(), true);
+		        }
+	        	
+	        }
+			else if(input.isRightKey()){
+				body.applyLinearImpulse(new Vector2(0.8f,0),body.getWorldCenter(), true);
+	        } 
+			else if(input.isLeftKey() && body.getLinearVelocity().x >= -4){
+				body.applyLinearImpulse(new Vector2(-0.8f,0),body.getWorldCenter(), true);
+	        }
+			
+			UDPBroadcastExcept(inputPacket, connection);
+			
+			//System.out.println(body.getPosition());
+		}
 		
+		/*
 		else if( obj instanceof PlayerState ){
 			PlayerState playerState = (PlayerState)obj;
 			for(Connection client : clients){
@@ -142,7 +202,7 @@ public class TestServer extends Listener {
 				}
 			}
 			System.out.println("[S]Recibido player: " + playerState.toString());
-		}
+		}*/
 		
 		
 	}

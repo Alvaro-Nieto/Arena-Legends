@@ -17,8 +17,9 @@ public class PlayerState implements Serializable {
 		this.position = position;
 	}
 	
-	public PlayerState(Vector2 position, long playerID){
+	public PlayerState(Vector2 position, long userID){
 		this.position = position;
+		this.userID = userID;
 	}
 
 	public long getUserID() {

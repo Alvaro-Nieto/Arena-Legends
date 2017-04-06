@@ -24,6 +24,7 @@ import es.alvaronieto.pfcdam.Scenes.DebugHud;
 import es.alvaronieto.pfcdam.Sprites.Game;
 import es.alvaronieto.pfcdam.Sprites.Player;
 import es.alvaronieto.pfcdam.States.GameState;
+import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.net.ClientListener;
 import es.alvaronieto.pfcdam.net.kryoclient.TestClient;
@@ -56,9 +57,11 @@ public class PlayScreen implements Screen {
 	private TestServer server;
 	//private GameState gameState;
 	private Game game;
+	private ScreenManager screenManager;
 	
-	public PlayScreen(Juego juego, PlayerState playerState, GameState gameState) {
-        this.juego = juego;
+	public PlayScreen(ScreenManager screenManager, PlayerState playerState, GameState gameState) {
+		this.screenManager = screenManager;
+        this.juego = screenManager.getJuego();
         
         // SET CAMERA
         gamecam = new OrthographicCamera();
@@ -171,7 +174,17 @@ public class PlayScreen implements Screen {
 		} else {
 			
 			// TODO Hay que hacer algo decente
+			InputState inputState = new InputState(
+					Gdx.input.isKeyPressed(Input.Keys.UP), 
+					Gdx.input.isKeyPressed(Input.Keys.DOWN),
+					Gdx.input.isKeyPressed(Input.Keys.LEFT),
+					Gdx.input.isKeyPressed(Input.Keys.RIGHT));
 			
+			screenManager.getTestClient().sendInputState(inputState, player.getUserID());
+			
+			
+			
+			 
 			if(Gdx.input.isKeyPressed(Input.Keys.UP)){
 				if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
 					player.getBody().applyLinearImpulse(new Vector2(0.4f,0.4f),player.getBody().getWorldCenter(), true);
@@ -288,4 +301,8 @@ public class PlayScreen implements Screen {
 		System.exit(0);
 	}
 	*/
+
+	public Game getGame() {
+		return game;
+	}
 }

@@ -1,6 +1,7 @@
 package es.alvaronieto.pfcdam.net;
 
 import es.alvaronieto.pfcdam.States.GameState;
+import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
 
 public class Packets {
@@ -43,5 +44,11 @@ public class Packets {
 	
 	public static class Packet08GameUpdate { 
 		GameState gameState;
+	} 
+	
+	public static class Packet09UserInput { 
+		public long timeStamp;
+		public long userID;
+		public InputState inputState;
 	} 
 }

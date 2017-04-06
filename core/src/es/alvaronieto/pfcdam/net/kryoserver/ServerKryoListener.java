@@ -17,6 +17,14 @@ import es.alvaronieto.pfcdam.net.Packets.Packet03ConnectionAccepted;
 import es.alvaronieto.pfcdam.net.Packets.Packet04ConnectionRejected;
 import es.alvaronieto.pfcdam.net.Packets.Packet05ClientConnected;
 
+/*
+ * YA NO SE USA. LO DEJO DE MOMENTO POR SI ACASO
+ * YA NO SE USA. LO DEJO DE MOMENTO POR SI ACASO
+ * YA NO SE USA. LO DEJO DE MOMENTO POR SI ACASO
+ * YA NO SE USA. LO DEJO DE MOMENTO POR SI ACASO
+ * YA NO SE USA. LO DEJO DE MOMENTO POR SI ACASO
+ */
+
 public class ServerKryoListener extends Listener {
 
 	private List<Connection> clients;

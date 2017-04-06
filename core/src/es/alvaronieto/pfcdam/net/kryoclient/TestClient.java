@@ -3,16 +3,20 @@ package es.alvaronieto.pfcdam.net.kryoclient;
 import java.io.IOException;
 import java.util.Date;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
+import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.net.ClientListener;
 import es.alvaronieto.pfcdam.net.Packets.Packet01Message;
 import es.alvaronieto.pfcdam.net.Packets.Packet02ConnectionRequest;
 import es.alvaronieto.pfcdam.net.Packets.Packet03ConnectionAccepted;
 import es.alvaronieto.pfcdam.net.Packets.Packet04ConnectionRejected;
 import es.alvaronieto.pfcdam.net.Packets.Packet05ClientConnected;
+import es.alvaronieto.pfcdam.net.Packets.Packet09UserInput;
 import es.alvaronieto.pfcdam.net.Util;
 
 public class TestClient extends Listener{
@@ -111,7 +115,21 @@ public class TestClient extends Listener{
 			clientListener.newPlayerConnected(connected.playerState);
 			System.out.println("[C]Cliente conectado con ID: " + connected.userID);
 		}
-		
+		else if( obj instanceof Packet09UserInput ){
+			Packet09UserInput inputPacket = (Packet09UserInput)obj;
+			clientListener.inputReceived(inputPacket.inputState, inputPacket.userID);
+
+		}
+			
+			//System.out.println(body.getPosition());
+	}
+
+	public void sendInputState(InputState inputState, long userID) {
+		Packet09UserInput inputPacket = new Packet09UserInput();
+		inputPacket.userID = userID;
+		inputPacket.timeStamp = new Date().getTime();
+		inputPacket.inputState = inputState;
+		client.sendUDP(inputPacket);
 	}
 
 }

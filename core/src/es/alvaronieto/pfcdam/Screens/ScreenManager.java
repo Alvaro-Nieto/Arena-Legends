@@ -1,7 +1,11 @@
 package es.alvaronieto.pfcdam.Screens;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+
 import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.States.GameState;
+import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.net.ClientListener;
 import es.alvaronieto.pfcdam.net.kryoclient.TestClient;
@@ -11,6 +15,7 @@ public class ScreenManager implements ClientListener {
 
 	private Juego juego;
 	private TestServer server;
+	private TestClient testClient;
 	private MainScreen mainScreen;
 	private PlayScreen playScreen;
 	public enum Screens{MainScreen, PlayScreen};
@@ -27,7 +32,7 @@ public class ScreenManager implements ClientListener {
 		if(launchServer){
         	server = new TestServer(3);
         }
-        TestClient testClient = new TestClient(this);
+        testClient = new TestClient(this);
 	}
 
 	
@@ -72,7 +77,13 @@ public class ScreenManager implements ClientListener {
 		this.juego = juego;
 	}
 
+	public TestClient getTestClient() {
+		return testClient;
+	}
 
+	public void setTestClient(TestClient testClient) {
+		this.testClient = testClient;
+	}
 
 	@Override
 	public void couldNotConnect() {
@@ -92,5 +103,45 @@ public class ScreenManager implements ClientListener {
 		if(currentScreen == Screens.PlayScreen){
 			playScreen.newNetworkPlayer(playerState);
 		}
+	}
+
+	@Override
+	public void inputReceived(InputState inputState, long userID) {
+		// TODO Auto-generated method stub
+		//System.out.println(inputPacket.userID + " INPUT >> "+ inputPacket.inputState);
+		//Body body = game.getPlayer(inputPacket.userID).getBody();
+		if(currentScreen == Screens.PlayScreen){
+			Body body = playScreen.getGame().getPlayer(userID).getBody();
+			InputState input = inputState;
+			if(input.isUpKey()){
+				if(input.isRightKey()){
+					body.applyLinearImpulse(new Vector2(0.4f,0.4f),body.getWorldCenter(), true);
+				} 
+				else if(input.isLeftKey()){
+					body.applyLinearImpulse(new Vector2(-0.4f,0.4f),body.getWorldCenter(), true);
+				} 
+				else{
+					body.applyLinearImpulse(new Vector2(0,0.8f),body.getWorldCenter(), true);
+				}
+			} 
+			else if(input.isDownKey()){
+				if(input.isRightKey()){
+					body.applyLinearImpulse(new Vector2(0.4f,-0.4f),body.getWorldCenter(), true);
+		        } 
+				else if(input.isLeftKey()){
+					body.applyLinearImpulse(new Vector2(-0.4f,-0.4f),body.getWorldCenter(), true);
+		        } else{
+		        	body.applyLinearImpulse(new Vector2(0,-0.8f),body.getWorldCenter(), true);
+		        }
+	        	
+	        }
+			else if(input.isRightKey()){
+				body.applyLinearImpulse(new Vector2(0.8f,0),body.getWorldCenter(), true);
+	        } 
+			else if(input.isLeftKey() && body.getLinearVelocity().x >= -4){
+				body.applyLinearImpulse(new Vector2(-0.8f,0),body.getWorldCenter(), true);
+	        }
+		}
+		
 	}
 }
