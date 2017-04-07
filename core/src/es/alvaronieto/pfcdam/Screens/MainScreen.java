@@ -52,13 +52,9 @@ public class MainScreen implements Screen {
 		return readyToLaunch;
 	}
 
-
-
 	public void setReadyToLaunch(boolean readyToLaunch) {
 		this.readyToLaunch = readyToLaunch;
 	}
-
-
 
 	public MainScreen(final ScreenManager screenManager) {
 		this.screenManager = screenManager;
@@ -104,9 +100,8 @@ public class MainScreen implements Screen {
         
 	}
 	
-	
-	
 	protected Skin getSkin() {
+		// TODO Mejorar esto y no repetirlo en todos lados
 		if(skin == null){
 			skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
 		}
@@ -140,6 +135,8 @@ public class MainScreen implements Screen {
         	screenManager.setCurrentScreen(Screens.PlayScreen);
         	juego.getScreen().dispose();
     		juego.setScreen(screenManager.getPlayScreen());
+    		// It waits for server connection
+    		// We should show some loading screen at this point
         }
 	}
 
@@ -172,19 +169,13 @@ public class MainScreen implements Screen {
 		stage.dispose();
 	}
 
-
-
 	public void setPlayerState(PlayerState playerState) {
 		this.playerState = playerState;		
 	}
-
-
 
 	public void setGameState(GameState gameState) {
 		this.gameState = gameState;
 		
 	}
-
-
 
 }

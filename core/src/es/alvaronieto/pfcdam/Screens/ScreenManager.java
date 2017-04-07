@@ -1,12 +1,9 @@
 package es.alvaronieto.pfcdam.Screens;
 
-import java.util.Map;
-
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 
 import es.alvaronieto.pfcdam.Juego;
-import es.alvaronieto.pfcdam.Sprites.Player;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
@@ -19,18 +16,19 @@ public class ScreenManager implements ClientListener {
 	private Juego juego;
 	private TestServer server;
 	private TestClient testClient;
-	private TittleScreen tittleScreen;
+	private TitleScreen titleScreen;
 	private MainScreen mainScreen;
 	private PlayScreen playScreen;
-	public enum Screens{TittleScreen, MainScreen, PlayScreen};
+	public enum Screens{TitleScreen, MainScreen, PlayScreen};
 	private Screens currentScreen;
 	private long lastSnap = Long.MIN_VALUE;
 	
 	public ScreenManager(Juego juego){
 		this.juego = juego;
-		mainScreen = new MainScreen(this);
-		juego.setScreen(mainScreen);
-		currentScreen = Screens.MainScreen;
+
+		titleScreen = new TitleScreen(this);
+		juego.setScreen(titleScreen);
+		currentScreen = Screens.TitleScreen;
 	}
 	
 	public void launchGameClient(boolean launchServer) {
@@ -47,14 +45,6 @@ public class ScreenManager implements ClientListener {
 
 	public void setServer(TestServer server) {
 		this.server = server;
-	}
-
-	public TittleScreen getMainScreen() {
-		return tittleScreen;
-	}
-
-	public void setTittleScreen(TittleScreen tittleScreen) {
-		this.tittleScreen = tittleScreen;
 	}
 
 	public PlayScreen getPlayScreen() {
@@ -77,7 +67,6 @@ public class ScreenManager implements ClientListener {
 		return juego;
 	}
 
-
 	public void setJuego(Juego juego) {
 		this.juego = juego;
 	}
@@ -89,11 +78,26 @@ public class ScreenManager implements ClientListener {
 	public void setTestClient(TestClient testClient) {
 		this.testClient = testClient;
 	}
+	
+	public TitleScreen getTitleScreen() {
+		return titleScreen;
+	}
+
+	public void setTitleScreen(TitleScreen titleScreen) {
+		this.titleScreen = titleScreen;
+	}
+
+	public MainScreen getMainScreen() {
+		return mainScreen;
+	}
+
+	public void setMainScreen(MainScreen mainScreen) {
+		this.mainScreen = mainScreen;
+	}
 
 	@Override
 	public void couldNotConnect() {
-		// TODO Auto-generated method stub
-		
+		System.out.println("No se puede conectar al server");
 	}
 
 	@Override
@@ -114,7 +118,7 @@ public class ScreenManager implements ClientListener {
 	public void inputReceived(InputState inputState, long userID) {
 		// TODO Auto-generated method stub
 		
-		// SOMETHING LIKE CLIENT PREDICTION NOT REAL CLIENT PREDICTION
+		// SOMETHING LIKE CLIENT PREDICTION BUT NOT REAL CLIENT PREDICTION
 		if(currentScreen == Screens.PlayScreen){
 			Body body = playScreen.getGame().getPlayer(userID).getBody();
 			InputState input = inputState;
