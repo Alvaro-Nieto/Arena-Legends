@@ -16,9 +16,10 @@ public class ScreenManager implements ClientListener {
 	private Juego juego;
 	private TestServer server;
 	private TestClient testClient;
+	private TittleScreen tittleScreen;
 	private MainScreen mainScreen;
 	private PlayScreen playScreen;
-	public enum Screens{MainScreen, PlayScreen};
+	public enum Screens{TittleScreen, MainScreen, PlayScreen};
 	private Screens currentScreen;
 	
 	public ScreenManager(Juego juego){
@@ -44,12 +45,12 @@ public class ScreenManager implements ClientListener {
 		this.server = server;
 	}
 
-	public MainScreen getMainScreen() {
-		return mainScreen;
+	public TittleScreen getMainScreen() {
+		return tittleScreen;
 	}
 
-	public void setMainScreen(MainScreen mainScreen) {
-		this.mainScreen = mainScreen;
+	public void setTittleScreen(TittleScreen tittleScreen) {
+		this.tittleScreen = tittleScreen;
 	}
 
 	public PlayScreen getPlayScreen() {
