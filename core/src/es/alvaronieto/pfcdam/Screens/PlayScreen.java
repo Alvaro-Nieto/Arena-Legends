@@ -1,6 +1,7 @@
 package es.alvaronieto.pfcdam.Screens;
 
 import java.awt.Cursor;
+import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -58,6 +59,9 @@ public class PlayScreen implements Screen {
 	//private GameState gameState;
 	private Game game;
 	private ScreenManager screenManager;
+	
+	private GameState lastSnapshot;
+	private long lastSnapshotTime;
 	
 	public PlayScreen(ScreenManager screenManager, PlayerState playerState, GameState gameState) {
 		this.screenManager = screenManager;
@@ -118,6 +122,26 @@ public class PlayScreen implements Screen {
 
 	public void update(float dt) {
 		handleInput(dt);
+		
+		
+		// Pruebas snapshots
+		/*
+		if(lastSnapshot!=null){
+			for (Map.Entry<Long, PlayerState> entry : lastSnapshot.getPlayers().entrySet()) {
+
+		        long userID = entry.getKey();
+		        PlayerState playerState = entry.getValue();
+		        //System.out.println("STATE:"+playerState.getPosition());
+		        Player player = getGame().getPlayer(userID);
+		        //System.out.println("OLD:"+player.getPosition());
+		        //player.getPosition().set(playerState.getPosition());
+		        player.getBody().setTransform(playerState.getPosition(), 0);
+		        //System.out.println("NEW:"+player.getPosition());
+		        
+		    }
+			lastSnapshot = null;
+		}*/
+		
 		
 		world.step(1/60f, 6, 2);
 		
@@ -225,10 +249,6 @@ public class PlayScreen implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.F12))
         	freeCameraEnabled = !freeCameraEnabled;
         
-        /*System.out.println(gamecam.position.y*Juego.PPM 
-        		+ ":" + gamePort.getWorldHeight()*Juego.PPM 
-        		+ ":" + mapHeight*Juego.PPM);*/
-        //System.out.println(gamecam.position.y + " : " + (mapHeight - gamePort.getWorldHeight()/2));
 	}
 	
 	public void newNetworkPlayer(PlayerState playerState){
@@ -305,4 +325,17 @@ public class PlayScreen implements Screen {
 	public Game getGame() {
 		return game;
 	}
+
+	public void setLastSnapshot(GameState gameState) {
+		this.lastSnapshot = gameState;
+	}
+
+	public long getLastSnapshotTime() {
+		return lastSnapshotTime;
+	}
+
+	public void setLastSnapshotTime(long lastSnapshotTime) {
+		this.lastSnapshotTime = lastSnapshotTime;
+	}
+	
 }

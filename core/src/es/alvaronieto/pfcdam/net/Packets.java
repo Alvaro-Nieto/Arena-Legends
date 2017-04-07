@@ -39,11 +39,13 @@ public class Packets {
 	} 
 	
 	public static class Packet07PlayerUpdate { 
-		PlayerState playerState;
+		public long timeStamp;
+		public PlayerState playerState;
 	} 
 	
 	public static class Packet08GameUpdate { 
-		GameState gameState;
+		public long timeStamp;
+		public GameState gameState;
 	} 
 	
 	public static class Packet09UserInput { 

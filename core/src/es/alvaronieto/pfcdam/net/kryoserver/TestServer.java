@@ -29,6 +29,7 @@ import es.alvaronieto.pfcdam.net.Packets.Packet02ConnectionRequest;
 import es.alvaronieto.pfcdam.net.Packets.Packet03ConnectionAccepted;
 import es.alvaronieto.pfcdam.net.Packets.Packet04ConnectionRejected;
 import es.alvaronieto.pfcdam.net.Packets.Packet05ClientConnected;
+import es.alvaronieto.pfcdam.net.Packets.Packet08GameUpdate;
 import es.alvaronieto.pfcdam.net.Packets.Packet09UserInput;
 
 
@@ -66,6 +67,7 @@ public class TestServer extends Listener {
 			@Override
 			public void run() {
 				world.step(1/60f, 6, 2);
+				sendSnapshot();
 			}
 		}, 0, (long) (1000/60f), TimeUnit.MILLISECONDS);
 		System.out.println((long)(1000/30f));
@@ -91,6 +93,13 @@ public class TestServer extends Listener {
 		
 	}
 	
+	protected void sendSnapshot() {
+		Packet08GameUpdate snapshot = new Packet08GameUpdate();
+		snapshot.gameState = game.getGameState();
+		snapshot.timeStamp = new Date().getTime();
+		UDPBroadcast(snapshot);
+	}
+
 	private void registerPackets(){
 		Util.registerPackets(server.getKryo());
 	}
@@ -221,6 +230,11 @@ public class TestServer extends Listener {
 				client.sendUDP(object);
 			}
 		}
+	}
+	
+	private void UDPBroadcast(Object object){
+		for(Connection client : clients)
+			client.sendUDP(object);
 	}
 	
 	

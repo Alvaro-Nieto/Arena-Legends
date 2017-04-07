@@ -16,6 +16,9 @@ import es.alvaronieto.pfcdam.net.Packets.Packet02ConnectionRequest;
 import es.alvaronieto.pfcdam.net.Packets.Packet03ConnectionAccepted;
 import es.alvaronieto.pfcdam.net.Packets.Packet04ConnectionRejected;
 import es.alvaronieto.pfcdam.net.Packets.Packet05ClientConnected;
+import es.alvaronieto.pfcdam.net.Packets.Packet06ClientDisconnected;
+import es.alvaronieto.pfcdam.net.Packets.Packet07PlayerUpdate;
+import es.alvaronieto.pfcdam.net.Packets.Packet08GameUpdate;
 import es.alvaronieto.pfcdam.net.Packets.Packet09UserInput;
 import es.alvaronieto.pfcdam.net.Util;
 
@@ -115,10 +118,14 @@ public class TestClient extends Listener{
 			clientListener.newPlayerConnected(connected.playerState);
 			System.out.println("[C]Cliente conectado con ID: " + connected.userID);
 		}
+		else if( obj instanceof Packet08GameUpdate ){
+			Packet08GameUpdate gameUpdate = (Packet08GameUpdate)obj;
+			clientListener.snapShotReceived(gameUpdate.timeStamp, gameUpdate.gameState);
+		}
 		else if( obj instanceof Packet09UserInput ){
 			Packet09UserInput inputPacket = (Packet09UserInput)obj;
 			clientListener.inputReceived(inputPacket.inputState, inputPacket.userID);
-
+			
 		}
 			
 			//System.out.println(body.getPosition());

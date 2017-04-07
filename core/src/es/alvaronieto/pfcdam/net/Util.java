@@ -14,6 +14,8 @@ import es.alvaronieto.pfcdam.net.Packets.Packet03ConnectionAccepted;
 import es.alvaronieto.pfcdam.net.Packets.Packet04ConnectionRejected;
 import es.alvaronieto.pfcdam.net.Packets.Packet05ClientConnected;
 import es.alvaronieto.pfcdam.net.Packets.Packet06ClientDisconnected;
+import es.alvaronieto.pfcdam.net.Packets.Packet07PlayerUpdate;
+import es.alvaronieto.pfcdam.net.Packets.Packet08GameUpdate;
 import es.alvaronieto.pfcdam.net.Packets.Packet09UserInput;
 
 public class Util {
@@ -24,6 +26,8 @@ public class Util {
 		kryo.register(Packet04ConnectionRejected.class);
 		kryo.register(Packet05ClientConnected.class);
 		kryo.register(Packet06ClientDisconnected.class);
+		kryo.register(Packet07PlayerUpdate.class);
+		kryo.register(Packet08GameUpdate.class);
 		kryo.register(Packet09UserInput.class);
 		kryo.register(PlayerState.class);
 		kryo.register(GameState.class);
