@@ -1,5 +1,6 @@
 package es.alvaronieto.pfcdam.Screens;
 
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 
@@ -39,68 +40,6 @@ public class ScreenManager implements ClientListener {
         testClient = new TestClient(this);
 	}
 
-	
-	public TestServer getServer() {
-		return server;
-	}
-
-	public void setServer(TestServer server) {
-		this.server = server;
-	}
-
-	public PlayScreen getPlayScreen() {
-		return playScreen;
-	}
-
-	public void setPlayScreen(PlayScreen playScreen) {
-		this.playScreen = playScreen;
-	}
-
-	public Screens getCurrentScreen() {
-		return currentScreen;
-	}
-
-	public void setCurrentScreen(Screens currentScreen) {
-		this.currentScreen = currentScreen;
-	}
-
-	public Juego getJuego() {
-		return juego;
-	}
-
-	public void setJuego(Juego juego) {
-		this.juego = juego;
-	}
-
-	public TestClient getTestClient() {
-		return testClient;
-	}
-
-	public void setTestClient(TestClient testClient) {
-		this.testClient = testClient;
-	}
-	
-	public TitleScreen getTitleScreen() {
-		return titleScreen;
-	}
-
-	public void setTitleScreen(TitleScreen titleScreen) {
-		this.titleScreen = titleScreen;
-	}
-
-	public MainScreen getMainScreen() {
-		return mainScreen;
-	}
-
-	public void setMainScreen(MainScreen mainScreen) {
-		this.mainScreen = mainScreen;
-	}
-	public ModeScreen getModeScreen(){
-		return modeScreen;
-	}
-	public void setModeScreen(ModeScreen modeScreen){
-		this.modeScreen=modeScreen;
-	}
 
 	@Override
 	public void couldNotConnect() {
@@ -123,8 +62,7 @@ public class ScreenManager implements ClientListener {
 
 	@Override
 	public void inputReceived(InputState inputState, long userID) {
-		// TODO Auto-generated method stub
-		
+
 		// SOMETHING LIKE CLIENT PREDICTION BUT NOT REAL CLIENT PREDICTION
 		if(currentScreen == Screens.PlayScreen){
 			Body body = playScreen.getGame().getPlayer(userID).getBody();
@@ -188,5 +126,76 @@ public class ScreenManager implements ClientListener {
 		} else
 			System.out.println("fuera de orden");
 		lastSnap = timeStamp;*/
+	}
+
+	public void setScreen(Screen screen) {
+		juego.setScreen(screen);
+	}
+
+	public Screen getScreen() {
+		return juego.getScreen();
+	}
+	
+	
+	public TestServer getServer() {
+		return server;
+	}
+
+	public void setServer(TestServer server) {
+		this.server = server;
+	}
+
+	public PlayScreen getPlayScreen() {
+		return playScreen;
+	}
+
+	public void setPlayScreen(PlayScreen playScreen) {
+		this.playScreen = playScreen;
+	}
+
+	public Screens getCurrentScreen() {
+		return currentScreen;
+	}
+
+	public void setCurrentScreen(Screens currentScreen) {
+		this.currentScreen = currentScreen;
+	}
+
+	public Juego getJuego() {
+		return juego;
+	}
+
+	public void setJuego(Juego juego) {
+		this.juego = juego;
+	}
+
+	public TestClient getTestClient() {
+		return testClient;
+	}
+
+	public void setTestClient(TestClient testClient) {
+		this.testClient = testClient;
+	}
+	
+	public TitleScreen getTitleScreen() {
+		return titleScreen;
+	}
+
+	public void setTitleScreen(TitleScreen titleScreen) {
+		this.titleScreen = titleScreen;
+	}
+
+	public MainScreen getMainScreen() {
+		return mainScreen;
+	}
+
+	public void setMainScreen(MainScreen mainScreen) {
+		this.mainScreen = mainScreen;
+	}
+	public ModeScreen getModeScreen(){
+		return modeScreen;
+	}
+	public void setModeScreen(ModeScreen modeScreen){
+		this.modeScreen=modeScreen;
 	}
 }

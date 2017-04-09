@@ -1,4 +1,4 @@
-package es.alvaronieto.pfcdam.Sprites;
+package es.alvaronieto.pfcdam.gameobjects;
 
 import java.util.HashMap;
 

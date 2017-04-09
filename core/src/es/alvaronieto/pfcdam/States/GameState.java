@@ -2,7 +2,7 @@ package es.alvaronieto.pfcdam.States;
 
 import java.util.HashMap;
 
-import es.alvaronieto.pfcdam.Sprites.Player;
+import es.alvaronieto.pfcdam.gameobjects.Player;
 
 public class GameState {
 	private HashMap<Long, PlayerState> playerStates;

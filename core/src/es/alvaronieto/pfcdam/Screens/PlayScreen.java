@@ -17,11 +17,11 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.Scenes.DebugHud;
-import es.alvaronieto.pfcdam.Sprites.Game;
-import es.alvaronieto.pfcdam.Sprites.Player;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
+import es.alvaronieto.pfcdam.gameobjects.Game;
+import es.alvaronieto.pfcdam.gameobjects.Player;
 import es.alvaronieto.pfcdam.net.kryoserver.TestServer;
 
 public class PlayScreen implements Screen {

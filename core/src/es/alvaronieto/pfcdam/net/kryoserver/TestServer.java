@@ -19,10 +19,10 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 
-import es.alvaronieto.pfcdam.Sprites.Game;
-import es.alvaronieto.pfcdam.Sprites.Player;
 import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
+import es.alvaronieto.pfcdam.gameobjects.Game;
+import es.alvaronieto.pfcdam.gameobjects.Player;
 import es.alvaronieto.pfcdam.net.Util;
 import es.alvaronieto.pfcdam.net.Packets.Packet01Message;
 import es.alvaronieto.pfcdam.net.Packets.Packet02ConnectionRequest;
@@ -41,7 +41,6 @@ public class TestServer extends Listener {
 	
 	// Kyonet "Server" object
 	private Server server;
-	ServerKryoListener snl;
 	
 	//
 	private List<Connection> clients;

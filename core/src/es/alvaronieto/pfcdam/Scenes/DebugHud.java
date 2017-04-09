@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import es.alvaronieto.pfcdam.Juego;
-import es.alvaronieto.pfcdam.Sprites.Player;
+import es.alvaronieto.pfcdam.gameobjects.Player;
 
 public class DebugHud implements Disposable{
 	public Stage stage;
