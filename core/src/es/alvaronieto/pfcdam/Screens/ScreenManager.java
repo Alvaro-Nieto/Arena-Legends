@@ -19,7 +19,8 @@ public class ScreenManager implements ClientListener {
 	private TitleScreen titleScreen;
 	private MainScreen mainScreen;
 	private PlayScreen playScreen;
-	public enum Screens{TitleScreen, MainScreen, PlayScreen};
+	private ModeScreen modeScreen;
+	public enum Screens{TitleScreen, ModeScreen, MainScreen, PlayScreen};
 	private Screens currentScreen;
 	private long lastSnap = Long.MIN_VALUE;
 	
@@ -93,6 +94,12 @@ public class ScreenManager implements ClientListener {
 
 	public void setMainScreen(MainScreen mainScreen) {
 		this.mainScreen = mainScreen;
+	}
+	public ModeScreen getModeScreen(){
+		return modeScreen;
+	}
+	public void setModeScreen(ModeScreen modeScreen){
+		this.modeScreen=modeScreen;
 	}
 
 	@Override

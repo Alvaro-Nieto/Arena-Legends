@@ -16,10 +16,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
-import es.alvaronieto.pfcdam.States.GameState;
-import es.alvaronieto.pfcdam.States.PlayerState;
 
-public class TitleScreen implements Screen {
+public class ModeScreen implements Screen {
 	private Juego juego;
 	private OrthographicCamera gamecam;
     private Viewport viewPort;
@@ -27,7 +25,7 @@ public class TitleScreen implements Screen {
 	private Skin skin;
 	private ScreenManager screenManager;
 	
-	public TitleScreen(final ScreenManager screenManager){
+	public ModeScreen(final ScreenManager screenManager){
 		this.screenManager = screenManager;
         this.juego = screenManager.getJuego();
         
@@ -39,27 +37,62 @@ public class TitleScreen implements Screen {
         Table table = new Table();
         table.pad(5f);
         table.setFillParent(true);
+        Table tableatras = new Table();
+        tableatras.pad(5f);
+        tableatras.setFillParent(true);
 
-        Label label=new Label("TITULO DE JUEGO. EL JUEGAZO DE LAS PELEAS TURBO DASH POWER OVERFLOW BROS", getSkin());
-        TextButton startBtn = new TextButton("Pulsa para empezar", getSkin());
-        startBtn.addListener(new InputListener(){
+        Label label=new Label("SELECCIONA MODO DE JUEGO", getSkin());
+        TextButton localBtn = new TextButton("Multijugador Local", getSkin());
+        localBtn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				
-				screenManager.setModeScreen(new ModeScreen(screenManager));
-	        	screenManager.setCurrentScreen(Screens.ModeScreen);
+				screenManager.setMainScreen(new MainScreen(screenManager));
+	        	screenManager.setCurrentScreen(Screens.MainScreen);
 	        	juego.getScreen().dispose();
-	    		juego.setScreen(screenManager.getModeScreen());
+	    		juego.setScreen(screenManager.getMainScreen());
+				return false;
+			}
+        });
+        TextButton onlineBtn = new TextButton("Online", getSkin());
+        onlineBtn.addListener(new InputListener(){
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				
+				screenManager.setMainScreen(new MainScreen(screenManager));
+	        	screenManager.setCurrentScreen(Screens.MainScreen);
+	        	juego.getScreen().dispose();
+	    		juego.setScreen(screenManager.getMainScreen());
+				return false;
+			}
+        });
+        TextButton atrasBtn = new TextButton("Atras", getSkin());
+        atrasBtn.addListener(new InputListener(){
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+				
+				screenManager.setTitleScreen(new TitleScreen(screenManager));
+	        	screenManager.setCurrentScreen(Screens.TitleScreen);
+	        	juego.getScreen().dispose();
+	    		juego.setScreen(screenManager.getTitleScreen());
 				return false;
 			}
         });
        
-        startBtn.center();
+        localBtn.center();
+        onlineBtn.center();
+        atrasBtn.center();
         
         table.add(label);
         table.row();
-        table.add(startBtn);
+        table.add(localBtn);
+        table.row();
+        table.add(onlineBtn);
+        tableatras.top();
+        tableatras.right();
+        tableatras.add(atrasBtn);
         stage.addActor(table);
+        stage.addActor(tableatras);
         Gdx.input.setInputProcessor(stage);
 	}
 	
@@ -114,3 +147,6 @@ public class TitleScreen implements Screen {
 		stage.dispose();
 	}
 }
+
+
+
