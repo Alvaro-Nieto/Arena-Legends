@@ -91,4 +91,8 @@ public class PauseHud implements Disposable{
 	public void togglePauseMenu(){
 		group.setVisible(!group.isVisible());
 	}
+
+	public Viewport getViewPort() {
+		return viewPort;
+	}
 }

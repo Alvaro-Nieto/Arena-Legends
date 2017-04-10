@@ -81,4 +81,8 @@ public class DebugHud implements Disposable{
     public void toggleFPS() {
 		fpsLabel.setVisible(!fpsLabel.isVisible());
 	}
+    
+    public Viewport getViewPort() {
+		return viewport;
+	}
 }

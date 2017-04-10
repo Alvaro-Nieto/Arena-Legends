@@ -281,6 +281,8 @@ public class PlayScreen implements Screen {
 	@Override
 	public void resize(int width, int height) {
 		gamePort.update(width, height);
+		pauseHud.getViewPort().update(width, height);
+		debugHud.getViewPort().update(width, height);
 	}
 
 	@Override
@@ -307,6 +309,7 @@ public class PlayScreen implements Screen {
 		world.dispose();
 		b2dr.dispose();
 		debugHud.dispose();
+		pauseHud.dispose();
 	}
 
 	public Game getGame() {
