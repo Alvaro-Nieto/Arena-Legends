@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.Scenes.DebugHud;
+import es.alvaronieto.pfcdam.Scenes.PauseHud;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
@@ -48,6 +49,9 @@ public class PlayScreen implements Screen {
     private DebugHud debugHud;
 	private boolean freeCameraEnabled = false;
 	
+	// Pause Hud
+	private PauseHud pauseHud;
+	
 	// Player
 	private Player player;
 	
@@ -78,6 +82,9 @@ public class PlayScreen implements Screen {
         
         // Hud
         debugHud = new DebugHud(juego.batch, player);
+        
+        // Pause Hud 
+        pauseHud = new PauseHud(juego.batch);
         
         // Testing Server
         //gameState = new GameState();
@@ -240,6 +247,10 @@ public class PlayScreen implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.F12))
         	freeCameraEnabled = !freeCameraEnabled;
         
+        // Pause HUD
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
+        	pauseHud.togglePauseMenu();
+        
 	}
 	
 	public void newNetworkPlayer(PlayerState playerState){
@@ -264,7 +275,7 @@ public class PlayScreen implements Screen {
         
     	juego.batch.setProjectionMatrix(debugHud.stage.getCamera().combined);
         debugHud.stage.draw();
-        
+        pauseHud.stage.draw();
 	}
 
 	@Override
