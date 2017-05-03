@@ -1,5 +1,7 @@
 package es.alvaronieto.pfcdam.Screens;
 
+import java.util.Map;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -124,7 +126,7 @@ public class PlayScreen implements Screen {
 	public void update(float dt) {
 		handleInput(dt);
 		// Pruebas snapshots
-		/*
+		
 		if(lastSnapshot!=null){
 			for (Map.Entry<Long, PlayerState> entry : lastSnapshot.getPlayers().entrySet()) {
 
@@ -139,7 +141,7 @@ public class PlayScreen implements Screen {
 		        
 		    }
 			lastSnapshot = null;
-		}*/
+		}
 		
 		
 		world.step(1/60f, 6, 2);
@@ -206,6 +208,7 @@ public class PlayScreen implements Screen {
 			screenManager.getTestClient().sendInputState(inputState, player.getUserID());
 			 
 			//  THIS SHOULD BE CLIENT PREDICTION INPUT
+			/*
 			if(Gdx.input.isKeyPressed(Input.Keys.UP)){
 				if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
 					player.getBody().applyLinearImpulse(new Vector2(0.4f,0.4f),player.getBody().getWorldCenter(), true);
@@ -233,7 +236,7 @@ public class PlayScreen implements Screen {
 	        } 
 			else if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.getBody().getLinearVelocity().x >= -4){
 	        	player.getBody().applyLinearImpulse(new Vector2(-0.8f,0),player.getBody().getWorldCenter(), true);
-	        }
+	        }*/
 	        
 		}
 		

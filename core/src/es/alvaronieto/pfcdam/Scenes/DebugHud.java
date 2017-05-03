@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.utils.Disposable;
@@ -29,7 +30,7 @@ public class DebugHud implements Disposable{
     private Label f12Label;
 
     public DebugHud(SpriteBatch sb, Player player) {
-       
+    	Skin skin =  new Skin(Gdx.files.internal("ui/star-soldier-ui.json"));
         viewport = new FitViewport(Juego.V_WIDTH,Juego.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, sb);
         this.player = player;
@@ -38,9 +39,9 @@ public class DebugHud implements Disposable{
         table.pad(5f);
         table.setFillParent(true);
 
-        fpsLabel = new Label(String.format("%d FPS", Gdx.graphics.getFramesPerSecond()), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        velocityLabel = new Label(String.format("Vel. x:%.2f y:%.2f", player.getBody().getLinearVelocity().x, player.getBody().getLinearVelocity().y), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
-        posLabel = new Label(String.format("Pos. x:%.2f y:%.2f", player.getPosition().x, player.getPosition().y), new Label.LabelStyle(new BitmapFont(), Color.WHITE));
+        fpsLabel = new Label(String.format("%d FPS", Gdx.graphics.getFramesPerSecond()), skin);
+        velocityLabel = new Label(String.format("Vel. x:%.2f y:%.2f", player.getBody().getLinearVelocity().x, player.getBody().getLinearVelocity().y), skin);
+        posLabel = new Label(String.format("Pos. x:%.2f y:%.2f", player.getPosition().x, player.getPosition().y), skin);
         f9Label = new Label("F9   - Unassigned", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         f10Label = new Label("F10 - Toggle FPS", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         f11Label = new Label("F11 - Toggle Player Info", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
