@@ -34,10 +34,10 @@ public class ModeScreen extends MenuScreen {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				
-				screenManager.setMainScreen(new MainScreen(screenManager));
-	        	screenManager.setCurrentScreen(Screens.MainScreen);
+				screenManager.setCharSelectionScreen(new CharSelectionScreen(screenManager));
+	        	screenManager.setCurrentScreen(Screens.CharSelectionScreen);
 	        	screenManager.getScreen().dispose();
-	        	screenManager.setScreen(screenManager.getMainScreen());
+	        	screenManager.setScreen(screenManager.getCharSelectionScreen());
 				return false;
 			}
         });
@@ -46,10 +46,10 @@ public class ModeScreen extends MenuScreen {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				
-				screenManager.setMainScreen(new MainScreen(screenManager));
-	        	screenManager.setCurrentScreen(Screens.MainScreen);
+				screenManager.setCharSelectionScreen(new CharSelectionScreen(screenManager));
+	        	screenManager.setCurrentScreen(Screens.CharSelectionScreen);
 	        	screenManager.getScreen().dispose();
-	        	screenManager.setScreen(screenManager.getMainScreen());
+	        	screenManager.setScreen(screenManager.getCharSelectionScreen());
 				return false;
 			}
         });
