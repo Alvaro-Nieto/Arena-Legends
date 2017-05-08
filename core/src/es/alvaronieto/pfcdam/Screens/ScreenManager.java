@@ -1,8 +1,7 @@
 package es.alvaronieto.pfcdam.Screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 
 import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.States.GameState;
@@ -14,6 +13,8 @@ import es.alvaronieto.pfcdam.net.kryoserver.TestServer;
 
 public class ScreenManager implements ClientListener {
 
+	private static ScreenManager screenManager;
+	
 	private Juego juego;
 	private TestServer server;
 	private TestClient testClient;
@@ -27,7 +28,7 @@ public class ScreenManager implements ClientListener {
 	private Screens currentScreen;
 	private long lastSnap = Long.MIN_VALUE;
 	
-	public ScreenManager(Juego juego){
+	private ScreenManager(Juego juego){
 		this.juego = juego;
 
 		titleScreen = new TitleScreen(this);
@@ -35,10 +36,18 @@ public class ScreenManager implements ClientListener {
 		currentScreen = Screens.TitleScreen;
 	}
 	
-	public void launchGameClient(boolean launchServer) {
-		if(launchServer){
-        	server = new TestServer(3);
-        }
+	public static synchronized ScreenManager getInstance(Juego juego){
+		if(screenManager == null){
+			screenManager = new ScreenManager(juego);
+		}
+		return screenManager;
+	}
+	
+	public void launchGameServer(){
+		server = new TestServer(3);
+	}
+	
+	public void launchGameClient() {
         testClient = new TestClient(this);
 	}
 
@@ -49,10 +58,17 @@ public class ScreenManager implements ClientListener {
 	}
 
 	@Override
-	public void connectionAccepted(PlayerState playerState, GameState gameState) {
-		mainScreen.setPlayerState(playerState);
-		mainScreen.setGameState(gameState);
-		mainScreen.setReadyToLaunch(true);
+	public void connectionAccepted(final PlayerState playerState, final GameState gameState) {
+		
+		Gdx.app.postRunnable(new Runnable() {
+	        @Override
+	        public void run() {
+	        	screenManager.setPlayScreen(new PlayScreen(screenManager, playerState, gameState));
+	        	screenManager.setCurrentScreen(Screens.PlayScreen);
+	        	screenManager.getScreen().dispose();
+	        	screenManager.setScreen(screenManager.getPlayScreen());
+	        }
+		});
 	}
 
 	@Override
@@ -64,7 +80,6 @@ public class ScreenManager implements ClientListener {
 
 	@Override
 	public void inputReceived(InputState inputState, long userID) {
-
 		
 		/*if(currentScreen == Screens.PlayScreen){
 			Body body = playScreen.getGame().getPlayer(userID).getBody();
@@ -104,32 +119,16 @@ public class ScreenManager implements ClientListener {
 	@Override
 	public void snapShotReceived(long timeStamp, GameState gameState, long sequenceNumber) {
 		// DANDO POR HECHO QUE NO HAY CLIENT PREDICTION
-		
-		
+
 		if(currentScreen == Screens.PlayScreen && timeStamp > lastSnap){
 			// TODO Esto es muy cutre, hay que arreglarlo
 			playScreen.setLastSnapshot(gameState);
 			playScreen.setLastSnapshotTime(timeStamp);
 			playScreen.setSnapSequenceNumber(sequenceNumber);
-			//System.out.println(sequenceNumber);
-			
-			
-			/*
-			for (Map.Entry<Long, PlayerState> entry : gameState.getPlayers().entrySet()) {
-
-		        long userID = entry.getKey();
-		        PlayerState playerState = entry.getValue();
-		        System.out.println("STATE:"+playerState.getPosition());
-		        Player player = playScreen.getGame().getPlayer(userID);
-		        System.out.println("OLD:"+player.getPosition());
-		        player.getPosition().set(playerState.getPosition());
-		        player.getBody().setTransform(playerState.getPosition(), 0);
-		        System.out.println("NEW:"+player.getPosition());
-		        
-		    }*/
 		
 		} else
 			System.out.println("fuera de orden");
+		
 		lastSnap = timeStamp;
 	}
 
@@ -140,7 +139,6 @@ public class ScreenManager implements ClientListener {
 	public Screen getScreen() {
 		return juego.getScreen();
 	}
-	
 	
 	public TestServer getServer() {
 		return server;

@@ -18,7 +18,7 @@ public class Juego extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		new ScreenManager(this);
+		ScreenManager.getInstance(this);
 	}
 
 	@Override
