@@ -2,6 +2,7 @@ package es.alvaronieto.pfcdam.States;
 
 public class InputState {
 	
+	private int sequenceNumber;
 	private boolean upKey;
 	private boolean downKey;
 	private boolean leftKey;
@@ -11,11 +12,12 @@ public class InputState {
 		
 	}
 	
-	public InputState(boolean upKey, boolean downKey, boolean leftKey, boolean rightKey){
+	public InputState(boolean upKey, boolean downKey, boolean leftKey, boolean rightKey, int sequenceNumber){
 		this.upKey = upKey;
 		this.downKey = downKey;
 		this.leftKey = leftKey;
 		this.rightKey = rightKey;
+		this.sequenceNumber = sequenceNumber;
 	}
 	
 	public boolean isUpKey() {
@@ -48,6 +50,16 @@ public class InputState {
 	
 	public void setRightKey(boolean rightKey) {
 		this.rightKey = rightKey;
+	}
+	
+	
+
+	public int getSequenceNumber() {
+		return this.sequenceNumber;
+	}
+
+	public void setSequenceNumber(int sequenceNumber) {
+		this.sequenceNumber = sequenceNumber;
 	}
 
 	@Override

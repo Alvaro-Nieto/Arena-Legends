@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +44,8 @@ public class TestServer extends Listener {
 	private Server server;
 	
 	//
-	private List<Connection> clients;
+	//private List<Connection> clients;
+	private HashMap<Long, ConnectedClient> clients;
 	
 	private Game game;
 	private World world;
@@ -55,7 +57,8 @@ public class TestServer extends Listener {
 	private final int MAX_CLIENTS = 3;
 	
 	public TestServer(int maxClients) {
-		clients = new ArrayList<Connection>();
+		//clients = new ArrayList<Connection>();
+		clients = new HashMap<Long, ConnectedClient>();
 		server = new Server();
 		
 		
@@ -69,7 +72,7 @@ public class TestServer extends Listener {
 				sendSnapshot();
 			}
 		}, 0, (long) (1000/60f), TimeUnit.MILLISECONDS);
-		System.out.println((long)(1000/30f));
+		//System.out.println((long)(1000/30f));
 		
 		//snl = new ServerKryoListener(clients, maxClients);
 		this.rnd = new Random();
@@ -93,10 +96,19 @@ public class TestServer extends Listener {
 	}
 	
 	protected void sendSnapshot() {
-		Packet08GameUpdate snapshot = new Packet08GameUpdate();
+		/*Packet08GameUpdate snapshot = new Packet08GameUpdate();
 		snapshot.gameState = game.getGameState();
 		snapshot.timeStamp = new Date().getTime();
-		UDPBroadcast(snapshot);
+		UDPBroadcast(snapshot);*/
+		
+		for(Map.Entry<Long, ConnectedClient> entry : clients.entrySet()){
+			Packet08GameUpdate snapshot = new Packet08GameUpdate();
+			ConnectedClient client = entry.getValue();
+			snapshot.gameState = game.getGameState();
+			snapshot.timeStamp = new Date().getTime();
+			snapshot.lastInputAccepted = client.getLastInputAccepted();
+			client.sendUDP(snapshot);
+		}
 	}
 
 	private void registerPackets(){
@@ -136,6 +148,7 @@ public class TestServer extends Listener {
 				accepted.playerState = new PlayerState(new Vector2(1,1),accepted.userID);
 				accepted.gameState = game.getGameState();
 				
+				
 				/*System.out.println("Estados enviados:");
 				HashMap<Long, PlayerState> playerStates = accepted.gameState.getPlayers();
 				for(Long userID : playerStates.keySet()){
@@ -147,7 +160,8 @@ public class TestServer extends Listener {
 				connection.sendTCP(accepted);
 				
 				System.out.println("[S] Conectado cliente con ID: "+ accepted.userID);
-				clients.add(connection);
+				//clients.add(connection);
+				clients.put(accepted.userID,new ConnectedClient(accepted.userID, connection));
 				Packet05ClientConnected clientConnected = new Packet05ClientConnected();
 				clientConnected.userID = accepted.userID;
 				clientConnected.timeStamp = new Date().getTime();
@@ -167,6 +181,11 @@ public class TestServer extends Listener {
 			//System.out.println(inputPacket.userID + " INPUT >> "+ inputPacket.inputState);
 			Body body = game.getPlayer(inputPacket.userID).getBody();
 			InputState input = inputPacket.inputState;
+			
+			ConnectedClient client = clients.get(inputPacket.userID);
+			client.setLastInputAccepted(inputPacket.inputState.getSequenceNumber());
+			//System.out.println(input.getSequenceNumber());
+			
 			if(input.isUpKey()){
 				if(input.isRightKey()){
 					body.applyLinearImpulse(new Vector2(0.4f,0.4f),body.getWorldCenter(), true);
@@ -216,7 +235,8 @@ public class TestServer extends Listener {
 	}
 	
 	private void TCPBroadcastExcept(Object object, Connection exceptionConnection){
-		for(Connection client : clients){
+		for(Map.Entry<Long, ConnectedClient> entry : clients.entrySet()){
+			ConnectedClient client = entry.getValue();
 			if(!client.equals(exceptionConnection)){
 				client.sendTCP(object);
 			}
@@ -224,7 +244,8 @@ public class TestServer extends Listener {
 	}
 	
 	private void UDPBroadcastExcept(Object object, Connection exceptionConnection){
-		for(Connection client : clients){
+		for(Map.Entry<Long, ConnectedClient> entry : clients.entrySet()){
+			ConnectedClient client = entry.getValue();
 			if(!client.equals(exceptionConnection)){
 				client.sendUDP(object);
 			}
@@ -232,8 +253,10 @@ public class TestServer extends Listener {
 	}
 	
 	private void UDPBroadcast(Object object){
-		for(Connection client : clients)
+		for(Map.Entry<Long, ConnectedClient> entry : clients.entrySet()){
+			ConnectedClient client = entry.getValue();
 			client.sendUDP(object);
+		}
 	}
 	
 	

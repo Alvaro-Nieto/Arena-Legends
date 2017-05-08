@@ -45,6 +45,7 @@ public class Packets {
 	
 	public static class Packet08GameUpdate { 
 		public long timeStamp;
+		public long lastInputAccepted;
 		public GameState gameState;
 	} 
 	

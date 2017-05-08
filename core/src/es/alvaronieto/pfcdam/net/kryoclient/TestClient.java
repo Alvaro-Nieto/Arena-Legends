@@ -29,17 +29,14 @@ public class TestClient extends Listener{
 	
 	// Kryonet stuff
 	private Client client;
-	//private ClientKryoListener cnl;
 	
+	// Game stuff
 	private ClientListener clientListener;
 	
 	public TestClient(ClientListener clientListener){
 
 		this.clientListener = clientListener;
 		client = new Client();
-		//cnl = new ClientKryoListener();
-		
-		//cnl.init(client, clientListener);
 		client.addListener(this);
 		registerPackets();
 		
@@ -52,24 +49,6 @@ public class TestClient extends Listener{
 			clientListener.couldNotConnect();
 		}
 		
-		// TODO Remove
-		// Prueba 
-		/*
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while(!Thread.interrupted()){
-					client.sendUDP(playerState);
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				
-			}
-		}).start();*/
 	}
 	
 	@Override
@@ -120,7 +99,7 @@ public class TestClient extends Listener{
 		}
 		else if( obj instanceof Packet08GameUpdate ){
 			Packet08GameUpdate gameUpdate = (Packet08GameUpdate)obj;
-			clientListener.snapShotReceived(gameUpdate.timeStamp, gameUpdate.gameState);
+			clientListener.snapShotReceived(gameUpdate.timeStamp, gameUpdate.gameState, gameUpdate.lastInputAccepted);
 		}
 		else if( obj instanceof Packet09UserInput ){
 			Packet09UserInput inputPacket = (Packet09UserInput)obj;
@@ -136,6 +115,7 @@ public class TestClient extends Listener{
 		inputPacket.userID = userID;
 		inputPacket.timeStamp = new Date().getTime();
 		inputPacket.inputState = inputState;
+		//System.out.println(inputState.getSequenceNumber());
 		client.sendUDP(inputPacket);
 	}
 

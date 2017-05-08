@@ -63,8 +63,8 @@ public class ScreenManager implements ClientListener {
 	@Override
 	public void inputReceived(InputState inputState, long userID) {
 
-		// SOMETHING LIKE CLIENT PREDICTION BUT NOT REAL CLIENT PREDICTION
-		if(currentScreen == Screens.PlayScreen){
+		
+		/*if(currentScreen == Screens.PlayScreen){
 			Body body = playScreen.getGame().getPlayer(userID).getBody();
 			InputState input = inputState;
 			if(input.isUpKey()){
@@ -95,20 +95,23 @@ public class ScreenManager implements ClientListener {
 			else if(input.isLeftKey() && body.getLinearVelocity().x >= -4){
 				body.applyLinearImpulse(new Vector2(-0.8f,0),body.getWorldCenter(), true);
 	        }
-		}
+		}*/
 		
 	}
 
 	@Override
-	public void snapShotReceived(long timeStamp, GameState gameState) {
+	public void snapShotReceived(long timeStamp, GameState gameState, long sequenceNumber) {
 		// DANDO POR HECHO QUE NO HAY CLIENT PREDICTION
 		
-		/*
+		
 		if(currentScreen == Screens.PlayScreen && timeStamp > lastSnap){
+			// TODO Esto es muy cutre, hay que arreglarlo
 			playScreen.setLastSnapshot(gameState);
 			playScreen.setLastSnapshotTime(timeStamp);
+			playScreen.setSnapSequenceNumber(sequenceNumber);
+			//System.out.println(sequenceNumber);
 			
-			*/
+			
 			/*
 			for (Map.Entry<Long, PlayerState> entry : gameState.getPlayers().entrySet()) {
 
@@ -122,10 +125,10 @@ public class ScreenManager implements ClientListener {
 		        System.out.println("NEW:"+player.getPosition());
 		        
 		    }*/
-		/*
+		
 		} else
 			System.out.println("fuera de orden");
-		lastSnap = timeStamp;*/
+		lastSnap = timeStamp;
 	}
 
 	public void setScreen(Screen screen) {

@@ -1,5 +1,6 @@
 package es.alvaronieto.pfcdam.gameobjects;
 
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -14,18 +15,18 @@ public class Player {
 	
 	private Body body;
 	private long userID;
+	
 
 
-	public Player(World world, float x, float y, long userID){
+	public Player(World world, Vector2 position, long userID){
 		
 		this.userID = userID;
 		BodyDef bdef = new BodyDef();	
 		PolygonShape shape = new PolygonShape();
 		FixtureDef fdef = new FixtureDef();
 		
-		bdef.type = BodyDef.BodyType.DynamicBody;
-		//bdef.position.set(new Vector2(x + 16 / Juego.PPM , y + 16 / Juego.PPM)); // Desde esquina inferior izquierda (Coordenadas b2d) 
-		bdef.position.set(new Vector2(x, y)); // Desde el centro (Coordenadas b2d)
+		bdef.type = BodyDef.BodyType.DynamicBody; 
+		bdef.position.set(position); // Desde el centro (Coordenadas b2d)
 		
 		shape.setAsBox(16 / Juego.PPM, 16 / Juego.PPM);
 		fdef.shape = shape;
@@ -36,7 +37,7 @@ public class Player {
 	}
 	
 	public Player(World world, PlayerState playerState){
-		this(world, playerState.getPosition().x, playerState.getPosition().y, playerState.getUserID());
+		this(world, playerState.getPosition(), playerState.getUserID());
 	}
 	
 	public void update(float delta){
@@ -68,6 +69,15 @@ public class Player {
 		return new PlayerState(this.getPosition(),userID);
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Player){
+			return this.userID == ((Player)obj).getUserID();
+		} else {
+			return super.equals(obj);
+		}
+	}
 
+	
 	
 }

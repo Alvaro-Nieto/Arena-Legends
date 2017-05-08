@@ -1,5 +1,10 @@
 package es.alvaronieto.pfcdam.Screens;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -10,6 +15,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -62,6 +68,10 @@ public class PlayScreen implements Screen {
 	private GameState lastSnapshot;
 	private long lastSnapshotTime;
 	
+	private List<InputState> pendingInputs;
+	private int inputSequenceNo = 0;
+	private long snapSequenceNumber;
+	
 	public PlayScreen(ScreenManager screenManager, PlayerState playerState, GameState gameState) {
 		this.screenManager = screenManager;
         this.juego = screenManager.getJuego();
@@ -95,6 +105,9 @@ public class PlayScreen implements Screen {
         }
         TestClient testClient = new TestClient(player.getPlayerState(), this);
               */
+        
+        pendingInputs = new ArrayList<InputState>();
+        
 	}
 	
 	private void loadMap() {
@@ -124,22 +137,27 @@ public class PlayScreen implements Screen {
 	public void update(float dt) {
 		handleInput(dt);
 		// Pruebas snapshots
-		/*
+		
 		if(lastSnapshot!=null){
+			this.world = game.resetWorld(lastSnapshot);
 			for (Map.Entry<Long, PlayerState> entry : lastSnapshot.getPlayers().entrySet()) {
-
+				
 		        long userID = entry.getKey();
 		        PlayerState playerState = entry.getValue();
-		        //System.out.println("STATE:"+playerState.getPosition());
-		        Player player = getGame().getPlayer(userID);
-		        //System.out.println("OLD:"+player.getPosition());
-		        //player.getPosition().set(playerState.getPosition());
-		        player.getBody().setTransform(playerState.getPosition(), 0);
-		        //System.out.println("NEW:"+player.getPosition());
+		        Player snapshotPlayer = getGame().getPlayer(userID);
+		        
+		        if(snapshotPlayer.equals(this.player)){
+		        	//snapshotPlayer.getBody().setTransform(playerState.getPosition(), 0);	
+		        	stateReconciliation(playerState);
+		        } else{
+		        	// TODO Do interpolation
+		        	//snapshotPlayer.getBody().setTransform(playerState.getPosition(), 0);
+		        }
 		        
 		    }
 			lastSnapshot = null;
-		}*/
+			snapSequenceNumber = -1;
+		}
 		
 		
 		world.step(1/60f, 6, 2);
@@ -167,8 +185,55 @@ public class PlayScreen implements Screen {
 		
 		gamecam.update();
 		renderer.setView(gamecam);
+		
 	}
 	
+	private void stateReconciliation(PlayerState playerState) {
+		
+		Iterator<InputState> it = pendingInputs.iterator();
+		while(it.hasNext()){
+			InputState input = it.next();
+			if(input.getSequenceNumber() <= snapSequenceNumber){
+				it.remove();
+				System.out.println("["+snapSequenceNumber+"]"+"Borrado: "+input.getSequenceNumber());
+			}
+			else {
+				System.out.println("["+snapSequenceNumber+"]"+"Aplicando: "+input.getSequenceNumber());
+				Body body = game.getPlayer(playerState.getUserID()).getBody();
+				if(input.isUpKey()){
+					if(input.isRightKey()){
+						body.applyLinearImpulse(new Vector2(0.4f,0.4f),body.getWorldCenter(), true);
+					} 
+					else if(input.isLeftKey()){
+						body.applyLinearImpulse(new Vector2(-0.4f,0.4f),body.getWorldCenter(), true);
+					} 
+					else{
+						body.applyLinearImpulse(new Vector2(0,0.8f),body.getWorldCenter(), true);
+					}
+				} 
+				else if(input.isDownKey()){
+					if(input.isRightKey()){
+						body.applyLinearImpulse(new Vector2(0.4f,-0.4f),body.getWorldCenter(), true);
+			        } 
+					else if(input.isLeftKey()){
+						body.applyLinearImpulse(new Vector2(-0.4f,-0.4f),body.getWorldCenter(), true);
+			        } else{
+			        	body.applyLinearImpulse(new Vector2(0,-0.8f),body.getWorldCenter(), true);
+			        }
+		        	
+		        }
+				else if(input.isRightKey()){
+					body.applyLinearImpulse(new Vector2(0.8f,0),body.getWorldCenter(), true);
+		        } 
+				else if(input.isLeftKey() && body.getLinearVelocity().x >= -4){
+					body.applyLinearImpulse(new Vector2(-0.8f,0),body.getWorldCenter(), true);
+		        }
+				//world.step(1/60f, 6, 2);
+			}
+		}
+		
+	}
+
 	private void handleInput(float dt) {
 		if(freeCameraEnabled){
 			if(Gdx.input.isKeyPressed(Input.Keys.UP)){
@@ -196,17 +261,20 @@ public class PlayScreen implements Screen {
 	        }
 		} else {
 			
+			inputSequenceNo++;
 			// TODO Hay que hacer algo decente
 			InputState inputState = new InputState(
 					Gdx.input.isKeyPressed(Input.Keys.UP), 
 					Gdx.input.isKeyPressed(Input.Keys.DOWN),
 					Gdx.input.isKeyPressed(Input.Keys.LEFT),
-					Gdx.input.isKeyPressed(Input.Keys.RIGHT));
+					Gdx.input.isKeyPressed(Input.Keys.RIGHT), inputSequenceNo);
+			
 			
 			screenManager.getTestClient().sendInputState(inputState, player.getUserID());
-			 
+			pendingInputs.add(inputState);
+			
 			//  THIS SHOULD BE CLIENT PREDICTION INPUT
-			if(Gdx.input.isKeyPressed(Input.Keys.UP)){
+			/*if(Gdx.input.isKeyPressed(Input.Keys.UP)){
 				if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
 					player.getBody().applyLinearImpulse(new Vector2(0.4f,0.4f),player.getBody().getWorldCenter(), true);
 				} 
@@ -233,7 +301,7 @@ public class PlayScreen implements Screen {
 	        } 
 			else if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.getBody().getLinearVelocity().x >= -4){
 	        	player.getBody().applyLinearImpulse(new Vector2(-0.8f,0),player.getBody().getWorldCenter(), true);
-	        }
+	        }*/
 	        
 		}
 		
@@ -326,6 +394,11 @@ public class PlayScreen implements Screen {
 
 	public void setLastSnapshotTime(long lastSnapshotTime) {
 		this.lastSnapshotTime = lastSnapshotTime;
+	}
+
+	public void setSnapSequenceNumber(long sequenceNumber) {
+		this.snapSequenceNumber = sequenceNumber;
+		
 	}
 	
 }

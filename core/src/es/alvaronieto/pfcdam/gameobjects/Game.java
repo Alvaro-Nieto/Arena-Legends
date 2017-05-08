@@ -2,6 +2,7 @@ package es.alvaronieto.pfcdam.gameobjects;
 
 import java.util.HashMap;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 
 import es.alvaronieto.pfcdam.States.GameState;
@@ -9,6 +10,7 @@ import es.alvaronieto.pfcdam.States.PlayerState;
 
 public class Game {
 	private HashMap<Long, Player> players;
+	
 	
 	public Game(){
 		this.players = new HashMap<Long, Player>();
@@ -44,6 +46,16 @@ public class Game {
 	
 	public GameState getGameState(){
 		return new GameState(players);
+	}
+	
+	public World resetWorld(GameState gameState){
+		World world = new World(Vector2.Zero, true);
+		this.players = new HashMap<Long, Player>();
+		HashMap<Long, PlayerState> playerStates = gameState.getPlayers();
+		for(Long userID : playerStates.keySet()){
+			this.players.put(userID, new Player(world, playerStates.get(userID)));
+		}
+		return world;
 	}
 
 }
