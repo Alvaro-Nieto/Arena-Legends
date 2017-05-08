@@ -157,6 +157,7 @@ public class PlayScreen implements Screen {
 		    }
 			lastSnapshot = null;
 			snapSequenceNumber = -1;
+
 		}
 		
 		
@@ -274,7 +275,8 @@ public class PlayScreen implements Screen {
 			pendingInputs.add(inputState);
 			
 			//  THIS SHOULD BE CLIENT PREDICTION INPUT
-			/*if(Gdx.input.isKeyPressed(Input.Keys.UP)){
+			/*
+			if(Gdx.input.isKeyPressed(Input.Keys.UP)){
 				if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
 					player.getBody().applyLinearImpulse(new Vector2(0.4f,0.4f),player.getBody().getWorldCenter(), true);
 				} 
