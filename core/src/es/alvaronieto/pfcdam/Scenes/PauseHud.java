@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import es.alvaronieto.pfcdam.Juego;
+import es.alvaronieto.pfcdam.Util.Constants;
 
 /*
  * Clase que se encarga de mostrar el menú de pausa in-game
@@ -36,9 +36,9 @@ public class PauseHud implements Disposable{
 	
 	public PauseHud(SpriteBatch sb){
 		
-		viewPort = new FitViewport(Juego.V_WIDTH, Juego.V_HEIGHT, new OrthographicCamera());
+		viewPort = new FitViewport(Constants.V_WIDTH, Constants.V_HEIGHT, new OrthographicCamera());
 		group = new Group();
-		group.setSize(Juego.V_WIDTH, Juego.V_HEIGHT);
+		group.setSize(Constants.V_WIDTH, Constants.V_HEIGHT);
 		stage = new Stage(viewPort, sb);
 		skin = new Skin(Gdx.files.internal("ui/star-soldier-ui.json"));
 		

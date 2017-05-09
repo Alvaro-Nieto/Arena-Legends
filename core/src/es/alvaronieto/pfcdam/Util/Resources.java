@@ -8,7 +8,7 @@ public class Resources {
 	private TextureAtlas atlas;
 	
 	private Resources(){
-		this.atlas = new TextureAtlas("trueno.pack");
+		this.atlas = new TextureAtlas("truemo.pack");
 	}
 	
 	public static synchronized Resources getInstance(){

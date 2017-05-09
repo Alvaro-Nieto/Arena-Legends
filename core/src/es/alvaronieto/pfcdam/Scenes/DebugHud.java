@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import es.alvaronieto.pfcdam.Juego;
+import es.alvaronieto.pfcdam.Util.Constants;
 import es.alvaronieto.pfcdam.gameobjects.Player;
 
 public class DebugHud implements Disposable{
@@ -31,7 +31,7 @@ public class DebugHud implements Disposable{
 
     public DebugHud(SpriteBatch sb, Player player) {
     	Skin skin =  new Skin(Gdx.files.internal("ui/star-soldier-ui.json"));
-        viewport = new FitViewport(Juego.V_WIDTH,Juego.V_HEIGHT, new OrthographicCamera());
+        viewport = new FitViewport(Constants.V_WIDTH,Constants.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, sb);
         this.player = player;
 

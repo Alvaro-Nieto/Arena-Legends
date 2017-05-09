@@ -11,7 +11,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -32,6 +31,8 @@ import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.gameobjects.Game;
 import es.alvaronieto.pfcdam.gameobjects.Player;
 import es.alvaronieto.pfcdam.net.kryoserver.TestServer;
+
+import static es.alvaronieto.pfcdam.Util.Constants.PPM;
 
 public class PlayScreen implements Screen {
 
@@ -83,7 +84,7 @@ public class PlayScreen implements Screen {
 
         // SET CAMERA
         gamecam = new OrthographicCamera();
-        gamePort = new FitViewport(Gdx.graphics.getWidth() / Juego.PPM,Gdx.graphics.getHeight() / Juego.PPM, gamecam);
+        gamePort = new FitViewport(Gdx.graphics.getWidth() / PPM,Gdx.graphics.getHeight() / PPM, gamecam);
         
         // LOAD TILED MAP
         loadMap();
@@ -113,7 +114,7 @@ public class PlayScreen implements Screen {
 	private void loadMap() {
 		mapLoader = new TmxMapLoader();
         map = mapLoader.load("testlevel.tmx");
-        renderer = new OrthogonalTiledMapRenderer(map, 1  / Juego.PPM);
+        renderer = new OrthogonalTiledMapRenderer(map, 1  / PPM);
 	
         gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2,0);
         
@@ -125,8 +126,8 @@ public class PlayScreen implements Screen {
         int tilePixelWidth = prop.get("tilewidth", Integer.class);
         int tilePixelHeight = prop.get("tileheight", Integer.class);
 
-        mapWidth = (mapWidth * tilePixelWidth) / Juego.PPM;
-        mapHeight = (mapHeight * tilePixelHeight) / Juego.PPM;
+        mapWidth = (mapWidth * tilePixelWidth) / PPM;
+        mapHeight = (mapHeight * tilePixelHeight) / PPM;
 	}
 
 	@Override

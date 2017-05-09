@@ -13,10 +13,10 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 
-import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.Screens.PlayScreen;
 import es.alvaronieto.pfcdam.Screens.ScreenManager;
 import es.alvaronieto.pfcdam.States.PlayerState;
+import es.alvaronieto.pfcdam.Util.Constants;
 import es.alvaronieto.pfcdam.Util.Resources;
 
 public class Player {
@@ -38,7 +38,7 @@ public class Player {
 		bdef.type = BodyDef.BodyType.DynamicBody; 
 		bdef.position.set(position); // Desde el centro (Coordenadas b2d)
 		
-		shape.setAsBox(16 / Juego.PPM, 16 / Juego.PPM);
+		shape.setAsBox(16 / Constants.PPM, 16 / Constants.PPM);
 		fdef.shape = shape;
 		
 		body = world.createBody(bdef);
@@ -46,9 +46,9 @@ public class Player {
 		body.setLinearDamping(10f);
 		
 		TextureAtlas atlas = Resources.getInstance().getAtlas();
-		this.sprite = new Sprite(atlas.findRegion(pj+"-stand"));
-		truenoStand = new TextureRegion(atlas.findRegion(pj+"-stand"));
-		sprite.setBounds(0, 0, 32 / Juego.PPM, 32 / Juego.PPM);
+		this.sprite = new Sprite(atlas.findRegion(pj+"stand"));
+		truenoStand = new TextureRegion(atlas.findRegion(pj+"stand"));
+		sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
 		sprite.setRegion(truenoStand);
 		
 		

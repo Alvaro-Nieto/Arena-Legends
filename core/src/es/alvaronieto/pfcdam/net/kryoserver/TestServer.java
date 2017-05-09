@@ -36,6 +36,8 @@ import es.alvaronieto.pfcdam.net.Packets.Packet05ClientConnected;
 import es.alvaronieto.pfcdam.net.Packets.Packet08GameUpdate;
 import es.alvaronieto.pfcdam.net.Packets.Packet09UserInput;
 
+import static es.alvaronieto.pfcdam.Util.Constants.TRUEMO;
+
 
 
 public class TestServer extends Listener {
@@ -148,7 +150,7 @@ public class TestServer extends Listener {
 				
 				accepted.userID = rnd.nextLong();
 				accepted.timeStamp = new Date().getTime();
-				accepted.playerState = new PlayerState(new Vector2(1,1),accepted.userID, "trueno");
+				accepted.playerState = new PlayerState(new Vector2(1,1),accepted.userID, TRUEMO);
 				accepted.gameState = game.getGameState();
 				
 				

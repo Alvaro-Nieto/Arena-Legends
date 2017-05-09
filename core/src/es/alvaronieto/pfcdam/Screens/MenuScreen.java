@@ -18,6 +18,7 @@ import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.PlayerState;
+import es.alvaronieto.pfcdam.Util.Constants;
 
 public abstract class MenuScreen implements Screen {
 	private Juego juego;
@@ -33,7 +34,7 @@ public abstract class MenuScreen implements Screen {
         this.skin = new Skin(Gdx.files.internal("ui/star-soldier-ui.json"));
         // SET CAMERA
         gamecam = new OrthographicCamera();
-        viewPort = new FitViewport(Juego.V_WIDTH,Juego.V_HEIGHT, new OrthographicCamera());
+        viewPort = new FitViewport(Constants.V_WIDTH,Constants.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewPort, juego.batch);
         Gdx.input.setInputProcessor(stage);
         stageDefinition();
