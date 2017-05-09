@@ -80,8 +80,7 @@ public class PlayScreen implements Screen {
 	public PlayScreen(ScreenManager screenManager, PlayerState playerState, GameState gameState) {
 		this.screenManager = screenManager;
         this.juego = screenManager.getJuego();
-        
-        
+
         // SET CAMERA
         gamecam = new OrthographicCamera();
         gamePort = new FitViewport(Gdx.graphics.getWidth() / Juego.PPM,Gdx.graphics.getHeight() / Juego.PPM, gamecam);
@@ -103,19 +102,11 @@ public class PlayScreen implements Screen {
         pauseHud = new PauseHud(juego.batch);
         
         // Testing Server
-        //gameState = new GameState();
         game = new Game(world, gameState);
         game.addPlayer(player);
-        /*if(createServer){
-        	server = new TestServer(3);
-        }
-        TestClient testClient = new TestClient(player.getPlayerState(), this);
-              */
-        
+
+        // Snapshots Stuff
         pendingInputs = new ArrayList<InputState>();
-        
-        //
-        
         
 	}
 	
@@ -145,140 +136,125 @@ public class PlayScreen implements Screen {
 
 	public void update(float dt) {
 		handleInput(dt);
+		
 		// Pruebas snapshots
-		
 		if(lastSnapshot!=null){
-			this.world = game.resetWorld(lastSnapshot);
-			player = game.getPlayer(player.getUserID());
-			debugHud.setPlayer(player);
-			for (Map.Entry<Long, PlayerState> entry : lastSnapshot.getPlayers().entrySet()) {
-				
-		        long userID = entry.getKey();
-		        PlayerState playerState = entry.getValue();
-		        Player snapshotPlayer = getGame().getPlayer(userID);
-		        
-		        
-		        if(snapshotPlayer.equals(this.player)){
-		        	//snapshotPlayer.getBody().setTransform(playerState.getPosition(), 0);	
-		        	stateReconciliation(playerState);
-		        } else{
-		        	// TODO Do interpolation
-		        	//snapshotPlayer.getBody().setTransform(playerState.getPosition(), 0);
-		        }
-		        
-		    }
-			lastSnapshot = null;
-			snapSequenceNumber = -1;
-
+			applySnapshot();
 		}
-		
 		
 		world.step(1/60f, 6, 2);
 		
-		HashMap<Long, Player> players =  game.getPlayers();
-        for(Long userID : players.keySet()){
-			players.get(userID).update(dt);
-		}
+		updateAllPlayers(dt);
 		
 		debugHud.update(dt);
 		
-		
 		if(!freeCameraEnabled){
-			
-			gamecam.position.y = player.getBody().getPosition().y;
-			
-			if(player.getBody().getPosition().y - gamecam.viewportHeight / 2 < 0) {
-	            gamecam.position.y = gamecam.viewportHeight / 2;
-	        } else if(player.getBody().getPosition().y + gamecam.viewportHeight / 2 > mapHeight){
-	            gamecam.position.y = mapHeight - gamecam.viewportHeight / 2;
-	        }
-			
-			gamecam.position.x = player.getBody().getPosition().x;
-	        if(player.getBody().getPosition().x - gamecam.viewportWidth / 2 < 0) {
-	            gamecam.position.x = gamecam.viewportWidth / 2;
-	        } else if(player.getBody().getPosition().x + gamecam.viewportWidth / 2 > mapWidth){
-	            gamecam.position.x = mapWidth - gamecam.viewportWidth / 2;
-	        }
+			camFollowPlayer();
 		}
 		
 		gamecam.update();
 		renderer.setView(gamecam);
+	}
+
+	private void updateAllPlayers(float dt) {
+		HashMap<Long, Player> players =  game.getPlayers();
+        for(Long userID : players.keySet()){
+			players.get(userID).update(dt);
+		}
+	}
+
+	private void applySnapshot() {
+		this.world = game.resetWorld(lastSnapshot);
+		player = game.getPlayer(player.getUserID());
+		debugHud.setPlayer(player);
+		for (Map.Entry<Long, PlayerState> entry : lastSnapshot.getPlayers().entrySet()) {
+			
+		    long userID = entry.getKey();
+		    PlayerState playerState = entry.getValue();
+		    Player snapshotPlayer = getGame().getPlayer(userID);
+		    
+		    
+		    if(snapshotPlayer.equals(this.player)){
+		    	//snapshotPlayer.getBody().setTransform(playerState.getPosition(), 0);	
+		    	stateReconciliation(playerState);
+		    } else{
+		    	// TODO Do interpolation
+		    	//snapshotPlayer.getBody().setTransform(playerState.getPosition(), 0);
+		    }
+		    
+		}
+		lastSnapshot = null;
+		snapSequenceNumber = -1;
+	}
+
+	private void camFollowPlayer() {
+		gamecam.position.y = player.getBody().getPosition().y;
 		
+		if(player.getBody().getPosition().y - gamecam.viewportHeight / 2 < 0) {
+		    gamecam.position.y = gamecam.viewportHeight / 2;
+		} else if(player.getBody().getPosition().y + gamecam.viewportHeight / 2 > mapHeight){
+		    gamecam.position.y = mapHeight - gamecam.viewportHeight / 2;
+		}
+		
+		gamecam.position.x = player.getBody().getPosition().x;
+		if(player.getBody().getPosition().x - gamecam.viewportWidth / 2 < 0) {
+		    gamecam.position.x = gamecam.viewportWidth / 2;
+		} else if(player.getBody().getPosition().x + gamecam.viewportWidth / 2 > mapWidth){
+		    gamecam.position.x = mapWidth - gamecam.viewportWidth / 2;
+		}
 	}
 	
 	private void stateReconciliation(PlayerState playerState) {
-		
 		Iterator<InputState> it = pendingInputs.iterator();
 		while(it.hasNext()){
 			InputState input = it.next();
 			if(input.getSequenceNumber() <= snapSequenceNumber){
 				it.remove();
-				//System.out.println("["+snapSequenceNumber+"]"+"Borrado: "+input.getSequenceNumber());
 			}
 			else {
-				//System.out.println("["+snapSequenceNumber+"]"+"Aplicando: "+input.getSequenceNumber());
 				Body body = game.getPlayer(playerState.getUserID()).getBody();
-				if(input.isUpKey()){
-					if(input.isRightKey()){
-						body.applyLinearImpulse(new Vector2(0.4f,0.4f),body.getWorldCenter(), true);
-					} 
-					else if(input.isLeftKey()){
-						body.applyLinearImpulse(new Vector2(-0.4f,0.4f),body.getWorldCenter(), true);
-					} 
-					else{
-						body.applyLinearImpulse(new Vector2(0,0.8f),body.getWorldCenter(), true);
-					}
-				} 
-				else if(input.isDownKey()){
-					if(input.isRightKey()){
-						body.applyLinearImpulse(new Vector2(0.4f,-0.4f),body.getWorldCenter(), true);
-			        } 
-					else if(input.isLeftKey()){
-						body.applyLinearImpulse(new Vector2(-0.4f,-0.4f),body.getWorldCenter(), true);
-			        } else{
-			        	body.applyLinearImpulse(new Vector2(0,-0.8f),body.getWorldCenter(), true);
-			        }
-		        	
-		        }
-				else if(input.isRightKey()){
-					body.applyLinearImpulse(new Vector2(0.8f,0),body.getWorldCenter(), true);
-		        } 
-				else if(input.isLeftKey() && body.getLinearVelocity().x >= -4){
-					body.applyLinearImpulse(new Vector2(-0.8f,0),body.getWorldCenter(), true);
-		        }
+				applyInputToBody(input, body);
 				//world.step(1/60f, 6, 2);
 			}
 		}
 		
 	}
 
+	private void applyInputToBody(InputState input, Body body) {
+		if(input.isUpKey()){
+			if(input.isRightKey()){
+				body.applyLinearImpulse(new Vector2(0.4f,0.4f),body.getWorldCenter(), true);
+			} 
+			else if(input.isLeftKey()){
+				body.applyLinearImpulse(new Vector2(-0.4f,0.4f),body.getWorldCenter(), true);
+			} 
+			else{
+				body.applyLinearImpulse(new Vector2(0,0.8f),body.getWorldCenter(), true);
+			}
+		} 
+		else if(input.isDownKey()){
+			if(input.isRightKey()){
+				body.applyLinearImpulse(new Vector2(0.4f,-0.4f),body.getWorldCenter(), true);
+		    } 
+			else if(input.isLeftKey()){
+				body.applyLinearImpulse(new Vector2(-0.4f,-0.4f),body.getWorldCenter(), true);
+		    } else{
+		    	body.applyLinearImpulse(new Vector2(0,-0.8f),body.getWorldCenter(), true);
+		    }
+			
+		}
+		else if(input.isRightKey()){
+			body.applyLinearImpulse(new Vector2(0.8f,0),body.getWorldCenter(), true);
+		} 
+		else if(input.isLeftKey() && body.getLinearVelocity().x >= -4){
+			body.applyLinearImpulse(new Vector2(-0.8f,0),body.getWorldCenter(), true);
+		}
+	}
+
 	private void handleInput(float dt) {
 		if(freeCameraEnabled){
-			if(Gdx.input.isKeyPressed(Input.Keys.UP)){
-				gamecam.position.y += 10 * dt;
-				if(gamecam.position.y > mapHeight - gamePort. getWorldHeight()/2)
-					gamecam.position.y = mapHeight - gamePort.getWorldHeight()/2;
-			}
-	            
-	        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
-	        	gamecam.position.x += 10 * dt;
-	        	if(gamecam.position.x > mapWidth - gamePort. getWorldWidth()/2)
-					gamecam.position.x = mapWidth - gamePort.getWorldWidth()/2;
-	        }
-	        	
-	        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
-	        	gamecam.position.x -= 10 * dt;
-	        	if(gamecam.position.x < 0 + gamePort.getWorldWidth()/2)
-					gamecam.position.x = 0 + gamePort.getWorldWidth()/2;
-	        }
-	        	
-	        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-	        	gamecam.position.y -= 10 * dt;
-	        	if(gamecam.position.y < 0 + gamePort.getWorldHeight()/2)
-					gamecam.position.y = 0 + gamePort.getWorldHeight()/2;
-	        }
+			moveFreeCamera(dt);
 		} else {
-			
 			inputSequenceNo++;
 			// TODO Hay que hacer algo decente
 			InputState inputState = new InputState(
@@ -287,41 +263,11 @@ public class PlayScreen implements Screen {
 					Gdx.input.isKeyPressed(Input.Keys.LEFT),
 					Gdx.input.isKeyPressed(Input.Keys.RIGHT), inputSequenceNo);
 			
-			
 			screenManager.getTestClient().sendInputState(inputState, player.getUserID());
 			pendingInputs.add(inputState);
 			
 			//  THIS SHOULD BE CLIENT PREDICTION INPUT
-			/*
-			if(Gdx.input.isKeyPressed(Input.Keys.UP)){
-				if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
-					player.getBody().applyLinearImpulse(new Vector2(0.4f,0.4f),player.getBody().getWorldCenter(), true);
-				} 
-				else if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
-					player.getBody().applyLinearImpulse(new Vector2(-0.4f,0.4f),player.getBody().getWorldCenter(), true);
-				} 
-				else{
-					player.getBody().applyLinearImpulse(new Vector2(0,0.8f),player.getBody().getWorldCenter(), true);
-				}
-			} 
-			else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
-				if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
-		        	 player.getBody().applyLinearImpulse(new Vector2(0.4f,-0.4f),player.getBody().getWorldCenter(), true);
-		        } 
-				else if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
-		        	player.getBody().applyLinearImpulse(new Vector2(-0.4f,-0.4f),player.getBody().getWorldCenter(), true);
-		        } else{
-		        	player.getBody().applyLinearImpulse(new Vector2(0,-0.8f),player.getBody().getWorldCenter(), true);
-		        }
-	        	
-	        }
-			else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
-	        	 player.getBody().applyLinearImpulse(new Vector2(0.8f,0),player.getBody().getWorldCenter(), true);
-	        } 
-			else if(Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.getBody().getLinearVelocity().x >= -4){
-	        	player.getBody().applyLinearImpulse(new Vector2(-0.8f,0),player.getBody().getWorldCenter(), true);
-	        }*/
-	        
+			//applyInputToBody(inputState, player.getBody());
 		}
 		
 		// Debug HUD
@@ -339,10 +285,37 @@ public class PlayScreen implements Screen {
         	pauseHud.togglePauseMenu();
         
 	}
+
+	private void moveFreeCamera(float dt) {
+		if(Gdx.input.isKeyPressed(Input.Keys.UP)){
+			gamecam.position.y += 10 * dt;
+			if(gamecam.position.y > mapHeight - gamePort. getWorldHeight()/2)
+				gamecam.position.y = mapHeight - gamePort.getWorldHeight()/2;
+		}
+		    
+		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+			gamecam.position.x += 10 * dt;
+			if(gamecam.position.x > mapWidth - gamePort. getWorldWidth()/2)
+				gamecam.position.x = mapWidth - gamePort.getWorldWidth()/2;
+		}
+			
+		if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+			gamecam.position.x -= 10 * dt;
+			if(gamecam.position.x < 0 + gamePort.getWorldWidth()/2)
+				gamecam.position.x = 0 + gamePort.getWorldWidth()/2;
+		}
+			
+		if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+			gamecam.position.y -= 10 * dt;
+			if(gamecam.position.y < 0 + gamePort.getWorldHeight()/2)
+				gamecam.position.y = 0 + gamePort.getWorldHeight()/2;
+		}
+	}
 	
+	/*
 	public void newNetworkPlayer(PlayerState playerState){
 		game.addPlayer(new Player(world, playerState));
-	}
+	}*/
 
 	@Override
 	public void render(float delta) {
@@ -357,17 +330,19 @@ public class PlayScreen implements Screen {
         
         juego.batch.setProjectionMatrix(gamecam.combined);
         juego.batch.begin();
-        
-        HashMap<Long, Player> players =  game.getPlayers();
-        for(Long userID : players.keySet()){
-			players.get(userID).draw(juego.batch);
-		}
- 
+        drawAllPlayers();
         juego.batch.end();
         
     	juego.batch.setProjectionMatrix(debugHud.stage.getCamera().combined);
         debugHud.stage.draw();
         pauseHud.stage.draw();
+	}
+
+	private void drawAllPlayers() {
+		HashMap<Long, Player> players =  game.getPlayers();
+        for(Long userID : players.keySet()){
+			players.get(userID).draw(juego.batch);
+		}
 	}
 
 	@Override
