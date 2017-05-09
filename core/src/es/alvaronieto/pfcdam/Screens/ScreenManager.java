@@ -72,9 +72,9 @@ public class ScreenManager implements ClientListener {
 
 	@Override
 	public void newPlayerConnected(PlayerState playerState) {
-		/*if(currentScreen == Screens.PlayScreen){
+		if(currentScreen == Screens.PlayScreen){
 			playScreen.newNetworkPlayer(playerState);
-		}*/
+		}
 	}
 
 	@Override

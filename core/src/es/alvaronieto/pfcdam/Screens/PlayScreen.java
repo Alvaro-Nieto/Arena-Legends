@@ -15,7 +15,9 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
@@ -30,13 +32,13 @@ import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.gameobjects.Game;
 import es.alvaronieto.pfcdam.gameobjects.Player;
+import es.alvaronieto.pfcdam.gameobjects.TruemoBall;
 import es.alvaronieto.pfcdam.net.kryoserver.TestServer;
 
 import static es.alvaronieto.pfcdam.Util.Constants.PPM;
 
 public class PlayScreen implements Screen {
 
-	private static final String TRUENO = "trueno";
 	private ScreenManager screenManager;
 	private Juego juego;
 	
@@ -75,12 +77,15 @@ public class PlayScreen implements Screen {
 	private List<InputState> pendingInputs;
 	private int inputSequenceNo = 0;
 	private long snapSequenceNumber;
+	private List<TruemoBall> balls;
 	
 
 	
 	public PlayScreen(ScreenManager screenManager, PlayerState playerState, GameState gameState) {
 		this.screenManager = screenManager;
         this.juego = screenManager.getJuego();
+        
+        this.balls = new ArrayList<TruemoBall>();
 
         // SET CAMERA
         gamecam = new OrthographicCamera();
@@ -146,7 +151,7 @@ public class PlayScreen implements Screen {
 		world.step(1/60f, 6, 2);
 		
 		updateAllPlayers(dt);
-		
+		updateAllBalls(dt);
 		debugHud.update(dt);
 		
 		if(!freeCameraEnabled){
@@ -155,6 +160,12 @@ public class PlayScreen implements Screen {
 		
 		gamecam.update();
 		renderer.setView(gamecam);
+	}
+
+	private void updateAllBalls(float dt) {
+		for(TruemoBall ball : balls)
+			ball.update(dt);
+		
 	}
 
 	private void updateAllPlayers(float dt) {
@@ -266,9 +277,13 @@ public class PlayScreen implements Screen {
 			
 			screenManager.getTestClient().sendInputState(inputState, player.getUserID());
 			pendingInputs.add(inputState);
-			
 			//  THIS SHOULD BE CLIENT PREDICTION INPUT
 			//applyInputToBody(inputState, player.getBody());
+			
+			if(Gdx.input.justTouched()){
+				// Desactivado mientras no se implemente en networking
+				//ballTest(dt);
+			}
 		}
 		
 		// Debug HUD
@@ -285,6 +300,18 @@ public class PlayScreen implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
         	pauseHud.togglePauseMenu();
         
+	}
+
+	private void ballTest(float dt) {
+		Vector2 position = player.getPosition();
+		Vector3 click = gamecam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+		Vector2 dir = new Vector2(click.x - position.x, click.y - position.y);
+		dir.nor();
+		
+		TruemoBall tball = new TruemoBall(world, new Vector2(position.x+dir.x*32/PPM, position.y+dir.y*32/PPM));
+		tball.getBody().setLinearVelocity(dir.scl(5f));
+
+		balls.add(tball);
 	}
 
 	private void moveFreeCamera(float dt) {
@@ -313,10 +340,10 @@ public class PlayScreen implements Screen {
 		}
 	}
 	
-	/*
+	
 	public void newNetworkPlayer(PlayerState playerState){
 		game.addPlayer(new Player(world, playerState));
-	}*/
+	}
 
 	@Override
 	public void render(float delta) {
@@ -332,11 +359,18 @@ public class PlayScreen implements Screen {
         juego.batch.setProjectionMatrix(gamecam.combined);
         juego.batch.begin();
         drawAllPlayers();
+        drawBalls();
         juego.batch.end();
         
     	juego.batch.setProjectionMatrix(debugHud.stage.getCamera().combined);
         debugHud.stage.draw();
         pauseHud.stage.draw();
+	}
+
+	private void drawBalls() {
+		for(TruemoBall ball : balls){
+			ball.draw(juego.batch);
+		}		
 	}
 
 	private void drawAllPlayers() {
