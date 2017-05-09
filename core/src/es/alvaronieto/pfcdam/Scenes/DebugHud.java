@@ -86,4 +86,9 @@ public class DebugHud implements Disposable{
     public Viewport getViewPort() {
 		return viewport;
 	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
+		
+	}
 }

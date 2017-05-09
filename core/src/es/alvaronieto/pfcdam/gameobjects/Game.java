@@ -53,6 +53,7 @@ public class Game {
 		this.players = new HashMap<Long, Player>();
 		HashMap<Long, PlayerState> playerStates = gameState.getPlayers();
 		for(Long userID : playerStates.keySet()){
+			//System.out.println(playerStates.get(userID).getPj());
 			this.players.put(userID, new Player(world, playerStates.get(userID)));
 		}
 		return world;

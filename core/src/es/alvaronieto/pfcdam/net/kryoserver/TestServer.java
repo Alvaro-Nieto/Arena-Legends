@@ -12,6 +12,7 @@ import java.util.Random;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
@@ -20,6 +21,8 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 
+import es.alvaronieto.pfcdam.Screens.PlayScreen;
+import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
 import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.gameobjects.Game;
@@ -141,11 +144,11 @@ public class TestServer extends Listener {
 			Packet02ConnectionRequest r = (Packet02ConnectionRequest)obj;
 			
 			if(clients.size() < MAX_CLIENTS){
-				Packet03ConnectionAccepted accepted = new Packet03ConnectionAccepted();
+				final Packet03ConnectionAccepted accepted = new Packet03ConnectionAccepted();
 				
 				accepted.userID = rnd.nextLong();
 				accepted.timeStamp = new Date().getTime();
-				accepted.playerState = new PlayerState(new Vector2(1,1),accepted.userID);
+				accepted.playerState = new PlayerState(new Vector2(1,1),accepted.userID, "trueno");
 				accepted.gameState = game.getGameState();
 				
 				
@@ -156,7 +159,13 @@ public class TestServer extends Listener {
 					System.out.println(playerState.getUserID() + " : " +  playerState.getPosition().toString());
 				}*/
 				
-				game.addPlayer(new Player(world, accepted.playerState));
+				Gdx.app.postRunnable(new Runnable() {
+			        @Override
+			        public void run() {
+			        	game.addPlayer(new Player(world, accepted.playerState));
+			        }
+				});
+				//game.addPlayer(new Player(world, accepted.playerState));
 				connection.sendTCP(accepted);
 				
 				System.out.println("[S] Conectado cliente con ID: "+ accepted.userID);

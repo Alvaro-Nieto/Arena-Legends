@@ -15,8 +15,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
 
 public class CharSelectionScreen extends MenuScreen {
-	Drawable drawaUnico;
-	Image personaje=new Image();
+	private Drawable drawaUnico;
+	private Image personaje = new Image();
+	
 	public CharSelectionScreen(final ScreenManager screenManager){
 		super(screenManager);
 	}

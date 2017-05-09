@@ -8,6 +8,7 @@ public class PlayerState implements Serializable {
 	
 	private long userID;
 	private Vector2 position;
+	private String pj;
 	
 	public PlayerState(){
 		
@@ -17,9 +18,10 @@ public class PlayerState implements Serializable {
 		this.position = position;
 	}
 	
-	public PlayerState(Vector2 position, long userID){
+	public PlayerState(Vector2 position, long userID, String pj){
 		this.position = position;
 		this.userID = userID;
+		this.pj = pj;
 	}
 
 	public long getUserID() {
@@ -36,6 +38,14 @@ public class PlayerState implements Serializable {
 
 	public void setPosition(Vector2 position) {
 		this.position = position;
+	}
+
+	public String getPj() {
+		return pj;
+	}
+
+	public void setPj(String pj) {
+		this.pj = pj;
 	}
 
 	@Override

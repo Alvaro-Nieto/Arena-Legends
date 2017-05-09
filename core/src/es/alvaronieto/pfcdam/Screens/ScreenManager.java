@@ -51,7 +51,6 @@ public class ScreenManager implements ClientListener {
         testClient = new TestClient(this);
 	}
 
-
 	@Override
 	public void couldNotConnect() {
 		System.out.println("No se puede conectar al server");
@@ -125,9 +124,9 @@ public class ScreenManager implements ClientListener {
 			playScreen.setLastSnapshot(gameState);
 			playScreen.setLastSnapshotTime(timeStamp);
 			playScreen.setSnapSequenceNumber(sequenceNumber);
-		
-		} else
-			System.out.println("fuera de orden");
+		} else {
+			//
+		}
 		
 		lastSnap = timeStamp;
 	}

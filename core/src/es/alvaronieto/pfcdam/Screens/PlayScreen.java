@@ -1,6 +1,7 @@
 package es.alvaronieto.pfcdam.Screens;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -33,6 +35,7 @@ import es.alvaronieto.pfcdam.net.kryoserver.TestServer;
 
 public class PlayScreen implements Screen {
 
+	private static final String TRUENO = "trueno";
 	private ScreenManager screenManager;
 	private Juego juego;
 	
@@ -72,13 +75,16 @@ public class PlayScreen implements Screen {
 	private int inputSequenceNo = 0;
 	private long snapSequenceNumber;
 	
+
+	
 	public PlayScreen(ScreenManager screenManager, PlayerState playerState, GameState gameState) {
 		this.screenManager = screenManager;
         this.juego = screenManager.getJuego();
         
+        
         // SET CAMERA
         gamecam = new OrthographicCamera();
-        gamePort = new FitViewport(Juego.V_WIDTH / Juego.PPM,Juego.V_HEIGHT / Juego.PPM, gamecam);
+        gamePort = new FitViewport(Gdx.graphics.getWidth() / Juego.PPM,Gdx.graphics.getHeight() / Juego.PPM, gamecam);
         
         // LOAD TILED MAP
         loadMap();
@@ -107,6 +113,9 @@ public class PlayScreen implements Screen {
               */
         
         pendingInputs = new ArrayList<InputState>();
+        
+        //
+        
         
 	}
 	
@@ -140,11 +149,14 @@ public class PlayScreen implements Screen {
 		
 		if(lastSnapshot!=null){
 			this.world = game.resetWorld(lastSnapshot);
+			player = game.getPlayer(player.getUserID());
+			debugHud.setPlayer(player);
 			for (Map.Entry<Long, PlayerState> entry : lastSnapshot.getPlayers().entrySet()) {
 				
 		        long userID = entry.getKey();
 		        PlayerState playerState = entry.getValue();
 		        Player snapshotPlayer = getGame().getPlayer(userID);
+		        
 		        
 		        if(snapshotPlayer.equals(this.player)){
 		        	//snapshotPlayer.getBody().setTransform(playerState.getPosition(), 0);	
@@ -162,6 +174,11 @@ public class PlayScreen implements Screen {
 		
 		
 		world.step(1/60f, 6, 2);
+		
+		HashMap<Long, Player> players =  game.getPlayers();
+        for(Long userID : players.keySet()){
+			players.get(userID).update(dt);
+		}
 		
 		debugHud.update(dt);
 		
@@ -196,10 +213,10 @@ public class PlayScreen implements Screen {
 			InputState input = it.next();
 			if(input.getSequenceNumber() <= snapSequenceNumber){
 				it.remove();
-				System.out.println("["+snapSequenceNumber+"]"+"Borrado: "+input.getSequenceNumber());
+				//System.out.println("["+snapSequenceNumber+"]"+"Borrado: "+input.getSequenceNumber());
 			}
 			else {
-				System.out.println("["+snapSequenceNumber+"]"+"Aplicando: "+input.getSequenceNumber());
+				//System.out.println("["+snapSequenceNumber+"]"+"Aplicando: "+input.getSequenceNumber());
 				Body body = game.getPlayer(playerState.getUserID()).getBody();
 				if(input.isUpKey()){
 					if(input.isRightKey()){
@@ -336,11 +353,16 @@ public class PlayScreen implements Screen {
         
         renderer.render();
         
-        b2dr.render(world, gamecam.combined);
+        //b2dr.render(world, gamecam.combined);
         
         juego.batch.setProjectionMatrix(gamecam.combined);
         juego.batch.begin();
         
+        HashMap<Long, Player> players =  game.getPlayers();
+        for(Long userID : players.keySet()){
+			players.get(userID).draw(juego.batch);
+		}
+ 
         juego.batch.end();
         
     	juego.batch.setProjectionMatrix(debugHud.stage.getCamera().combined);
