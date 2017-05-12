@@ -8,6 +8,5 @@ public interface ClientListener {
 	public void couldNotConnect();
 	public void connectionAccepted(PlayerState playerState, GameState gameState);
 	public void newPlayerConnected(PlayerState playerState);
-	public void inputReceived(InputState inputState, long userID);
 	public void snapShotReceived(long timeStamp, GameState gameState, long sequenceNumber);
 }

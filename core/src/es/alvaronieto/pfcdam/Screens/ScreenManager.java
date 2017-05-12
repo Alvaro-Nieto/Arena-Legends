@@ -78,44 +78,6 @@ public class ScreenManager implements ClientListener {
 	}
 
 	@Override
-	public void inputReceived(InputState inputState, long userID) {
-		
-		/*if(currentScreen == Screens.PlayScreen){
-			Body body = playScreen.getGame().getPlayer(userID).getBody();
-			InputState input = inputState;
-			if(input.isUpKey()){
-				if(input.isRightKey()){
-					body.applyLinearImpulse(new Vector2(0.4f,0.4f),body.getWorldCenter(), true);
-				} 
-				else if(input.isLeftKey()){
-					body.applyLinearImpulse(new Vector2(-0.4f,0.4f),body.getWorldCenter(), true);
-				} 
-				else{
-					body.applyLinearImpulse(new Vector2(0,0.8f),body.getWorldCenter(), true);
-				}
-			} 
-			else if(input.isDownKey()){
-				if(input.isRightKey()){
-					body.applyLinearImpulse(new Vector2(0.4f,-0.4f),body.getWorldCenter(), true);
-		        } 
-				else if(input.isLeftKey()){
-					body.applyLinearImpulse(new Vector2(-0.4f,-0.4f),body.getWorldCenter(), true);
-		        } else{
-		        	body.applyLinearImpulse(new Vector2(0,-0.8f),body.getWorldCenter(), true);
-		        }
-	        	
-	        }
-			else if(input.isRightKey()){
-				body.applyLinearImpulse(new Vector2(0.8f,0),body.getWorldCenter(), true);
-	        } 
-			else if(input.isLeftKey() && body.getLinearVelocity().x >= -4){
-				body.applyLinearImpulse(new Vector2(-0.8f,0),body.getWorldCenter(), true);
-	        }
-		}*/
-		
-	}
-
-	@Override
 	public void snapShotReceived(long timeStamp, GameState gameState, long sequenceNumber) {
 		// DANDO POR HECHO QUE NO HAY CLIENT PREDICTION
 

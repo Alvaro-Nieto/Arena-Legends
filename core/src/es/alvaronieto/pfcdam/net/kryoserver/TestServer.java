@@ -1,12 +1,12 @@
 package es.alvaronieto.pfcdam.net.kryoserver;
 
+import static es.alvaronieto.pfcdam.Util.Constants.TRUEMO;
+
 import java.io.IOException;
 import java.net.BindException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -14,20 +14,16 @@ import java.util.concurrent.TimeUnit;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
-import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 
-import es.alvaronieto.pfcdam.Screens.PlayScreen;
-import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
+import es.alvaronieto.pfcdam.Input.InputManager;
 import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.gameobjects.Game;
 import es.alvaronieto.pfcdam.gameobjects.Player;
-import es.alvaronieto.pfcdam.net.Util;
 import es.alvaronieto.pfcdam.net.Packets.Packet01Message;
 import es.alvaronieto.pfcdam.net.Packets.Packet02ConnectionRequest;
 import es.alvaronieto.pfcdam.net.Packets.Packet03ConnectionAccepted;
@@ -35,53 +31,38 @@ import es.alvaronieto.pfcdam.net.Packets.Packet04ConnectionRejected;
 import es.alvaronieto.pfcdam.net.Packets.Packet05ClientConnected;
 import es.alvaronieto.pfcdam.net.Packets.Packet08GameUpdate;
 import es.alvaronieto.pfcdam.net.Packets.Packet09UserInput;
-
-import static es.alvaronieto.pfcdam.Util.Constants.TRUEMO;
-
-
+import es.alvaronieto.pfcdam.net.Util;
 
 public class TestServer extends Listener {
 	// Connection info
 	int serverPort = 25565;
 	
-	
 	// Kyonet "Server" object
 	private Server server;
 	
-	//
-	//private List<Connection> clients;
 	private HashMap<Long, ConnectedClient> clients;
 	
 	private Game game;
 	private World world;
 	
 	//
-	
 	private Random rnd;
 	private SimpleDateFormat dateFormat;
 	private final int MAX_CLIENTS = 3;
 	
+	private boolean gameStarted;
+	
 	public TestServer(int maxClients) {
-		//clients = new ArrayList<Connection>();
 		clients = new HashMap<Long, ConnectedClient>();
 		server = new Server();
 		
-		
 		world = new World(Vector2.Zero, true);
 		game = new Game();
+
+		rnd = new Random();
+		dateFormat = new SimpleDateFormat("HH:mm:ss");
 		
-		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new Runnable(){
-			@Override
-			public void run() {
-				world.step(1/60f, 6, 2);
-				sendSnapshot();
-			}
-		}, 0, (long) (1000/60f), TimeUnit.MILLISECONDS);
-		//System.out.println((long)(1000/30f));
-		
-		//snl = new ServerKryoListener(clients, maxClients);
-		this.rnd = new Random();
-		this.dateFormat = new SimpleDateFormat("HH:mm:ss");
+		gameStarted = false;
 		
 		server.addListener(this);
 
@@ -90,22 +71,25 @@ public class TestServer extends Listener {
 		} catch(BindException be){
 			System.err.println("en uso");
 		} catch (IOException e) {
-
 			e.printStackTrace();
 		}
 		
-		registerPackets();
+		Util.registerPackets(server.getKryo());
 		
 		server.start();
-		
+	}
+
+	private void startSimulation() {
+		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new Runnable(){
+			@Override
+			public void run() {
+				world.step(1/60f, 6, 2);
+				sendSnapshot();
+			}
+		}, 0, (long) (1000/60f), TimeUnit.MILLISECONDS);
 	}
 	
 	protected void sendSnapshot() {
-		/*Packet08GameUpdate snapshot = new Packet08GameUpdate();
-		snapshot.gameState = game.getGameState();
-		snapshot.timeStamp = new Date().getTime();
-		UDPBroadcast(snapshot);*/
-		
 		for(Map.Entry<Long, ConnectedClient> entry : clients.entrySet()){
 			Packet08GameUpdate snapshot = new Packet08GameUpdate();
 			ConnectedClient client = entry.getValue();
@@ -115,13 +99,7 @@ public class TestServer extends Listener {
 			client.sendUDP(snapshot);
 		}
 	}
-
-	private void registerPackets(){
-		Util.registerPackets(server.getKryo());
-	}
 	
-	
-
 	@Override
 	public void connected(Connection connection) {
 		//System.out.println("[S]Someone has connected");
@@ -131,118 +109,85 @@ public class TestServer extends Listener {
 	@Override
 	public void disconnected(Connection connection) {
 		//System.out.println("[S]Someone has disconnected");
-		
 	}
-
 
 	@Override
 	public void received(Connection connection, Object obj) {
-		if( obj instanceof Packet01Message ){
-			Packet01Message p = (Packet01Message)obj;
-			System.out.println(dateFormat.format(new Date((p.timeStamp)))+" : [S](CLIENT) >> " + p.message);
+		if( obj instanceof Packet01Message )
+			processMessage((Packet01Message)obj);
+		
+		else if( obj instanceof Packet02ConnectionRequest )
+			processConnectionRequest(connection, (Packet02ConnectionRequest)obj);
+		
+		else if( obj instanceof Packet09UserInput )
+			proccessUserInput(connection, (Packet09UserInput)obj);
+		
+	}
+	
+	private void processMessage(Packet01Message msg) {
+		System.out.println(dateFormat.format(new Date((msg.timeStamp)))+" : [S](CLIENT) >> " + msg.message);
+	}
+
+	private void processConnectionRequest(Connection connection, Packet02ConnectionRequest request) {
+		if(clients.size() >= MAX_CLIENTS)
+			rejectConnection(connection);
+		else {
+			// De momento la partida empieza con el primer jugador. No hay sala de espera.
+			if(!gameStarted)
+				startGame(); // TODO
+			
+			acceptConnection(connection);
 		}
+	}
+
+	private void startGame() {
+		gameStarted = true;
+		startSimulation();
+		// TODO 
+	}
+
+	private void rejectConnection(Connection connection) {
+		Packet04ConnectionRejected rejected = new Packet04ConnectionRejected();
+		rejected.timeStamp = new Date().getTime();
+		// TODO
+		System.out.println("[S] Conexión rechazada a un cliente");
+		connection.close();
+	}
+
+	private void acceptConnection(Connection connection) {		
+		final Packet03ConnectionAccepted accepted = new Packet03ConnectionAccepted();
 		
-		else if( obj instanceof Packet02ConnectionRequest ){
-			Packet02ConnectionRequest r = (Packet02ConnectionRequest)obj;
-			
-			if(clients.size() < MAX_CLIENTS){
-				final Packet03ConnectionAccepted accepted = new Packet03ConnectionAccepted();
-				
-				accepted.userID = rnd.nextLong();
-				accepted.timeStamp = new Date().getTime();
-				accepted.playerState = new PlayerState(new Vector2(1,1),accepted.userID, TRUEMO);
-				accepted.gameState = game.getGameState();
-				
-				
-				/*System.out.println("Estados enviados:");
-				HashMap<Long, PlayerState> playerStates = accepted.gameState.getPlayers();
-				for(Long userID : playerStates.keySet()){
-					PlayerState playerState = playerStates.get(userID);
-					System.out.println(playerState.getUserID() + " : " +  playerState.getPosition().toString());
-				}*/
-				
-				Gdx.app.postRunnable(new Runnable() {
-			        @Override
-			        public void run() {
-			        	game.addPlayer(new Player(world, accepted.playerState));
-			        }
-				});
-				//game.addPlayer(new Player(world, accepted.playerState));
-				connection.sendTCP(accepted);
-				
-				System.out.println("[S] Conectado cliente con ID: "+ accepted.userID);
-				//clients.add(connection);
-				clients.put(accepted.userID,new ConnectedClient(accepted.userID, connection));
-				Packet05ClientConnected clientConnected = new Packet05ClientConnected();
-				clientConnected.userID = accepted.userID;
-				clientConnected.timeStamp = new Date().getTime();
-				clientConnected.playerState = accepted.playerState;
-				TCPBroadcastExcept(clientConnected, connection);
-			} 
-			else {
-				Packet04ConnectionRejected rejected = new Packet04ConnectionRejected();
-				rejected.timeStamp = new Date().getTime();
-				System.out.println("[S] Conexión rechazada a un cliente");
-				connection.close();
-			}
-			
-		}
-		else if( obj instanceof Packet09UserInput ){
-			Packet09UserInput inputPacket = (Packet09UserInput)obj;
-			//System.out.println(inputPacket.userID + " INPUT >> "+ inputPacket.inputState);
-			Body body = game.getPlayer(inputPacket.userID).getBody();
-			InputState input = inputPacket.inputState;
-			
-			ConnectedClient client = clients.get(inputPacket.userID);
-			client.setLastInputAccepted(inputPacket.inputState.getSequenceNumber());
-			//System.out.println(input.getSequenceNumber());
-			
-			if(input.isUpKey()){
-				if(input.isRightKey()){
-					body.applyLinearImpulse(new Vector2(0.4f,0.4f),body.getWorldCenter(), true);
-				} 
-				else if(input.isLeftKey()){
-					body.applyLinearImpulse(new Vector2(-0.4f,0.4f),body.getWorldCenter(), true);
-				} 
-				else{
-					body.applyLinearImpulse(new Vector2(0,0.8f),body.getWorldCenter(), true);
-				}
-			} 
-			else if(input.isDownKey()){
-				if(input.isRightKey()){
-					body.applyLinearImpulse(new Vector2(0.4f,-0.4f),body.getWorldCenter(), true);
-		        } 
-				else if(input.isLeftKey()){
-					body.applyLinearImpulse(new Vector2(-0.4f,-0.4f),body.getWorldCenter(), true);
-		        } else{
-		        	body.applyLinearImpulse(new Vector2(0,-0.8f),body.getWorldCenter(), true);
-		        }
-	        	
-	        }
-			else if(input.isRightKey()){
-				body.applyLinearImpulse(new Vector2(0.8f,0),body.getWorldCenter(), true);
-	        } 
-			else if(input.isLeftKey() && body.getLinearVelocity().x >= -4){
-				body.applyLinearImpulse(new Vector2(-0.8f,0),body.getWorldCenter(), true);
-	        }
-			
-			UDPBroadcastExcept(inputPacket, connection);
-			
-			//System.out.println(body.getPosition());
-		}
+		accepted.userID = getNewUserID();
+		accepted.timeStamp = new Date().getTime();
+		accepted.playerState = new PlayerState(new Vector2(1,1),accepted.userID, TRUEMO);
+		accepted.gameState = game.getGameState();
 		
-		/*
-		else if( obj instanceof PlayerState ){
-			PlayerState playerState = (PlayerState)obj;
-			for(Connection client : clients){
-				if(!client.equals(connection)){
-					client.sendTCP(playerState);
-				}
-			}
-			System.out.println("[S]Recibido player: " + playerState.toString());
-		}*/
+		Gdx.app.postRunnable(new Runnable() {
+		    @Override
+		    public void run() {
+		    	game.addPlayer(new Player(world, accepted.playerState));
+		    }
+		});
+		connection.sendTCP(accepted);
 		
+		System.out.println("[S] Conectado cliente con ID: "+ accepted.userID);
+		clients.put(accepted.userID,new ConnectedClient(accepted.userID, connection));
 		
+		Packet05ClientConnected clientConnected = new Packet05ClientConnected();
+		clientConnected.userID = accepted.userID;
+		clientConnected.timeStamp = new Date().getTime();
+		clientConnected.playerState = accepted.playerState;
+		TCPBroadcastExcept(clientConnected, connection);
+	}
+	
+	private void proccessUserInput(Connection connection, Packet09UserInput inputPacket) {
+		Player player = game.getPlayer(inputPacket.userID);
+		InputState input = inputPacket.inputState;
+		ConnectedClient client = clients.get(inputPacket.userID);
+		
+		client.setLastInputAccepted(inputPacket.inputState.getSequenceNumber());
+		InputManager.applyInputToPlayer(input, player);
+		//UDPBroadcastExcept(inputPacket, connection);
 	}
 	
 	private void TCPBroadcastExcept(Object object, Connection exceptionConnection){
@@ -270,5 +215,10 @@ public class TestServer extends Listener {
 		}
 	}
 	
-	
+	private long getNewUserID(){
+		long userID;
+		while(clients.containsKey((userID = rnd.nextLong())))
+			;
+		return userID;
+	}
 }

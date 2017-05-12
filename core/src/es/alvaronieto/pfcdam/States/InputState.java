@@ -51,8 +51,6 @@ public class InputState {
 	public void setRightKey(boolean rightKey) {
 		this.rightKey = rightKey;
 	}
-	
-	
 
 	public int getSequenceNumber() {
 		return this.sequenceNumber;
@@ -66,7 +64,5 @@ public class InputState {
 	public String toString() {
 		return (upKey ? "1" : "0")+ "," + (downKey ? "1" : "0")+ "," + (leftKey ? "1" : "0")+ "," + (rightKey ? "1" : "0");
 	}
-	
-	
 	
 }

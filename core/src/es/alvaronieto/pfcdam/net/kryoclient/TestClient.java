@@ -56,10 +56,9 @@ public class TestClient extends Listener{
 		System.out.println("[C] >> You have connected.");
 		
 		Packet02ConnectionRequest request = new Packet02ConnectionRequest();
-		request.clientName = "NOT DEFINED";
+		request.clientName = "NOT DEFINED"; // TODO
 		request.timeStamp = new Date().getTime();
 		connection.sendTCP(request);
-		
 	}
 	
 	private void registerPackets() {
@@ -75,7 +74,6 @@ public class TestClient extends Listener{
 	public void received(Connection connection, Object obj) {
 		if( obj instanceof Packet01Message ){
 			Packet01Message p = (Packet01Message)obj;
-			
 			System.out.println("[C](SERVER) >> " + p.message);
 		}
 		
@@ -90,24 +88,18 @@ public class TestClient extends Listener{
 			System.err.println("[C] >> " + "Conexión rechazada");
 			System.exit(1);
 		}
-		
-		
+	
 		else if( obj instanceof Packet05ClientConnected ){
 			Packet05ClientConnected connected = (Packet05ClientConnected)obj;
 			clientListener.newPlayerConnected(connected.playerState);
 			System.out.println("[C]Cliente conectado con ID: " + connected.userID);
 		}
+		
 		else if( obj instanceof Packet08GameUpdate ){
 			Packet08GameUpdate gameUpdate = (Packet08GameUpdate)obj;
 			clientListener.snapShotReceived(gameUpdate.timeStamp, gameUpdate.gameState, gameUpdate.lastInputAccepted);
 		}
-		else if( obj instanceof Packet09UserInput ){
-			Packet09UserInput inputPacket = (Packet09UserInput)obj;
-			clientListener.inputReceived(inputPacket.inputState, inputPacket.userID);
-			
-		}
-			
-			//System.out.println(body.getPosition());
+		
 	}
 
 	public void sendInputState(InputState inputState, long userID) {

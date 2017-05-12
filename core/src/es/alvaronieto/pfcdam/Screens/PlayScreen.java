@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import es.alvaronieto.pfcdam.Juego;
+import es.alvaronieto.pfcdam.Input.InputManager;
 import es.alvaronieto.pfcdam.Scenes.DebugHud;
 import es.alvaronieto.pfcdam.Scenes.PauseHud;
 import es.alvaronieto.pfcdam.States.GameState;
@@ -225,42 +226,11 @@ public class PlayScreen implements Screen {
 			}
 			else {
 				Body body = game.getPlayer(playerState.getUserID()).getBody();
-				applyInputToBody(input, body);
+				InputManager.applyInputToPlayer(input, player);
 				//world.step(1/60f, 6, 2);
 			}
 		}
 		
-	}
-
-	private void applyInputToBody(InputState input, Body body) {
-		if(input.isUpKey()){
-			if(input.isRightKey()){
-				body.applyLinearImpulse(new Vector2(0.4f,0.4f),body.getWorldCenter(), true);
-			} 
-			else if(input.isLeftKey()){
-				body.applyLinearImpulse(new Vector2(-0.4f,0.4f),body.getWorldCenter(), true);
-			} 
-			else{
-				body.applyLinearImpulse(new Vector2(0,0.8f),body.getWorldCenter(), true);
-			}
-		} 
-		else if(input.isDownKey()){
-			if(input.isRightKey()){
-				body.applyLinearImpulse(new Vector2(0.4f,-0.4f),body.getWorldCenter(), true);
-		    } 
-			else if(input.isLeftKey()){
-				body.applyLinearImpulse(new Vector2(-0.4f,-0.4f),body.getWorldCenter(), true);
-		    } else{
-		    	body.applyLinearImpulse(new Vector2(0,-0.8f),body.getWorldCenter(), true);
-		    }
-			
-		}
-		else if(input.isRightKey()){
-			body.applyLinearImpulse(new Vector2(0.8f,0),body.getWorldCenter(), true);
-		} 
-		else if(input.isLeftKey() && body.getLinearVelocity().x >= -4){
-			body.applyLinearImpulse(new Vector2(-0.8f,0),body.getWorldCenter(), true);
-		}
 	}
 
 	private void handleInput(float dt) {
@@ -278,7 +248,7 @@ public class PlayScreen implements Screen {
 			screenManager.getTestClient().sendInputState(inputState, player.getUserID());
 			pendingInputs.add(inputState);
 			//  THIS SHOULD BE CLIENT PREDICTION INPUT
-			//applyInputToBody(inputState, player.getBody());
+			InputManager.applyInputToPlayer(inputState, player);
 			
 			if(Gdx.input.justTouched()){
 				// Desactivado mientras no se implemente en networking
