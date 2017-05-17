@@ -52,6 +52,8 @@ public class TestServer extends Listener {
 	
 	private boolean gameStarted;
 	
+	private volatile long currentTick;
+	
 	public TestServer(int maxClients) {
 		clients = new HashMap<Long, ConnectedClient>();
 		server = new Server();
@@ -80,22 +82,25 @@ public class TestServer extends Listener {
 	}
 
 	private void startSimulation() {
+		this.currentTick = 0;
 		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new Runnable(){
 			@Override
 			public void run() {
+				currentTick++;
 				world.step(1/60f, 6, 2);
-				sendSnapshot();
+				sendSnapshot(currentTick);
 			}
 		}, 0, (long) (1000/60f), TimeUnit.MILLISECONDS);
 	}
 	
-	protected void sendSnapshot() {
+	protected void sendSnapshot(long currentTick) {
 		for(Map.Entry<Long, ConnectedClient> entry : clients.entrySet()){
 			Packet08GameUpdate snapshot = new Packet08GameUpdate();
 			ConnectedClient client = entry.getValue();
 			snapshot.gameState = game.getGameState();
 			snapshot.timeStamp = new Date().getTime();
-			snapshot.lastInputAccepted = client.getLastInputAccepted();
+			snapshot.userLastInputProccessed = client.getLastInputAccepted();
+			snapshot.serverCurrentTick = currentTick;
 			client.sendUDP(snapshot);
 		}
 	}
@@ -184,7 +189,7 @@ public class TestServer extends Listener {
 		Player player = game.getPlayer(inputPacket.userID);
 		InputState input = inputPacket.inputState;
 		ConnectedClient client = clients.get(inputPacket.userID);
-		
+	
 		client.setLastInputAccepted(inputPacket.inputState.getSequenceNumber());
 		InputManager.applyInputToPlayer(input, player);
 		//UDPBroadcastExcept(inputPacket, connection);

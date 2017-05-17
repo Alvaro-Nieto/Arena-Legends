@@ -197,7 +197,6 @@ public class CharSelectionScreen extends MenuScreen {
         stage.addActor(table);
         stage.addActor(tableopcion);
         stage.addActor(descripcion);	
-        
 	}
 }
 

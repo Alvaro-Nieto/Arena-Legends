@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Disposable;
 
 import es.alvaronieto.pfcdam.Screens.PlayScreen;
 import es.alvaronieto.pfcdam.Screens.ScreenManager;
@@ -19,7 +20,7 @@ import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.Util.Constants;
 import es.alvaronieto.pfcdam.Util.Resources;
 
-public class Player {
+public class Player implements Disposable {
 	
 	private Body body;
 	private long userID;
@@ -63,7 +64,6 @@ public class Player {
 			sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2,
 					   body.getPosition().y - sprite.getHeight() / 2);
 		}
-		
 	}
 	
 	public void draw(Batch batch){
@@ -112,6 +112,12 @@ public class Player {
 		} else {
 			return super.equals(obj);
 		}
+	}
+
+	@Override
+	public void dispose() {
+		//sprite.getTexture().dispose();
+		//truenoStand.getTexture().dispose();
 	}
 
 	

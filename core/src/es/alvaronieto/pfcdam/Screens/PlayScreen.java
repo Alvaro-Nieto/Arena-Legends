@@ -78,16 +78,18 @@ public class PlayScreen implements Screen {
 	private List<InputState> pendingInputs;
 	private int inputSequenceNo = 0;
 	private long snapSequenceNumber;
+	private long lastNo; // TODO remove
 	private List<TruemoBall> balls;
 	
-
+	private double accumulator;
+	private long currentTick;
 	
 	public PlayScreen(ScreenManager screenManager, PlayerState playerState, GameState gameState) {
 		this.screenManager = screenManager;
         this.juego = screenManager.getJuego();
         
         this.balls = new ArrayList<TruemoBall>();
-
+        this.currentTick = 0;
         // SET CAMERA
         gamecam = new OrthographicCamera();
         gamePort = new FitViewport(Gdx.graphics.getWidth() / PPM,Gdx.graphics.getHeight() / PPM, gamecam);
@@ -114,6 +116,8 @@ public class PlayScreen implements Screen {
 
         // Snapshots Stuff
         pendingInputs = new ArrayList<InputState>();
+        
+        accumulator = 0;
         
 	}
 	
@@ -142,17 +146,30 @@ public class PlayScreen implements Screen {
 	}
 
 	public void update(float dt) {
-		handleInput(dt);
 		
-		// Pruebas snapshots
-		if(lastSnapshot!=null){
-			applySnapshot();
+		float step = 1f / 60f;
+		accumulator += dt;
+		if(accumulator >= step) {
+			
+			handleInput(dt);
+			
+			// Pruebas snapshots
+			if(lastSnapshot!=null){
+				lastNo = snapSequenceNumber;
+				newSnapshot();
+			}
+			
+			//System.out.println("C >> "+currentTick);
+			currentTick++;
+			world.step(step, 6, 2);
+			accumulator -= step;
+			System.out.println("["+lastNo+"]"+"STEP:"+player.getPosition());
 		}
 		
-		world.step(1/60f, 6, 2);
+		//world.step(1/60f, 6, 2);
 		
 		updateAllPlayers(dt);
-		updateAllBalls(dt);
+		//updateAllBalls(dt);
 		debugHud.update(dt);
 		
 		if(!freeCameraEnabled){
@@ -161,12 +178,12 @@ public class PlayScreen implements Screen {
 		
 		gamecam.update();
 		renderer.setView(gamecam);
+		//System.out.println("UPDATE:"+player.getPosition());
 	}
 
 	private void updateAllBalls(float dt) {
 		for(TruemoBall ball : balls)
 			ball.update(dt);
-		
 	}
 
 	private void updateAllPlayers(float dt) {
@@ -176,16 +193,18 @@ public class PlayScreen implements Screen {
 		}
 	}
 
-	private void applySnapshot() {
+	private void newSnapshot() {
+		//System.out.println("["+snapSequenceNumber+"]"+"OLD:"+player.getPosition());
+		this.world.dispose();
 		this.world = game.resetWorld(lastSnapshot);
 		player = game.getPlayer(player.getUserID());
+		//System.out.println("["+snapSequenceNumber+"]"+"SNAP:"+player.getPosition());
 		debugHud.setPlayer(player);
 		for (Map.Entry<Long, PlayerState> entry : lastSnapshot.getPlayers().entrySet()) {
 			
 		    long userID = entry.getKey();
 		    PlayerState playerState = entry.getValue();
 		    Player snapshotPlayer = getGame().getPlayer(userID);
-		    
 		    
 		    if(snapshotPlayer.equals(this.player)){
 		    	//snapshotPlayer.getBody().setTransform(playerState.getPosition(), 0);	
@@ -196,8 +215,8 @@ public class PlayScreen implements Screen {
 		    }
 		    
 		}
-		lastSnapshot = null;
-		snapSequenceNumber = -1;
+		//lastSnapshot = null;
+		//snapSequenceNumber = -1;
 	}
 
 	private void camFollowPlayer() {
@@ -222,10 +241,12 @@ public class PlayScreen implements Screen {
 		while(it.hasNext()){
 			InputState input = it.next();
 			if(input.getSequenceNumber() <= snapSequenceNumber){
+				//System.out.println("Borrando: "+input.getSequenceNumber());
 				it.remove();
 			}
 			else {
 				Body body = game.getPlayer(playerState.getUserID()).getBody();
+				//System.out.println("Aplicando: "+ input.getSequenceNumber() );
 				InputManager.applyInputToPlayer(input, player);
 				//world.step(1/60f, 6, 2);
 			}
@@ -247,13 +268,15 @@ public class PlayScreen implements Screen {
 			
 			screenManager.getTestClient().sendInputState(inputState, player.getUserID());
 			pendingInputs.add(inputState);
+
 			//  THIS SHOULD BE CLIENT PREDICTION INPUT
-			InputManager.applyInputToPlayer(inputState, player);
+			//InputManager.applyInputToPlayer(inputState, player);
 			
 			if(Gdx.input.justTouched()){
 				// Desactivado mientras no se implemente en networking
 				//ballTest(dt);
 			}
+			
 		}
 		
 		// Debug HUD
@@ -329,7 +352,7 @@ public class PlayScreen implements Screen {
         juego.batch.setProjectionMatrix(gamecam.combined);
         juego.batch.begin();
         drawAllPlayers();
-        drawBalls();
+        //drawBalls();
         juego.batch.end();
         
     	juego.batch.setProjectionMatrix(debugHud.stage.getCamera().combined);
@@ -402,7 +425,13 @@ public class PlayScreen implements Screen {
 
 	public void setSnapSequenceNumber(long sequenceNumber) {
 		this.snapSequenceNumber = sequenceNumber;
-		
 	}
+
+	public long getCurrentTick() {
+		return currentTick;
+	}
+	
+	
+	
 	
 }

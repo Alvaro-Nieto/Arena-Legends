@@ -97,7 +97,7 @@ public class TestClient extends Listener{
 		
 		else if( obj instanceof Packet08GameUpdate ){
 			Packet08GameUpdate gameUpdate = (Packet08GameUpdate)obj;
-			clientListener.snapShotReceived(gameUpdate.timeStamp, gameUpdate.gameState, gameUpdate.lastInputAccepted);
+			clientListener.snapShotReceived(gameUpdate.timeStamp, gameUpdate.gameState, gameUpdate.userLastInputProccessed);
 		}
 		
 	}

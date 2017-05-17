@@ -4,11 +4,12 @@ import java.util.HashMap;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Disposable;
 
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.PlayerState;
 
-public class Game {
+public class Game implements Disposable {
 	private HashMap<Long, Player> players;
 	
 	
@@ -49,6 +50,7 @@ public class Game {
 	}
 	
 	public World resetWorld(GameState gameState){
+		this.dispose();
 		World world = new World(Vector2.Zero, true);
 		this.players = new HashMap<Long, Player>();
 		HashMap<Long, PlayerState> playerStates = gameState.getPlayers();
@@ -57,6 +59,13 @@ public class Game {
 			this.players.put(userID, new Player(world, playerStates.get(userID)));
 		}
 		return world;
+	}
+
+	@Override
+	public void dispose() {
+		for(Long userID : players.keySet()){
+			players.get(userID).dispose();
+		}
 	}
 
 }
