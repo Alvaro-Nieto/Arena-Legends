@@ -1,6 +1,10 @@
 package es.alvaronieto.pfcdam.Screens;
 
+import static es.alvaronieto.pfcdam.Util.Constants.STEP;
+
+import java.awt.SecondaryLoop;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -78,11 +82,11 @@ public class PlayScreen implements Screen {
 	private List<InputState> pendingInputs;
 	private int inputSequenceNo = 0;
 	private long snapSequenceNumber;
-	private long lastNo; // TODO remove
 	private List<TruemoBall> balls;
 	
 	private double accumulator;
 	private long currentTick;
+	private boolean interpolating = false;
 	
 	public PlayScreen(ScreenManager screenManager, PlayerState playerState, GameState gameState) {
 		this.screenManager = screenManager;
@@ -146,27 +150,14 @@ public class PlayScreen implements Screen {
 	}
 
 	public void update(float dt) {
-		
-		float step = 1f / 60f;
+
 		accumulator += dt;
-		if(accumulator >= step) {
-			
-			handleInput(dt);
-			
-			// Pruebas snapshots
-			if(lastSnapshot!=null){
-				lastNo = snapSequenceNumber;
-				newSnapshot();
-			}
-			
-			//System.out.println("C >> "+currentTick);
-			currentTick++;
-			world.step(step, 6, 2);
-			accumulator -= step;
-			System.out.println("["+lastNo+"]"+"STEP:"+player.getPosition());
+		if(accumulator >= STEP) {
+			tick(dt);
+			accumulator -= STEP;
+		} else {
+			// TODO CSP
 		}
-		
-		//world.step(1/60f, 6, 2);
 		
 		updateAllPlayers(dt);
 		//updateAllBalls(dt);
@@ -181,6 +172,23 @@ public class PlayScreen implements Screen {
 		//System.out.println("UPDATE:"+player.getPosition());
 	}
 
+	private void tick(float dt) {
+		handleInput(dt);
+		
+		//sendInput()
+		
+		
+		// Pruebas snapshots
+		if(lastSnapshot!=null){
+			newSnapshot();
+		}
+		
+		//System.out.println("C >> "+currentTick);
+		currentTick++;
+		world.step(STEP, 6, 2);
+		//System.out.println("["+snapSequenceNumber+"]"+"STEP:"+player.getPosition());
+	}
+
 	private void updateAllBalls(float dt) {
 		for(TruemoBall ball : balls)
 			ball.update(dt);
@@ -189,7 +197,14 @@ public class PlayScreen implements Screen {
 	private void updateAllPlayers(float dt) {
 		HashMap<Long, Player> players =  game.getPlayers();
         for(Long userID : players.keySet()){
-			players.get(userID).update(dt);
+			Player player = players.get(userID);
+			if(interpolating ){
+				// TODO interpolating
+				// Vector2 targetPosition = lastSnapshot.getPlayers().get(userID).getPosition();
+				// getInterpolatedPosition(player.getPosition(),targetPosition,time);
+			}
+			else
+				player.update(player.getPosition());
 		}
 	}
 
@@ -248,12 +263,14 @@ public class PlayScreen implements Screen {
 				Body body = game.getPlayer(playerState.getUserID()).getBody();
 				//System.out.println("Aplicando: "+ input.getSequenceNumber() );
 				InputManager.applyInputToPlayer(input, player);
-				//world.step(1/60f, 6, 2);
+				if(it.hasNext())
+					world.step(STEP, 6, 2);
 			}
 		}
 		
 	}
 
+	
 	private void handleInput(float dt) {
 		if(freeCameraEnabled){
 			moveFreeCamera(dt);
@@ -430,8 +447,5 @@ public class PlayScreen implements Screen {
 	public long getCurrentTick() {
 		return currentTick;
 	}
-	
-	
-	
 	
 }

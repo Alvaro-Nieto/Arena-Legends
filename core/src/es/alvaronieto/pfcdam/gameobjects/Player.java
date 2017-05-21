@@ -51,23 +51,27 @@ public class Player implements Disposable {
 		truenoStand = new TextureRegion(atlas.findRegion(pj+"stand"));
 		sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
 		sprite.setRegion(truenoStand);
-		
-		
 	}
+	
+	public Player(World world, Vector2 position, long userID, String pj, Vector2 velocity){
+		this(world, position, userID, pj);
+		this.body.setLinearVelocity(velocity);
+	}
+	
 	
 	public Player(World world, PlayerState playerState){
-		this(world, playerState.getPosition(), playerState.getUserID(), playerState.getPj());
+		this(world, playerState.getPosition(), playerState.getUserID(), playerState.getPj(), playerState.getVelocity());
 	}
 	
-	public void update(float delta){
-		if(sprite != null){
-			sprite.setPosition(body.getPosition().x - sprite.getWidth() / 2,
-					   body.getPosition().y - sprite.getHeight() / 2);
-		}
+	public void update(Vector2 position){
+		//if(sprite != null){
+			sprite.setPosition(position.x - sprite.getWidth() / 2,
+					   position.y - sprite.getHeight() / 2);
+		//}
 	}
 	
 	public void draw(Batch batch){
-		if(sprite != null)
+		//if(sprite != null)
 			sprite.draw(batch);
 	}
 
@@ -93,9 +97,8 @@ public class Player implements Disposable {
 	}
 	
 	public PlayerState getPlayerState(){
-		return new PlayerState(this.getPosition(),userID, this.getPj());
+		return new PlayerState(this.getPosition(), userID, this.getPj(), body.getLinearVelocity());
 	}
-
 	
 	public String getPj() {
 		return pj;

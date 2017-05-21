@@ -1,6 +1,7 @@
 package es.alvaronieto.pfcdam.net.kryoserver;
 
 import static es.alvaronieto.pfcdam.Util.Constants.TRUEMO;
+import static es.alvaronieto.pfcdam.Util.Constants.STEP;
 
 import java.io.IOException;
 import java.net.BindException;
@@ -15,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
@@ -87,10 +89,11 @@ public class TestServer extends Listener {
 			@Override
 			public void run() {
 				currentTick++;
-				world.step(1/60f, 6, 2);
+				world.step(STEP, 6, 2);
 				sendSnapshot(currentTick);
 			}
-		}, 0, (long) (1000/60f), TimeUnit.MILLISECONDS);
+		}, 0, (long)(STEP*1000), TimeUnit.MILLISECONDS);
+		System.out.println(STEP+":"+(long)STEP);
 	}
 	
 	protected void sendSnapshot(long currentTick) {
@@ -164,7 +167,7 @@ public class TestServer extends Listener {
 		
 		accepted.userID = getNewUserID();
 		accepted.timeStamp = new Date().getTime();
-		accepted.playerState = new PlayerState(new Vector2(1,1),accepted.userID, TRUEMO);
+		accepted.playerState = new PlayerState(new Vector2(1,1),accepted.userID, TRUEMO, Vector2.Zero);
 		accepted.gameState = game.getGameState();
 		
 		Gdx.app.postRunnable(new Runnable() {
@@ -191,7 +194,9 @@ public class TestServer extends Listener {
 		ConnectedClient client = clients.get(inputPacket.userID);
 	
 		client.setLastInputAccepted(inputPacket.inputState.getSequenceNumber());
+		
 		InputManager.applyInputToPlayer(input, player);
+		
 		//UDPBroadcastExcept(inputPacket, connection);
 	}
 	
