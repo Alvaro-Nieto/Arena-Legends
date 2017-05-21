@@ -32,19 +32,8 @@ public class Player implements Disposable {
 		
 		this.userID = userID;
 		this.pj = pj;
-		BodyDef bdef = new BodyDef();	
-		PolygonShape shape = new PolygonShape();
-		FixtureDef fdef = new FixtureDef();
 		
-		bdef.type = BodyDef.BodyType.DynamicBody; 
-		bdef.position.set(position); // Desde el centro (Coordenadas b2d)
-		
-		shape.setAsBox(16 / Constants.PPM, 16 / Constants.PPM);
-		fdef.shape = shape;
-		
-		body = world.createBody(bdef);
-		body.createFixture(fdef);	
-		body.setLinearDamping(10f);
+		this.setBody(position, world);
 		
 		TextureAtlas atlas = Resources.getInstance().getAtlas();
 		this.sprite = new Sprite(atlas.findRegion(pj+"stand"));
@@ -70,6 +59,28 @@ public class Player implements Disposable {
 		//}
 	}
 	
+	public void setBody(Vector2 position, World world) {
+		BodyDef bdef = new BodyDef();	
+		PolygonShape shape = new PolygonShape();
+		FixtureDef fdef = new FixtureDef();
+		
+		bdef.type = BodyDef.BodyType.DynamicBody; 
+		bdef.position.set(position); // Desde el centro (Coordenadas b2d)
+		
+		shape.setAsBox(16 / Constants.PPM, 16 / Constants.PPM);
+		fdef.shape = shape;
+		
+		body = world.createBody(bdef);
+		body.createFixture(fdef);	
+		body.setLinearDamping(10f);
+	}
+	
+	public void setBody(PlayerState playerState, World world){
+		this.setBody(playerState.getPosition(), world);
+		this.body.setLinearVelocity(playerState.getVelocity());
+	}
+	
+
 	public void draw(Batch batch){
 		//if(sprite != null)
 			sprite.draw(batch);

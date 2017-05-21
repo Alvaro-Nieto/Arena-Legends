@@ -50,13 +50,14 @@ public class Game implements Disposable {
 	}
 	
 	public World resetWorld(GameState gameState){
-		this.dispose();
+		//this.dispose();
 		World world = new World(Vector2.Zero, true);
-		this.players = new HashMap<Long, Player>();
+		//this.players = new HashMap<Long, Player>();
 		HashMap<Long, PlayerState> playerStates = gameState.getPlayers();
 		for(Long userID : playerStates.keySet()){
 			//System.out.println(playerStates.get(userID).getPj());
-			this.players.put(userID, new Player(world, playerStates.get(userID)));
+			//this.players.put(userID, new Player(world, playerStates.get(userID)));
+			this.players.get(userID).setBody(playerStates.get(userID), world);
 		}
 		return world;
 	}
