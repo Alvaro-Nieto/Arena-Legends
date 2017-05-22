@@ -13,8 +13,11 @@ import java.util.Map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -88,6 +91,9 @@ public class PlayScreen implements Screen {
 	private long currentTick;
 	private boolean interpolating = false;
 	
+	
+	private ShapeRenderer sr;
+	
 	public PlayScreen(ScreenManager screenManager, PlayerState playerState, GameState gameState) {
 		this.screenManager = screenManager;
         this.juego = screenManager.getJuego();
@@ -122,7 +128,10 @@ public class PlayScreen implements Screen {
         pendingInputs = new ArrayList<InputState>();
         
         accumulator = 0;
+        sr = new ShapeRenderer();
         
+
+        sr.setAutoShapeType(true);
 	}
 	
 	private void loadMap() {
@@ -364,17 +373,32 @@ public class PlayScreen implements Screen {
         
         renderer.render();
         
-        //b2dr.render(world, gamecam.combined);
+        b2dr.render(world, gamecam.combined);
         
         juego.batch.setProjectionMatrix(gamecam.combined);
         juego.batch.begin();
         drawAllPlayers();
         //drawBalls();
         juego.batch.end();
+        drawGhost();
         
     	juego.batch.setProjectionMatrix(debugHud.stage.getCamera().combined);
         debugHud.stage.draw();
         pauseHud.stage.draw();
+	}
+
+	/*
+	 * Draw the last player position acknowledged by the server.
+	 */
+	private void drawGhost() {
+		if(lastSnapshot != null){
+			sr.setProjectionMatrix(gamecam.combined);
+        	Vector2 pos = lastSnapshot.getPlayers().get(player.getUserID()).getPosition();
+        	sr.begin();
+        	sr.setColor(Color.RED);
+            sr.rect(pos.x - 16 / PPM, pos.y - 16 / PPM, 32 / PPM, 32 / PPM);
+            sr.end();
+        }
 	}
 
 	private void drawBalls() {

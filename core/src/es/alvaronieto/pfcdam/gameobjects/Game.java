@@ -57,7 +57,10 @@ public class Game implements Disposable {
 		for(Long userID : playerStates.keySet()){
 			//System.out.println(playerStates.get(userID).getPj());
 			//this.players.put(userID, new Player(world, playerStates.get(userID)));
-			this.players.get(userID).setBody(playerStates.get(userID), world);
+			if(players.containsKey(userID))
+				players.get(userID).setBody(playerStates.get(userID), world);
+			else
+				players.put(userID, new Player(world, playerStates.get(userID)));
 		}
 		return world;
 	}

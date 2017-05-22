@@ -1,8 +1,10 @@
 package es.alvaronieto.pfcdam.net.kryoclient;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Date;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.esotericsoftware.kryonet.Client;
@@ -86,7 +88,7 @@ public class TestClient extends Listener{
 		else if( obj instanceof Packet04ConnectionRejected ){
 			Packet04ConnectionRejected rejected = (Packet04ConnectionRejected)obj;
 			System.err.println("[C] >> " + "Conexión rechazada");
-			System.exit(1);
+			Gdx.app.exit();
 		}
 	
 		else if( obj instanceof Packet05ClientConnected ){
