@@ -21,7 +21,7 @@ public class Game implements Disposable {
 		this();
 		HashMap<Long, PlayerState> playerStates = gameState.getPlayers();
 		for(Long userID : playerStates.keySet()){
-			this.players.put(userID, new Player(world, playerStates.get(userID)));
+			this.players.put(userID, new Player(playerStates.get(userID), world));
 		}
 	}
 	
@@ -60,7 +60,7 @@ public class Game implements Disposable {
 			if(players.containsKey(userID))
 				players.get(userID).setBody(playerStates.get(userID), world);
 			else
-				players.put(userID, new Player(world, playerStates.get(userID)));
+				players.put(userID, new Player(playerStates.get(userID), world));
 		}
 		return world;
 	}
@@ -69,6 +69,16 @@ public class Game implements Disposable {
 	public void dispose() {
 		for(Long userID : players.keySet()){
 			players.get(userID).dispose();
+		}
+	}
+
+	public void fillWorld(GameState gameState, World world) {
+		HashMap<Long, PlayerState> playerStates = gameState.getPlayers();
+		for(Long userID : playerStates.keySet()){
+			if(players.containsKey(userID))
+				players.get(userID).setBody(playerStates.get(userID), world);
+			else
+				players.put(userID, new Player(playerStates.get(userID), world));
 		}
 	}
 

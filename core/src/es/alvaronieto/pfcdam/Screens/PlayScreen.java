@@ -118,7 +118,7 @@ public class PlayScreen implements Screen {
         loadMap();
         
         // Player
-        player = new Player(world, playerState);
+        player = new Player(playerState, world);
         
         // Hud
         debugHud = new DebugHud(juego.batch, player);
@@ -142,9 +142,11 @@ public class PlayScreen implements Screen {
 	
 	private void loadMap() {
 		mapLoader = new TmxMapLoader();
+		
         map = mapLoader.load("testlevel2.tmx");
         renderer = new OrthogonalTiledMapRenderer(map, 1  / PPM);
-	
+        
+        
         gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2,0);
         
         
@@ -222,7 +224,7 @@ public class PlayScreen implements Screen {
 		
 		//System.out.println("C >> "+currentTick);
 		currentTick++;
-		world.step(STEP, 6, 2);
+		//world.step(STEP, 6, 2);
 		//System.out.println("["+snapSequenceNumber+"]"+"STEP:"+player.getPosition());
 	}
 
@@ -247,11 +249,15 @@ public class PlayScreen implements Screen {
 
 	private void newSnapshot() {
 		//System.out.println("["+snapSequenceNumber+"]"+"OLD:"+player.getPosition());
-		this.world.dispose();
-		this.world = game.resetWorld(lastSnapshot);
-		player = game.getPlayer(player.getUserID());
+		//this.world.dispose();
+		//System.out.println(world.isLocked());
+		destroyBodies();
+		game.fillWorld(lastSnapshot, world);
+		//this.world = game.resetWorld(lastSnapshot);
+		//player = game.getPlayer(player.getUserID());
 		//System.out.println("["+snapSequenceNumber+"]"+"SNAP:"+player.getPosition());
-		debugHud.setPlayer(player);
+		//System.out.println("["+snapSequenceNumber+"]"+"SNAP:"+lastSnapshot.getPlayers().get(player.getUserID()).getPosition());
+		//debugHud.setPlayer(player);
 		for (Map.Entry<Long, PlayerState> entry : lastSnapshot.getPlayers().entrySet()) {
 			
 		    long userID = entry.getKey();
@@ -271,9 +277,24 @@ public class PlayScreen implements Screen {
 		//snapSequenceNumber = -1;
 	}
 
+	private void destroyBodies() {
+		for (Map.Entry<Long, Player> entry : game.getPlayers().entrySet()) {
+			Body body = entry.getValue().getBody();
+			if(body.isActive()){
+				this.world.destroyBody(body);
+			}
+		}
+	}
+
 	private void camFollowPlayer() {
-		gamecam.position.y = player.getBody().getPosition().y;
 		
+		float dt = Gdx.graphics.getDeltaTime();
+		gamecam.position.y += (player.getBody().getPosition().y - gamecam.position.y) * 5f * dt;
+		gamecam.position.x += (player.getBody().getPosition().x - gamecam.position.x) * 5f * dt;
+		
+		
+		/*
+		gamecam.position.y = player.getBody().getPosition().y;
 		if(player.getBody().getPosition().y - gamecam.viewportHeight / 2 < 0) {
 		    gamecam.position.y = gamecam.viewportHeight / 2;
 		} else if(player.getBody().getPosition().y + gamecam.viewportHeight / 2 > mapHeight){
@@ -285,7 +306,7 @@ public class PlayScreen implements Screen {
 		    gamecam.position.x = gamecam.viewportWidth / 2;
 		} else if(player.getBody().getPosition().x + gamecam.viewportWidth / 2 > mapWidth){
 		    gamecam.position.x = mapWidth - gamecam.viewportWidth / 2;
-		}
+		}*/
 	}
 	
 	private void stateReconciliation(PlayerState playerState) {
@@ -300,7 +321,7 @@ public class PlayScreen implements Screen {
 				Body body = game.getPlayer(playerState.getUserID()).getBody();
 				//System.out.println("Aplicando: "+ input.getSequenceNumber() );
 				InputManager.applyInputToPlayer(input, player);
-				if(it.hasNext())
+				//if(it.hasNext())
 					world.step(STEP, 6, 2);
 			}
 		}
@@ -389,7 +410,7 @@ public class PlayScreen implements Screen {
 	
 	
 	public void newNetworkPlayer(PlayerState playerState){
-		game.addPlayer(new Player(world, playerState));
+		game.addPlayer(new Player(playerState, world));
 	}
 
 	@Override
