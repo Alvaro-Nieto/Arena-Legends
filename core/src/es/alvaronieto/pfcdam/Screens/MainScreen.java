@@ -25,7 +25,7 @@ public class MainScreen extends MenuScreen {
         table.pad(5f);
         table.setFillParent(true);
         
-        TextButton clienteBtn = new TextButton("Cliente", getSkin());
+        TextButton clienteBtn = new TextButton("Unirse a partida", getSkin());
         clienteBtn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -34,7 +34,7 @@ public class MainScreen extends MenuScreen {
 			}
 
         });
-        TextButton serverBtn = new TextButton("Server", getSkin());
+        TextButton serverBtn = new TextButton("Crear partida", getSkin());
         serverBtn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
