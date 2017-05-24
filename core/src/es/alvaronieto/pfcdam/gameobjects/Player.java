@@ -48,7 +48,7 @@ public class Player implements Disposable {
 	}
 	
 	
-	public Player(World world, PlayerState playerState){
+	public Player(PlayerState playerState, World world){
 		this(world, playerState.getPosition(), playerState.getUserID(), playerState.getPj(), playerState.getVelocity());
 	}
 	
@@ -73,6 +73,8 @@ public class Player implements Disposable {
 		body = world.createBody(bdef);
 		body.createFixture(fdef);	
 		body.setLinearDamping(10f);
+		
+		shape.dispose();
 	}
 	
 	public void setBody(PlayerState playerState, World world){

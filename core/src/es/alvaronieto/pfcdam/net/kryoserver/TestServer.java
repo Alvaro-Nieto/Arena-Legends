@@ -173,7 +173,7 @@ public class TestServer extends Listener {
 		Gdx.app.postRunnable(new Runnable() {
 		    @Override
 		    public void run() {
-		    	game.addPlayer(new Player(world, accepted.playerState));
+		    	game.addPlayer(new Player(accepted.playerState, world));
 		    }
 		});
 		connection.sendTCP(accepted);
