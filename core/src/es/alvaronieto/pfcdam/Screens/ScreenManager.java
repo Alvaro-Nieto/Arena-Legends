@@ -3,6 +3,7 @@ package es.alvaronieto.pfcdam.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 
+import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.InputState;

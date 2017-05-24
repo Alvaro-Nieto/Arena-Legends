@@ -7,4 +7,5 @@ public class Constants {
 	public static final int V_HEIGHT = 720;
 	public static final float PPM = 100f;
 	public static final float STEP = 1f/60f;
+	public static final String ARENA_LAVA = "testlevel2.tmx";
 }
