@@ -1,7 +1,6 @@
 package es.alvaronieto.pfcdam.net.kryoserver;
 
-import static es.alvaronieto.pfcdam.Util.Constants.TRUEMO;
-import static es.alvaronieto.pfcdam.Util.Constants.STEP;
+import static es.alvaronieto.pfcdam.Util.Constants.*;
 
 import java.io.IOException;
 import java.net.BindException;
@@ -21,9 +20,11 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 
+import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.Input.InputManager;
 import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
+import es.alvaronieto.pfcdam.gameobjects.Arena;
 import es.alvaronieto.pfcdam.gameobjects.Game;
 import es.alvaronieto.pfcdam.gameobjects.Player;
 import es.alvaronieto.pfcdam.net.Packets.Packet01Message;
@@ -39,7 +40,7 @@ public class TestServer extends Listener {
 	// Connection info
 	int serverPort = 25565;
 	
-	// Kyonet "Server" object
+	// Kryonet "Server" object
 	private Server server;
 	
 	private HashMap<Long, ConnectedClient> clients;
@@ -50,19 +51,28 @@ public class TestServer extends Listener {
 	//
 	private Random rnd;
 	private SimpleDateFormat dateFormat;
-	private final int MAX_CLIENTS = 3;
+	private final int MAX_CLIENTS;
 	
 	private boolean gameStarted;
 	
 	private volatile long currentTick;
+
+	private Arena arena;
 	
 	public TestServer(int maxClients) {
 		clients = new HashMap<Long, ConnectedClient>();
 		server = new Server();
 		
 		world = new World(Vector2.Zero, true);
-		game = new Game();
-
+		game = new Game(ARENA_LAVA);
+		
+		// TODO TEMP
+		// Esto debe generarse desde el lobby
+		GameRules gameRules = GameRules.getDefault();
+		MAX_CLIENTS = gameRules.getMaxPlayers();
+		this.arena = new Arena(gameRules.getArena(), world);
+		//
+		
 		rnd = new Random();
 		dateFormat = new SimpleDateFormat("HH:mm:ss");
 		
@@ -165,9 +175,11 @@ public class TestServer extends Listener {
 	private void acceptConnection(Connection connection) {		
 		final Packet03ConnectionAccepted accepted = new Packet03ConnectionAccepted();
 		
+		Vector2 startPosition = new Vector2(arena.getMapWidth() / 2 ,arena.getMapHeight() / 2 );
+		
 		accepted.userID = getNewUserID();
 		accepted.timeStamp = new Date().getTime();
-		accepted.playerState = new PlayerState(new Vector2(1,1),accepted.userID, TRUEMO, Vector2.Zero);
+		accepted.playerState = new PlayerState(startPosition,accepted.userID, TRUEMO, Vector2.Zero);
 		accepted.gameState = game.getGameState();
 		
 		Gdx.app.postRunnable(new Runnable() {

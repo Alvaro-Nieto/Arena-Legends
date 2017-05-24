@@ -142,10 +142,10 @@ public class CharSelectionScreen extends MenuScreen {
         atrasBtn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				screenManager.setModeScreen(new ModeScreen(screenManager));
-	        	screenManager.setCurrentScreen(Screens.ModeScreen);
+				screenManager.setSearchScreen(new SearchScreen(screenManager));
+	        	screenManager.setCurrentScreen(Screens.SearchScreen);
 	        	screenManager.getScreen().dispose();
-	        	screenManager.setScreen(screenManager.getModeScreen());
+	        	screenManager.setScreen(screenManager.getSearchScreen());
 				return false;
 			}
         });

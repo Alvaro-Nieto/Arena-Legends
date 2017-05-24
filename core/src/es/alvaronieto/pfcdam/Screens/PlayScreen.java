@@ -18,14 +18,18 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -43,6 +47,7 @@ import es.alvaronieto.pfcdam.Scenes.PauseHud;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
+import es.alvaronieto.pfcdam.gameobjects.Arena;
 import es.alvaronieto.pfcdam.gameobjects.Game;
 import es.alvaronieto.pfcdam.gameobjects.Player;
 import es.alvaronieto.pfcdam.gameobjects.TruemoBall;
@@ -59,12 +64,8 @@ public class PlayScreen implements Screen {
 	private OrthographicCamera gamecam;
     private Viewport gamePort;
     
-    // Tiled Map
-    private TmxMapLoader mapLoader;
-    private TiledMap map;
-    private OrthogonalTiledMapRenderer renderer;
-    private float mapWidth;
-    private float mapHeight;
+    // Arena
+    private Arena arena;
     
     // Box2D
     private World world;
@@ -96,7 +97,7 @@ public class PlayScreen implements Screen {
 	private long currentTick;
 	private boolean interpolating = false;
 	
-	
+	// Used to render debugging stuff
 	private ShapeRenderer sr;
 	
 	private float skill1CD = 0.5f;
@@ -112,13 +113,13 @@ public class PlayScreen implements Screen {
         gamecam = new OrthographicCamera();
         gamePort = new FitViewport(Gdx.graphics.getWidth() / PPM,Gdx.graphics.getHeight() / PPM, gamecam);
         
-        // LOAD TILED MAP
-        loadMap();
-        
         // Box2D
         world = new World(Vector2.Zero, true);
         b2dr = new Box2DDebugRenderer();
         createCollisionListener();
+        
+        // LOAD TILED MAP
+        loadMap();
 	
         // Player
         player = new Player(playerState, world);
@@ -144,25 +145,12 @@ public class PlayScreen implements Screen {
 	}
 	
 	private void loadMap() {
-		mapLoader = new TmxMapLoader();
-        map = mapLoader.load("testlevel.tmx");
-        renderer = new OrthogonalTiledMapRenderer(map, 1f  / PPM);
-        
-        gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2,0);
-        
-        
-        MapProperties prop = map.getProperties();
-
-        mapWidth = prop.get("width", Integer.class);
-        mapHeight = prop.get("height", Integer.class);
-        int tilePixelWidth = prop.get("tilewidth", Integer.class);
-        int tilePixelHeight = prop.get("tileheight", Integer.class);
-
-        mapWidth = (mapWidth * tilePixelWidth) / PPM;
-        mapHeight = (mapHeight * tilePixelHeight) / PPM;
+		this.arena = new Arena(ARENA_LAVA, world);
+		gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2,0);
 	}
 	
 	private void createCollisionListener() {
+		// TODO some testing. this is temp
         world.setContactListener(new ContactListener() {
 
 			@Override
@@ -173,14 +161,12 @@ public class PlayScreen implements Screen {
                 if(fixtureA.getBody().getUserData().equals(TRUEMOBALL)){
                 	for(TruemoBall ball : balls){
                 		if(ball.getBody().equals(fixtureA.getBody())){
-                			System.out.println("Entra");
                 			ball.disposeNextUpdate();
                 		}
                 	}
                 } else if(fixtureB.getBody().getUserData().equals(TRUEMOBALL)){
                 	for(TruemoBall ball : balls){
                 		if(ball.getBody().equals(fixtureB.getBody())){
-                			System.out.println("Entra");
                 			ball.disposeNextUpdate();
                 		}
                 	}
@@ -233,7 +219,7 @@ public class PlayScreen implements Screen {
 		}
 		
 		gamecam.update();
-		renderer.setView(gamecam);
+		arena.getRenderer().setView(gamecam);
 		//System.out.println("UPDATE:"+player.getPosition());
 	}
 
@@ -274,16 +260,8 @@ public class PlayScreen implements Screen {
 	}
 
 	private void newSnapshot() {
-		//System.out.println("["+snapSequenceNumber+"]"+"OLD:"+player.getPosition());
-		//this.world.dispose();
-		//System.out.println(world.isLocked());
 		destroyBodies();
 		game.fillWorld(lastSnapshot, world);
-		//this.world = game.resetWorld(lastSnapshot);
-		//player = game.getPlayer(player.getUserID());
-		//System.out.println("["+snapSequenceNumber+"]"+"SNAP:"+player.getPosition());
-		//System.out.println("["+snapSequenceNumber+"]"+"SNAP:"+lastSnapshot.getPlayers().get(player.getUserID()).getPosition());
-		//debugHud.setPlayer(player);
 		for (Map.Entry<Long, PlayerState> entry : lastSnapshot.getPlayers().entrySet()) {
 			
 		    long userID = entry.getKey();
@@ -291,16 +269,12 @@ public class PlayScreen implements Screen {
 		    Player snapshotPlayer = getGame().getPlayer(userID);
 		    
 		    if(snapshotPlayer.equals(this.player)){
-		    	//snapshotPlayer.getBody().setTransform(playerState.getPosition(), 0);	
 		    	stateReconciliation(playerState);
 		    } else{
 		    	// TODO Do interpolation
-		    	//snapshotPlayer.getBody().setTransform(playerState.getPosition(), 0);
 		    }
 		    
 		}
-		//lastSnapshot = null;
-		//snapSequenceNumber = -1;
 	}
 
 	private void destroyBodies() {
@@ -317,7 +291,6 @@ public class PlayScreen implements Screen {
 		float dt = Gdx.graphics.getDeltaTime();
 		gamecam.position.y += (player.getBody().getPosition().y - gamecam.position.y) * 5f * dt;
 		gamecam.position.x += (player.getBody().getPosition().x - gamecam.position.x) * 5f * dt;
-		
 		
 		/*
 		gamecam.position.y = player.getBody().getPosition().y;
@@ -340,12 +313,10 @@ public class PlayScreen implements Screen {
 		while(it.hasNext()){
 			InputState input = it.next();
 			if(input.getSequenceNumber() <= snapSequenceNumber){
-				//System.out.println("Borrando: "+input.getSequenceNumber());
 				it.remove();
 			}
 			else {
 				Body body = game.getPlayer(playerState.getUserID()).getBody();
-				//System.out.println("Aplicando: "+ input.getSequenceNumber() );
 				InputManager.applyInputToPlayer(input, player);
 				//if(it.hasNext())
 					world.step(STEP, 6, 2);
@@ -411,6 +382,9 @@ public class PlayScreen implements Screen {
 	}
 
 	private void moveFreeCamera(float dt) {
+		float mapHeight = arena.getMapHeight();
+		float mapWidth = arena.getMapWidth();
+		
 		if(Gdx.input.isKeyPressed(Input.Keys.UP)){
 			gamecam.position.y += 10 * dt;
 			if(gamecam.position.y > mapHeight - gamePort. getWorldHeight()/2)
@@ -448,16 +422,16 @@ public class PlayScreen implements Screen {
 		Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
-        renderer.render();
+        arena.getRenderer().render();
         
-        b2dr.render(world, gamecam.combined);
+        //b2dr.render(world, gamecam.combined);
         
         juego.batch.setProjectionMatrix(gamecam.combined);
         juego.batch.begin();
         drawAllPlayers();
         drawBalls();
         juego.batch.end();
-        drawGhost();
+        //drawGhost();
         
     	juego.batch.setProjectionMatrix(debugHud.stage.getCamera().combined);
         debugHud.stage.draw();
@@ -517,8 +491,7 @@ public class PlayScreen implements Screen {
 
 	@Override
 	public void dispose() {
-		map.dispose();
-		renderer.dispose();
+		arena.dispose();
 		world.dispose();
 		b2dr.dispose();
 		debugHud.dispose();

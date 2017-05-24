@@ -10,15 +10,17 @@ import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.PlayerState;
 
 public class Game implements Disposable {
+	
+	private String arena;
 	private HashMap<Long, Player> players;
 	
 	
-	public Game(){
+	public Game(String arena){
 		this.players = new HashMap<Long, Player>();
 	}
 	
 	public Game(World world, GameState gameState){
-		this();
+		this(gameState.getArena());
 		HashMap<Long, PlayerState> playerStates = gameState.getPlayers();
 		for(Long userID : playerStates.keySet()){
 			this.players.put(userID, new Player(playerStates.get(userID), world));
@@ -46,7 +48,7 @@ public class Game implements Disposable {
 	}
 	
 	public GameState getGameState(){
-		return new GameState(players);
+		return new GameState(players, arena);
 	}
 	
 	public World resetWorld(GameState gameState){

@@ -34,22 +34,22 @@ public class ModeScreen extends MenuScreen {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				
-				screenManager.setCharSelectionScreen(new CharSelectionScreen(screenManager));
-	        	screenManager.setCurrentScreen(Screens.CharSelectionScreen);
+				
+				screenManager.setMainScreen(new MainScreen(screenManager));
+	        	screenManager.setCurrentScreen(Screens.MainScreen);
 	        	screenManager.getScreen().dispose();
-	        	screenManager.setScreen(screenManager.getCharSelectionScreen());
+	        	screenManager.setScreen(screenManager.getMainScreen());
 				return false;
+				
+				
 			}
         });
-        TextButton onlineBtn = new TextButton("Online", getSkin());
+        TextButton onlineBtn = new TextButton("Online (No disponible)", getSkin());
         onlineBtn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				
-				screenManager.setCharSelectionScreen(new CharSelectionScreen(screenManager));
-	        	screenManager.setCurrentScreen(Screens.CharSelectionScreen);
-	        	screenManager.getScreen().dispose();
-	        	screenManager.setScreen(screenManager.getCharSelectionScreen());
+				
 				return false;
 			}
         });
@@ -65,7 +65,6 @@ public class ModeScreen extends MenuScreen {
 				return false;
 			}
         });
-       
         localBtn.center();
         onlineBtn.center();
         atrasBtn.center();

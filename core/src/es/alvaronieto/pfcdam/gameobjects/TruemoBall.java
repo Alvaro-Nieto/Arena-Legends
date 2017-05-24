@@ -23,7 +23,7 @@ public class TruemoBall {
 	private Body body;
 	private Sprite sprite;
 	private float timeSinceStart = 0f;
-	private float maxTimeAlive = 1f;
+	private float maxTimeAlive = 2f;
 	private World world;
 	private boolean disposed = false;
 	private boolean shouldDispose = false;
