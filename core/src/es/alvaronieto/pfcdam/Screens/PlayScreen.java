@@ -1,6 +1,6 @@
 package es.alvaronieto.pfcdam.Screens;
 
-import static es.alvaronieto.pfcdam.Util.Constants.STEP;
+import static es.alvaronieto.pfcdam.Util.Constants.*;
 
 import java.awt.SecondaryLoop;
 import java.util.ArrayList;
@@ -27,6 +27,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -94,6 +99,9 @@ public class PlayScreen implements Screen {
 	
 	private ShapeRenderer sr;
 	
+	private float skill1CD = 0.5f;
+	private float timeSinceSkill1 = skill1CD+1;
+	
 	public PlayScreen(ScreenManager screenManager, PlayerState playerState, GameState gameState) {
 		this.screenManager = screenManager;
         this.juego = screenManager.getJuego();
@@ -110,6 +118,7 @@ public class PlayScreen implements Screen {
         // Box2D
         world = new World(Vector2.Zero, true);
         b2dr = new Box2DDebugRenderer();
+        createCollisionListener();
 	
         // Player
         player = new Player(playerState, world);
@@ -152,6 +161,53 @@ public class PlayScreen implements Screen {
         mapWidth = (mapWidth * tilePixelWidth) / PPM;
         mapHeight = (mapHeight * tilePixelHeight) / PPM;
 	}
+	
+	private void createCollisionListener() {
+        world.setContactListener(new ContactListener() {
+
+			@Override
+			public void beginContact(Contact contact) {
+				Fixture fixtureA = contact.getFixtureA();
+                Fixture fixtureB = contact.getFixtureB();
+                //TEMP
+                if(fixtureA.getBody().getUserData().equals(TRUEMOBALL)){
+                	for(TruemoBall ball : balls){
+                		if(ball.getBody().equals(fixtureA.getBody())){
+                			System.out.println("Entra");
+                			ball.disposeNextUpdate();
+                		}
+                	}
+                } else if(fixtureB.getBody().getUserData().equals(TRUEMOBALL)){
+                	for(TruemoBall ball : balls){
+                		if(ball.getBody().equals(fixtureB.getBody())){
+                			System.out.println("Entra");
+                			ball.disposeNextUpdate();
+                		}
+                	}
+                }
+			}
+
+			@Override
+			public void endContact(Contact contact) {
+				
+			}
+
+			@Override
+			public void preSolve(Contact contact, Manifold oldManifold) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void postSolve(Contact contact, ContactImpulse impulse) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+
+        });
+    }
 
 	@Override
 	public void show() {
@@ -159,7 +215,7 @@ public class PlayScreen implements Screen {
 	}
 
 	public void update(float dt) {
-
+		timeSinceSkill1 += dt;
 		accumulator += dt;
 		if(accumulator >= STEP) {
 			tick(dt);
@@ -169,7 +225,7 @@ public class PlayScreen implements Screen {
 		}
 		
 		updateAllPlayers(dt);
-		//updateAllBalls(dt);
+		updateAllBalls(dt);
 		debugHud.update(dt);
 		
 		if(!freeCameraEnabled){
@@ -317,9 +373,11 @@ public class PlayScreen implements Screen {
 			//  THIS SHOULD BE CLIENT PREDICTION INPUT
 			//InputManager.applyInputToPlayer(inputState, player);
 			
-			if(Gdx.input.justTouched()){
-				// Desactivado mientras no se implemente en networking
-				//ballTest(dt);
+			// TODO implementar en net
+			
+			if(Gdx.input.isTouched() && skill1CD < timeSinceSkill1){
+				ballTest(dt);
+				timeSinceSkill1 = 0;
 			}
 			
 		}
@@ -346,7 +404,7 @@ public class PlayScreen implements Screen {
 		Vector2 dir = new Vector2(click.x - position.x, click.y - position.y);
 		dir.nor();
 		
-		TruemoBall tball = new TruemoBall(world, new Vector2(position.x+dir.x*32/PPM, position.y+dir.y*32/PPM));
+		TruemoBall tball = new TruemoBall(world, new Vector2(position.x+dir.x*40/PPM, position.y+dir.y*40/PPM));
 		tball.getBody().setLinearVelocity(dir.scl(5f));
 
 		balls.add(tball);
@@ -397,7 +455,7 @@ public class PlayScreen implements Screen {
         juego.batch.setProjectionMatrix(gamecam.combined);
         juego.batch.begin();
         drawAllPlayers();
-        //drawBalls();
+        drawBalls();
         juego.batch.end();
         drawGhost();
         

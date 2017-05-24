@@ -1,5 +1,7 @@
 package es.alvaronieto.pfcdam.gameobjects;
 
+import static es.alvaronieto.pfcdam.Util.Constants.TRUEMOBALL;
+
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -71,6 +73,7 @@ public class Player implements Disposable {
 		fdef.shape = shape;
 		
 		body = world.createBody(bdef);
+		body.setUserData("PLAYER"+userID);
 		body.createFixture(fdef);	
 		body.setLinearDamping(10f);
 		
