@@ -18,15 +18,21 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -104,13 +110,13 @@ public class PlayScreen implements Screen {
         gamecam = new OrthographicCamera();
         gamePort = new FitViewport(Gdx.graphics.getWidth() / PPM,Gdx.graphics.getHeight() / PPM, gamecam);
         
-        // LOAD TILED MAP
-        loadMap();
-        
         // Box2D
         world = new World(Vector2.Zero, true);
         b2dr = new Box2DDebugRenderer();
-	
+        
+        // LOAD TILED MAP
+        loadMap();
+        
         // Player
         player = new Player(world, playerState);
         
@@ -136,7 +142,7 @@ public class PlayScreen implements Screen {
 	
 	private void loadMap() {
 		mapLoader = new TmxMapLoader();
-        map = mapLoader.load("testlevel.tmx");
+        map = mapLoader.load("testlevel2.tmx");
         renderer = new OrthogonalTiledMapRenderer(map, 1  / PPM);
 	
         gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2,0);
@@ -151,6 +157,28 @@ public class PlayScreen implements Screen {
 
         mapWidth = (mapWidth * tilePixelWidth) / PPM;
         mapHeight = (mapHeight * tilePixelHeight) / PPM;
+        
+        createBodies();    
+	}
+	
+	private void createBodies(){
+		BodyDef bdef = new BodyDef();
+        PolygonShape shape = new PolygonShape();
+        FixtureDef fdef = new FixtureDef();
+        Body body;   
+        
+        for(MapObject object: map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)){
+        	
+        	Rectangle rect = ((RectangleMapObject)object).getRectangle();
+        	
+        	bdef.type = BodyDef.BodyType.StaticBody;
+        	bdef.position.set((rect.getX() + rect.getWidth() / 2) / PPM, (rect.getY() + rect.getHeight()/2)/PPM);
+        	body = world.createBody(bdef);
+        	
+        	shape.setAsBox((rect.getWidth() / 2) / PPM, (rect.getHeight() / 2) / PPM);        	
+        	fdef.shape = shape;        	
+        	body.createFixture(fdef);
+        }
 	}
 
 	@Override
@@ -159,7 +187,7 @@ public class PlayScreen implements Screen {
 	}
 
 	public void update(float dt) {
-
+		
 		accumulator += dt;
 		if(accumulator >= STEP) {
 			tick(dt);

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" nextobjectid="24">
+ <tileset firstgid="1" name="terrain_atlas" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="3136" columns="56">
+  <image source="terrain_atlas.png" width="1024" height="1024"/>
+ </tileset>
+ <layer name="Capa de Patrones 1" width="60" height="60">
+  <data encoding="base64" compression="zlib">
+   eJztz7EJACAQBMEH+6/iyrIZE1Mz4UUmmHw3oyrb/FQOurv83v/tbgEAAAAAAAAAAAAAAAB4xQJCES6l
+  </data>
+ </layer>
+ <layer name="Capa de patrones 2" width="60" height="60">
+  <data encoding="base64" compression="zlib">
+   eJzt2U0OgjAQBeAGWPpzSRNP4VYvQTgKXEKIJ9GtNXHRmJK2w7TCzHvJbIjSfqFAS7vamE5hXStjDo28ulnX6PH29rjEDD/e6VvSvaNC7wivuMALr6Ro9U7KvNqub27vyZ7zVaXXuebtRynvzs7V94Q6Nrz9wHhO97pj9cE8/rjb5PC2zv9LjYu70ya884EX3lDgzR9t3vaPXnfuVOr9S20T8yt4JSXWO8ys10rdr6HE9i/F6/6O8mzMmdj+wTvv9a3H1+SN6R+eV/BKCry09ULp9zG1Te71UUnvGtaD8ObJUu+S/bIterVdX3jjz4HvOesN9n+x/ysp8MIrKfDCKynwwispH+8Er3kS5vZbKZ/XV779qBx1acLF1dYbxEaAhQ==
+  </data>
+ </layer>
+ <objectgroup name="Lava">
+  <object id="2" x="675" y="258.696" width="54.3478" height="139.13"/>
+  <object id="3" x="752.333" y="447.667" width="91.6667" height="65"/>
+  <object id="4" x="675" y="576.333" width="55.3333" height="128"/>
+  <object id="5" x="358.667" y="721.667" width="233" height="29.6667"/>
+  <object id="6" x="513.667" y="718.333" width="0.333333" height="3"/>
+  <object id="9" x="112" y="447.333" width="89.3333" height="64"/>
+  <object id="10" x="210.667" y="256" width="57.3333" height="142.667"/>
+  <object id="11" x="353.333" y="209.333" width="239.333" height="28.6667"/>
+  <object id="12" x="-1.33333" y="-1.33333" width="42.33" height="961.333"/>
+  <object id="14" x="38.6667" y="930" width="922.667" height="28.6667"/>
+  <object id="15" x="912" y="0.666667" width="47.3333" height="927.333"/>
+  <object id="17" x="212.667" y="576" width="53.3333" height="126.667"/>
+  <object id="20" x="38.6667" y="-0.666667" width="870.667" height="26"/>
+ </objectgroup>
+</map>
