@@ -219,11 +219,14 @@ public class PlayScreen implements Screen {
 
 	private void newSnapshot() {
 		//System.out.println("["+snapSequenceNumber+"]"+"OLD:"+player.getPosition());
-		this.world.dispose();
-		this.world = game.resetWorld(lastSnapshot);
+		//this.world.dispose();
+		//System.out.println(world.isLocked());
+		destroyBodies();
+		game.fillWorld(lastSnapshot, world);
+		//this.world = game.resetWorld(lastSnapshot);
 		//player = game.getPlayer(player.getUserID());
 		//System.out.println("["+snapSequenceNumber+"]"+"SNAP:"+player.getPosition());
-		System.out.println("["+snapSequenceNumber+"]"+"SNAP:"+lastSnapshot.getPlayers().get(player.getUserID()).getPosition());
+		//System.out.println("["+snapSequenceNumber+"]"+"SNAP:"+lastSnapshot.getPlayers().get(player.getUserID()).getPosition());
 		//debugHud.setPlayer(player);
 		for (Map.Entry<Long, PlayerState> entry : lastSnapshot.getPlayers().entrySet()) {
 			
@@ -242,6 +245,13 @@ public class PlayScreen implements Screen {
 		}
 		//lastSnapshot = null;
 		//snapSequenceNumber = -1;
+	}
+
+	private void destroyBodies() {
+		for (Map.Entry<Long, Player> entry : game.getPlayers().entrySet()) {
+			Body body = entry.getValue().getBody();
+			this.world.destroyBody(body);
+		}
 	}
 
 	private void camFollowPlayer() {

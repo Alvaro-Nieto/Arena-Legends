@@ -72,4 +72,14 @@ public class Game implements Disposable {
 		}
 	}
 
+	public void fillWorld(GameState gameState, World world) {
+		HashMap<Long, PlayerState> playerStates = gameState.getPlayers();
+		for(Long userID : playerStates.keySet()){
+			if(players.containsKey(userID))
+				players.get(userID).setBody(playerStates.get(userID), world);
+			else
+				players.put(userID, new Player(playerStates.get(userID), world));
+		}
+	}
+
 }
