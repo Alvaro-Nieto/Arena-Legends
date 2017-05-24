@@ -250,7 +250,9 @@ public class PlayScreen implements Screen {
 	private void destroyBodies() {
 		for (Map.Entry<Long, Player> entry : game.getPlayers().entrySet()) {
 			Body body = entry.getValue().getBody();
-			this.world.destroyBody(body);
+			if(body.isActive()){
+				this.world.destroyBody(body);
+			}
 		}
 	}
 

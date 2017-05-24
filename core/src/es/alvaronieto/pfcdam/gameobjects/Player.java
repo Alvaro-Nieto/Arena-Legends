@@ -136,6 +136,10 @@ public class Player implements Disposable {
 		//truenoStand.getTexture().dispose();
 	}
 
+	public void setBody(Body body) {
+		this.body = body;
+	}
+
 	
 	
 }
