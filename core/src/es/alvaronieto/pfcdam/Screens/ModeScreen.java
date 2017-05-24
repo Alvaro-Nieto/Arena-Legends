@@ -34,11 +34,14 @@ public class ModeScreen extends MenuScreen {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				
-				screenManager.setSearchScreen(new SearchScreen(screenManager));
-	        	screenManager.setCurrentScreen(Screens.SearchScreen);
+				
+				screenManager.setMainScreen(new MainScreen(screenManager));
+	        	screenManager.setCurrentScreen(Screens.MainScreen);
 	        	screenManager.getScreen().dispose();
-	        	screenManager.setScreen(screenManager.getSearchScreen());
+	        	screenManager.setScreen(screenManager.getMainScreen());
 				return false;
+				
+				
 			}
         });
         TextButton onlineBtn = new TextButton("Online (No disponible)", getSkin());
