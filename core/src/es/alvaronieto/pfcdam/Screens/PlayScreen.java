@@ -103,6 +103,8 @@ public class PlayScreen implements Screen {
 	private float skill1CD = 0.5f;
 	private float timeSinceSkill1 = skill1CD+1;
 	
+	private long timeLast = 0;
+	
 	public PlayScreen(ScreenManager screenManager, PlayerState playerState, GameState gameState) {
 		this.screenManager = screenManager;
         this.juego = screenManager.getJuego();
@@ -203,12 +205,10 @@ public class PlayScreen implements Screen {
 	public void update(float dt) {
 		timeSinceSkill1 += dt;
 		accumulator += dt;
-		if(accumulator >= STEP) {
+		while(accumulator >= STEP) {
 			tick(dt);
 			accumulator -= STEP;
-		} else {
-			// TODO CSP
-		}
+		} 
 		
 		updateAllPlayers(dt);
 		updateAllBalls(dt);

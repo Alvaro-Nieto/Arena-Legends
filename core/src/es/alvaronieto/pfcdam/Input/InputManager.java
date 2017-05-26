@@ -11,6 +11,7 @@ public class InputManager {
 	private static float v = 0.5f;
 	
 	public static void applyInputToPlayer(InputState input, Player player) {
+	
 		Body body = player.getBody();
 		if(input.isUpKey())
 			body.applyLinearImpulse(new Vector2(0,v),body.getWorldCenter(), true);
@@ -20,6 +21,7 @@ public class InputManager {
 			body.applyLinearImpulse(new Vector2(v,0),body.getWorldCenter(), true);
 		if(input.isLeftKey())
 			body.applyLinearImpulse(new Vector2(-v,0),body.getWorldCenter(), true);
+		
 	}
 	// old
 	/*
