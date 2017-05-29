@@ -1,7 +1,6 @@
 package es.alvaronieto.pfcdam.net;
 
 import es.alvaronieto.pfcdam.States.GameState;
-import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
 
 public interface ClientListener {

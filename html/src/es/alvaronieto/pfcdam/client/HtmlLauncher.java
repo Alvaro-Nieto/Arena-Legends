@@ -3,6 +3,7 @@ package es.alvaronieto.pfcdam.client;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
+
 import es.alvaronieto.pfcdam.Juego;
 
 public class HtmlLauncher extends GwtApplication {

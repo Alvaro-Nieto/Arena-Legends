@@ -5,6 +5,7 @@ import java.util.HashMap;
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryo.Kryo;
 
+import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
@@ -34,5 +35,6 @@ public class Util {
 		kryo.register(InputState.class);
 		kryo.register(Vector2.class);
 		kryo.register(HashMap.class);
+		kryo.register(GameRules.class);
 	}
 }

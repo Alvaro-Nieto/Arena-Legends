@@ -1,14 +1,18 @@
 package es.alvaronieto.pfcdam.Util;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class Resources {
 
 	private static Resources resources;
-	private TextureAtlas atlas;
+	private TextureAtlas truemoAtlas;
+	private Skin skin;
 	
 	private Resources(){
-		this.atlas = new TextureAtlas("truemo.pack");
+		this.truemoAtlas = new TextureAtlas("truemo.pack");
+		this.skin = new Skin(Gdx.files.internal("ui/star-soldier-ui.json"));
 	}
 	
 	public static synchronized Resources getInstance(){
@@ -17,7 +21,13 @@ public class Resources {
 		return resources;
 	}
 	
-	public TextureAtlas getAtlas(){
-		return this.atlas;
+	public TextureAtlas getTruemoAtlas(){
+		return this.truemoAtlas;
 	}
+
+	public Skin getSkin() {
+		return skin;
+	}
+	
+	
 }

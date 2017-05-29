@@ -2,24 +2,25 @@ package es.alvaronieto.pfcdam.States;
 
 import java.util.HashMap;
 
+import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.gameobjects.Player;
 
 public class GameState {
 	
-	private String arena;
+	private GameRules gameRules;
 	private HashMap<Long, PlayerState> playerStates;
 	
-	public GameState(){
+	private GameState(){
 		this.playerStates = new HashMap<Long, PlayerState>();
 	}
 	
-	public GameState(String arena){
+	public GameState(GameRules gameRules){
 		this();
-		this.arena = arena;
+		this.gameRules = gameRules;
 	}
 
-	public GameState(HashMap<Long, Player> players, String arena) {
-		this(arena);
+	public GameState(HashMap<Long, Player> players, GameRules gameRules) {
+		this(gameRules);
 		for(Long userID : players.keySet()){
 			playerStates.put(userID, players.get(userID).getPlayerState());
 		}
@@ -34,15 +35,8 @@ public class GameState {
 		this.playerStates = players;
 	}
 
-
-	public void setArena(String arena) {
-		this.arena = arena;
+	public GameRules getGameRules() {
+		return this.gameRules;
 	}
-
-	public String getArena() {
-		return this.arena;
-	}
-
-
 	
 }

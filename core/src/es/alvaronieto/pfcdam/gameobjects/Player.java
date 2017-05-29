@@ -1,9 +1,5 @@
 package es.alvaronieto.pfcdam.gameobjects;
 
-import static es.alvaronieto.pfcdam.Util.Constants.TRUEMOBALL;
-
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -16,8 +12,6 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
-import es.alvaronieto.pfcdam.Screens.PlayScreen;
-import es.alvaronieto.pfcdam.Screens.ScreenManager;
 import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.Util.Constants;
 import es.alvaronieto.pfcdam.Util.Resources;
@@ -31,28 +25,29 @@ public class Player implements Disposable {
 	private String pj;
 	private Vector2 position;
 	
-	public Player(World world, Vector2 position, long userID, String pj){
+	public Player(Game game, Vector2 position, long userID, String pj){
 		this.position = position;
 		this.userID = userID;
 		this.pj = pj;
 		
-		this.setBody(position, world);
+		this.setBody(position, game.getWorld());
 		
-		TextureAtlas atlas = Resources.getInstance().getAtlas();
+		TextureAtlas atlas = Resources.getInstance().getTruemoAtlas();
 		this.sprite = new Sprite(atlas.findRegion(pj+"stand"));
 		truenoStand = new TextureRegion(atlas.findRegion(pj+"stand"));
 		sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
 		sprite.setRegion(truenoStand);
+		game.addPlayer(this);
 	}
 	
-	public Player(World world, Vector2 position, long userID, String pj, Vector2 velocity){
-		this(world, position, userID, pj);
+	public Player(Game game, Vector2 position, long userID, String pj, Vector2 velocity){
+		this(game, position, userID, pj);
 		this.body.setLinearVelocity(velocity);
 	}
 	
 	
-	public Player(PlayerState playerState, World world){
-		this(world, 
+	public Player(PlayerState playerState, Game game){
+		this(game, 
 			playerState.getBodyPosition(), 
 			playerState.getUserID(), 
 			playerState.getPj(), 

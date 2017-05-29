@@ -1,12 +1,9 @@
 package es.alvaronieto.pfcdam.net.kryoclient;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.Date;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -18,8 +15,6 @@ import es.alvaronieto.pfcdam.net.Packets.Packet02ConnectionRequest;
 import es.alvaronieto.pfcdam.net.Packets.Packet03ConnectionAccepted;
 import es.alvaronieto.pfcdam.net.Packets.Packet04ConnectionRejected;
 import es.alvaronieto.pfcdam.net.Packets.Packet05ClientConnected;
-import es.alvaronieto.pfcdam.net.Packets.Packet06ClientDisconnected;
-import es.alvaronieto.pfcdam.net.Packets.Packet07PlayerUpdate;
 import es.alvaronieto.pfcdam.net.Packets.Packet08GameUpdate;
 import es.alvaronieto.pfcdam.net.Packets.Packet09UserInput;
 import es.alvaronieto.pfcdam.net.Util;

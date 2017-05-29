@@ -1,6 +1,5 @@
 package es.alvaronieto.pfcdam.Input;
 
-import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.Snapshot;
 
 public class SnapshotsManager {

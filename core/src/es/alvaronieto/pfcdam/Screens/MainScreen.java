@@ -5,11 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
-import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
-import es.alvaronieto.pfcdam.States.GameState;
-import es.alvaronieto.pfcdam.States.PlayerState;
-import es.alvaronieto.pfcdam.net.kryoserver.TestServer;
 
 public class MainScreen extends MenuScreen {
 
