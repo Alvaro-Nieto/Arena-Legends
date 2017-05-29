@@ -35,6 +35,7 @@ import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.Input.InputManager;
 import es.alvaronieto.pfcdam.Scenes.DebugHud;
 import es.alvaronieto.pfcdam.Scenes.PauseHud;
+import es.alvaronieto.pfcdam.Scenes.TimeHud;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
@@ -65,6 +66,9 @@ public class PlayScreen implements Screen {
 	
 	// Pause Hud
 	private PauseHud pauseHud;
+	
+	// Time Hud
+	private TimeHud timeHud;
 	
 	// Player
 	private Player player;
@@ -115,6 +119,9 @@ public class PlayScreen implements Screen {
         
         // Pause Hud 
         pauseHud = new PauseHud(juego.batch);
+        
+        // Time Hud
+        timeHud = new TimeHud(juego.batch);
         
         // Testing Server
         game = new Game(world, gameState);
@@ -196,6 +203,7 @@ public class PlayScreen implements Screen {
 		}         
 		
 		debugHud.update(dt);
+		timeHud.update(100);
 		
 		if(!freeCameraEnabled){
 			camFollowPlayer();
@@ -418,6 +426,7 @@ public class PlayScreen implements Screen {
     	juego.batch.setProjectionMatrix(debugHud.stage.getCamera().combined);
         debugHud.stage.draw();
         pauseHud.stage.draw();
+        timeHud.stage.draw();
 	}
 
 	/*
@@ -453,6 +462,7 @@ public class PlayScreen implements Screen {
 		gamePort.update(width, height);
 		pauseHud.getViewPort().update(width, height);
 		debugHud.getViewPort().update(width, height);
+		timeHud.getViewPort().update(width, height);
 	}
 
 	@Override
@@ -479,6 +489,7 @@ public class PlayScreen implements Screen {
 		b2dr.dispose();
 		debugHud.dispose();
 		pauseHud.dispose();
+		timeHud.dispose();
 	}
 
 	public Game getGame() {
