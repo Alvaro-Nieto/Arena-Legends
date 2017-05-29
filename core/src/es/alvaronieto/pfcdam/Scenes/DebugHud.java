@@ -44,7 +44,7 @@ public class DebugHud implements Disposable{
 
         fpsLabel = new Label(String.format("%d FPS", Gdx.graphics.getFramesPerSecond()), skin);
         velocityLabel = new Label(String.format("Vel. x:%.2f y:%.2f", player.getBody().getLinearVelocity().x, player.getBody().getLinearVelocity().y), skin);
-        posLabel = new Label(String.format("Pos. x:%.2f y:%.2f", player.getPosition().x, player.getPosition().y), skin);
+        posLabel = new Label(String.format("Pos. x:%.2f y:%.2f", player.getBodyPosition().x, player.getBodyPosition().y), skin);
         heapLabel = new Label(String.format("Heap: %.2f MB", (float)Gdx.app.getJavaHeap() / 1024f / 1024f), skin);
         f9Label = new Label("F9   - Unassigned", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
         f10Label = new Label("F10 - Toggle FPS", new Label.LabelStyle(new BitmapFont(), Color.WHITE));
@@ -71,7 +71,7 @@ public class DebugHud implements Disposable{
     
     public void update(float dt){
     	fpsLabel.setText(String.format("%d FPS", Gdx.graphics.getFramesPerSecond()));
-    	posLabel.setText(String.format("Pos. x:%.2f y:%.2f", player.getPosition().x, player.getPosition().y));
+    	posLabel.setText(String.format("Pos. x:%.2f y:%.2f", player.getBodyPosition().x, player.getBodyPosition().y));
     	velocityLabel.setText(String.format("Vel. x:%.2f y:%.2f", player.getBody().getLinearVelocity().x, player.getBody().getLinearVelocity().y));
     	
     	float heap = Gdx.app.getJavaHeap() / 1024f / 1024f;

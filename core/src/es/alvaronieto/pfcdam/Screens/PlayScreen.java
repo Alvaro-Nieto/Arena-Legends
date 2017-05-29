@@ -1,10 +1,11 @@
 package es.alvaronieto.pfcdam.Screens;
 
-import static es.alvaronieto.pfcdam.Util.Constants.*;
+import static es.alvaronieto.pfcdam.Util.Constants.ARENA_LAVA;
+import static es.alvaronieto.pfcdam.Util.Constants.PPM;
+import static es.alvaronieto.pfcdam.Util.Constants.STEP;
+import static es.alvaronieto.pfcdam.Util.Constants.TRUEMOBALL;
 
-import java.awt.SecondaryLoop;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -17,19 +18,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
@@ -51,9 +42,6 @@ import es.alvaronieto.pfcdam.gameobjects.Arena;
 import es.alvaronieto.pfcdam.gameobjects.Game;
 import es.alvaronieto.pfcdam.gameobjects.Player;
 import es.alvaronieto.pfcdam.gameobjects.TruemoBall;
-import es.alvaronieto.pfcdam.net.kryoserver.TestServer;
-
-import static es.alvaronieto.pfcdam.Util.Constants.PPM;
 
 public class PlayScreen implements Screen {
 
@@ -81,8 +69,6 @@ public class PlayScreen implements Screen {
 	// Player
 	private Player player;
 	
-	// Testing Server
-	private TestServer server;
 	private Game game;
 	
 	private GameState lastSnapshot;
@@ -102,8 +88,6 @@ public class PlayScreen implements Screen {
 	
 	private float skill1CD = 0.5f;
 	private float timeSinceSkill1 = skill1CD+1;
-	
-	private long timeLast = 0;
 	
 	public PlayScreen(ScreenManager screenManager, PlayerState playerState, GameState gameState) {
 		this.screenManager = screenManager;
@@ -148,7 +132,8 @@ public class PlayScreen implements Screen {
 	
 	private void loadMap() {
 		this.arena = new Arena(ARENA_LAVA, world);
-		gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2,0);
+		//gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2,0);
+		gamecam.position.set(arena.getMapWidth() / 2 ,arena.getMapHeight() / 2, 0);
 	}
 	
 	private void createCollisionListener() {
@@ -191,9 +176,6 @@ public class PlayScreen implements Screen {
 				// TODO Auto-generated method stub
 				
 			}
-
-
-
         });
     }
 
@@ -205,13 +187,14 @@ public class PlayScreen implements Screen {
 	public void update(float dt) {
 		timeSinceSkill1 += dt;
 		accumulator += dt;
+		if(dt > 0.30f) dt = 0.30f;
 		while(accumulator >= STEP) {
 			tick(dt);
 			accumulator -= STEP;
-		} 
+			updateAllPlayers(dt);
+			updateAllBalls(dt);
+		}         
 		
-		updateAllPlayers(dt);
-		updateAllBalls(dt);
 		debugHud.update(dt);
 		
 		if(!freeCameraEnabled){
@@ -220,18 +203,16 @@ public class PlayScreen implements Screen {
 		
 		gamecam.update();
 		arena.getRenderer().setView(gamecam);
+		
 		//System.out.println("UPDATE:"+player.getPosition());
 	}
 
 	private void tick(float dt) {
 		handleInput(dt);
 		
-		//sendInput()
-		
-		
 		// Pruebas snapshots
 		if(lastSnapshot!=null){
-			newSnapshot();
+			applyLastSnapshot();
 		}
 		
 		//System.out.println("C >> "+currentTick);
@@ -255,14 +236,16 @@ public class PlayScreen implements Screen {
 				// getInterpolatedPosition(player.getPosition(),targetPosition,time);
 			}
 			else
-				player.update(player.getPosition());
+				player.update();
 		}
 	}
 
-	private void newSnapshot() {
+	private void applyLastSnapshot() {
 		destroyBodies();
 		game.fillWorld(lastSnapshot, world);
-		for (Map.Entry<Long, PlayerState> entry : lastSnapshot.getPlayers().entrySet()) {
+		PlayerState playerState = lastSnapshot.getPlayers().get(player.getUserID());
+		stateReconciliation(playerState);
+		/*for (Map.Entry<Long, PlayerState> entry : lastSnapshot.getPlayers().entrySet()) {
 			
 		    long userID = entry.getKey();
 		    PlayerState playerState = entry.getValue();
@@ -274,7 +257,7 @@ public class PlayScreen implements Screen {
 		    	// TODO Do interpolation
 		    }
 		    
-		}
+		}*/
 	}
 
 	private void destroyBodies() {
@@ -316,10 +299,8 @@ public class PlayScreen implements Screen {
 				it.remove();
 			}
 			else {
-				Body body = game.getPlayer(playerState.getUserID()).getBody();
 				InputManager.applyInputToPlayer(input, player);
-				//if(it.hasNext())
-					world.step(STEP, 6, 2);
+				world.step(STEP, 6, 2);
 			}
 		}
 		
@@ -370,7 +351,7 @@ public class PlayScreen implements Screen {
 	}
 
 	private void ballTest(float dt) {
-		Vector2 position = player.getPosition();
+		Vector2 position = player.getBodyPosition();
 		Vector3 click = gamecam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 		Vector2 dir = new Vector2(click.x - position.x, click.y - position.y);
 		dir.nor();
@@ -422,6 +403,7 @@ public class PlayScreen implements Screen {
 		Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
+        
         arena.getRenderer().render();
         
         //b2dr.render(world, gamecam.combined);
@@ -444,12 +426,13 @@ public class PlayScreen implements Screen {
 	private void drawGhost() {
 		if(lastSnapshot != null){
 			sr.setProjectionMatrix(gamecam.combined);
-        	Vector2 pos = lastSnapshot.getPlayers().get(player.getUserID()).getPosition();
+        	Vector2 pos = lastSnapshot.getPlayers().get(player.getUserID()).getBodyPosition();
+        	
         	sr.begin();
         	sr.setColor(Color.RED);
-            sr.rect(pos.x - 16 / PPM, pos.y - 16 / PPM, 32 / PPM, 32 / PPM);
+            sr.rect(pos.x - 16f / PPM, pos.y - 16f / PPM, 32f / PPM, 32f / PPM);
             sr.end();
-        }
+        } 
 	}
 
 	private void drawBalls() {

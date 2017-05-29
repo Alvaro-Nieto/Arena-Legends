@@ -29,9 +29,10 @@ public class Player implements Disposable {
 	private Sprite sprite;
 	private TextureRegion truenoStand;
 	private String pj;
+	private Vector2 position;
 	
 	public Player(World world, Vector2 position, long userID, String pj){
-		
+		this.position = position;
 		this.userID = userID;
 		this.pj = pj;
 		
@@ -51,14 +52,19 @@ public class Player implements Disposable {
 	
 	
 	public Player(PlayerState playerState, World world){
-		this(world, playerState.getPosition(), playerState.getUserID(), playerState.getPj(), playerState.getVelocity());
+		this(world, 
+			playerState.getBodyPosition(), 
+			playerState.getUserID(), 
+			playerState.getPj(), 
+			playerState.getVelocity());
+	}
+	
+	public void update(){
+		this.setPosition(getBodyPosition());
 	}
 	
 	public void update(Vector2 position){
-		//if(sprite != null){
-			sprite.setPosition(position.x - sprite.getWidth() / 2,
-					   position.y - sprite.getHeight() / 2);
-		//}
+		this.setPosition(position);
 	}
 	
 	public void setBody(Vector2 position, World world) {
@@ -81,7 +87,7 @@ public class Player implements Disposable {
 	}
 	
 	public void setBody(PlayerState playerState, World world){
-		this.setBody(playerState.getPosition(), world);
+		this.setBody(playerState.getBodyPosition(), world);
 		this.body.setLinearVelocity(playerState.getVelocity());
 	}
 	
@@ -104,16 +110,26 @@ public class Player implements Disposable {
 		return body;
 	}
 	
-	public Vector2 getPosition() {
+	public Vector2 getBodyPosition() {
 		return body.getPosition();
 	}
 	
-	public void setPosition(Vector2 position) {
+	public void setBodyPosition(Vector2 position) {
 		this.body.getPosition().set(position);
 	}
 	
+	public Vector2 getPosition() {
+		return position;
+	}
+
+	public void setPosition(Vector2 position) {
+		this.position.set(position.x - sprite.getWidth() / 2,
+				   position.y - sprite.getHeight() / 2);
+		sprite.setPosition(this.position.x , this.position.y);
+	}
+
 	public PlayerState getPlayerState(){
-		return new PlayerState(this.getPosition(), userID, this.getPj(), body.getLinearVelocity());
+		return new PlayerState(this.getBodyPosition(), userID, this.getPj(), body.getLinearVelocity());
 	}
 	
 	public String getPj() {
@@ -142,6 +158,11 @@ public class Player implements Disposable {
 	public void setBody(Body body) {
 		this.body = body;
 	}
+	
+	public Sprite getSprite(){
+		return this.sprite;
+	}
+	
 
 	
 	
