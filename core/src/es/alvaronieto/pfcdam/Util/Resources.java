@@ -1,5 +1,7 @@
 package es.alvaronieto.pfcdam.Util;
 
+import java.text.SimpleDateFormat;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -28,6 +30,5 @@ public class Resources {
 	public Skin getSkin() {
 		return skin;
 	}
-	
 	
 }

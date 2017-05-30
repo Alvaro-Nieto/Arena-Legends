@@ -92,15 +92,20 @@ public class TestServer extends Listener {
 
 	private void startSimulation() {
 		this.currentTick = 0;
+		game.start();
 		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new Runnable(){
 			@Override
 			public void run() {
-				currentTick++;
-				game.step();
-				sendSnapshot(currentTick);
+				tick();
 			}
 		}, 0, (long)(STEP*1000), TimeUnit.MILLISECONDS);
-		System.out.println(STEP+":"+(long)STEP);
+	}
+
+	private void tick() {
+		currentTick++;
+		game.update();
+		game.step();
+		sendSnapshot(currentTick);
 	}
 	
 	protected void sendSnapshot(long currentTick) {

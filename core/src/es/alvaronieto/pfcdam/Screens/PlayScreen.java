@@ -110,7 +110,7 @@ public class PlayScreen implements Screen {
         // Scenes
         debugHud = new DebugHud(juego.batch, player);
         pauseMenu = new PauseMenu(juego.batch);
-        hud = new Hud(juego.batch, 2);
+        hud = new Hud(juego.batch, game);
 
         // Snapshots Stuff
         pendingInputs = new ArrayList<InputState>();
@@ -119,6 +119,8 @@ public class PlayScreen implements Screen {
         
         sr = new ShapeRenderer();
         sr.setAutoShapeType(true);
+        
+        game.start();
 	}
 	
 	private void createCollisionListener() {
@@ -167,6 +169,7 @@ public class PlayScreen implements Screen {
 			updateAllBalls(dt);
 		}         
 		
+		game.update();
 		debugHud.update(dt);
 		hud.update(100);
 		

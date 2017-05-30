@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.Disposable;
 import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.PlayerState;
+import es.alvaronieto.pfcdam.Util.CountDownTimer;
 
 public class Game implements Disposable {
 	
@@ -21,13 +22,15 @@ public class Game implements Disposable {
 	private World world;
 	private GameRules gameRules;
 	private Arena arena;
-	
+	private CountDownTimer timer;
 	
 	public Game(GameRules gameRules){
 		this.gameRules = gameRules;
 		this.world = new World(Vector2.Zero, true);
 		this.players = new HashMap<Long, Player>();
 		this.arena = new Arena(gameRules.getArena(), world);
+		this.timer = new CountDownTimer(gameRules.getGameLengthMinutes(),
+										gameRules.getGameLengthSeconds());
 	}
 	
 	public Game(GameState gameState){
@@ -109,6 +112,14 @@ public class Game implements Disposable {
 		world.step(STEP, 6, 2);
 	}
 	
+	public void start(){
+		timer.start();
+	}
+	
+	public void update(){
+		timer.update();
+	}
+	
 	public float getMapWidth(){
 		return arena.getMapWidth();
 	}
@@ -119,6 +130,10 @@ public class Game implements Disposable {
 
 	public OrthogonalTiledMapRenderer getMapRenderer() {
 		return arena.getRenderer();
+	}
+
+	public CountDownTimer getTimer() {
+		return this.timer;
 	}
 
 }
