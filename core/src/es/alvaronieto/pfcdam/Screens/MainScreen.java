@@ -63,7 +63,7 @@ public class MainScreen extends MenuScreen {
 				//screenManager.launchGameServer(); // TODO Descomentar
 				//screenManager.launchGameClient();
 				
-				screenManager.setLobbyScreen(new LobbyScreen(screenManager));
+				screenManager.setLobbyScreen(new LobbyScreen(screenManager, true));
 				screenManager.setCurrentScreen(Screens.LobbyScreen);
 				screenManager.getScreen().dispose();
 				screenManager.setScreen(screenManager.getLobbyScreen());

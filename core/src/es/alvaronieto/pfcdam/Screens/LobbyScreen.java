@@ -3,6 +3,7 @@ package es.alvaronieto.pfcdam.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -13,13 +14,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 
 import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
+import es.alvaronieto.pfcdam.Util.Constants;
 
 public class LobbyScreen extends MenuScreen{
 	
 	private Table table;
-	
-	public LobbyScreen(final ScreenManager screenManager){
+	private boolean admin;
+	private int totalPlayers;
+	private String level;
+		
+	public LobbyScreen(final ScreenManager screenManager, boolean admin){
 		super(screenManager);
+		this.admin = admin;
 	}
 	
 	@Override
@@ -35,7 +41,7 @@ public class LobbyScreen extends MenuScreen{
 			 @Override
 			 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
 				 screenManager.setMainScreen(new MainScreen(screenManager));
-				 screenManager.setCurrentScreen(Screens.MainScreen); // TODO Cambiar
+				 screenManager.setCurrentScreen(Screens.LobbyScreen);
 				 screenManager.getScreen().dispose();
 				 screenManager.setScreen(screenManager.getMainScreen());
 				 return false;
@@ -57,9 +63,28 @@ public class LobbyScreen extends MenuScreen{
 		configurationBar();
 		
 		teamLists();
+		
+		TextButton startBtn = new TextButton("Comenzar", getSkin());
+		
+		startBtn.addListener(new InputListener(){
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+				startBtn.setTouchable(Touchable.disabled);
+				screenManager.launchGameServer();
+				screenManager.launchGameClient();
+				return false;
+			}
+		});
+		
+		Table startTable = new Table();
+		startTable.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		startTable.bottom().right();
+		startTable.add(startBtn);
+		
+		stage.addActor(startTable);
 	}
 	
-	private void configurationBar(){
+	private void configurationBar(){ // TODO Hacer que los jugadores que no sean admins no puedan configurar la partida
 		table.debugTable().debugCell();
 		table.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		table.top();
@@ -71,6 +96,8 @@ public class LobbyScreen extends MenuScreen{
 		SelectBox playersList = new SelectBox(getSkin());
 		String[] playersNumbers = {"1v1", "2v2", "5v5"};
 		playersList.setItems(playersNumbers);
+		playersList.setSelectedIndex(0);
+		
 		table.add(playersList);
 		
 		Label map = new Label("Mapa: ", getSkin());
@@ -79,6 +106,7 @@ public class LobbyScreen extends MenuScreen{
 		String[] mapsNames = {"Lava arena", "Water arena"};
 		mapsList.setItems(mapsNames);
 		table.add(mapsList);
+		mapsList.setSelectedIndex(0);
 		
 		Label mode = new Label("Modo: ", getSkin());
 		table.add(mode).minHeight(50);
@@ -89,34 +117,60 @@ public class LobbyScreen extends MenuScreen{
 		table.add(rounds).minWidth(40).minHeight(50);
 		TextField txtRounds = new TextField("", getSkin());
 		txtRounds.setMaxLength(1);
-		table.add(txtRounds).minWidth(50);
+		txtRounds.setText("1");
+		table.add(txtRounds).maxWidth(60);
+				
+		TextButton acceptBtn = new TextButton("Aplicar", getSkin());
+		acceptBtn.center();
+		acceptBtn.addListener(new InputListener(){
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+				switch(playersList.getSelectedIndex()){
+					case 0: totalPlayers = 2;break;
+					case 1: totalPlayers = 4;break;
+					case 2: totalPlayers = 10;
+				}
+				
+				switch(mapsList.getSelectedIndex()){
+					case 0: level = Constants.ARENA_LAVA;break;
+					case 1: level = Constants.ARENA_WATER;
+				}
+				return false;
+			}
+		});
+		
+		table.add(acceptBtn);
 		
 		stage.addActor(table);
 	}
 	
-	private void teamLists(){
+	private void teamLists(){ // Players would appear in these tables
 		Table team1 = new Table();
 		Table team2 = new Table();
 		
-		team1.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		team2.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()/4*2);
-		team1.left();
-		team1.debugTable();
-		team2.right();
-		team2.debugTable();	
+		team1.debugAll();
+		team2.debugAll();
 		
-		SelectBox team1List = new SelectBox(getSkin());
+		team1.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		team2.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		
+		team1.padLeft(300);
+		team2.padRight(300);
+		
+		team1.left();
+		team2.right();
+		
+		List team1List = new List(getSkin());
 		String s = "Team 1";
 		team1List.setItems(s);
-		team1.add(team1List);
+		team1.add(team1List).minWidth(250);
 		
-		SelectBox team2List = new SelectBox(getSkin());
+		List team2List = new List(getSkin());
 		String s2 = "Team 2";
 		team2List.setItems(s2);
-		team2.add(team2List);
+		team2.add(team2List).minWidth(250);
 		
-		stage.addActor(team1List);
-		stage.addActor(team2List);
+		stage.addActor(team1);
+		stage.addActor(team2);
 	}
-
 }
