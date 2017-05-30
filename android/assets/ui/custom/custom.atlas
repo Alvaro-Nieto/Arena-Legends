@@ -1,0 +1,22 @@
+
+custom.png
+size: 32,32
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+progress-bar-horizontal
+  rotate: false
+  xy: 1, 14
+  size: 29, 16
+  split: 6, 6, 0, 0
+  pad: 3, 3, 0, 0
+  orig: 29, 16
+  offset: 0, 0
+  index: -1
+progress-bar-knob-horizontal
+  rotate: false
+  xy: 1, 2
+  size: 1, 10
+  orig: 1, 10
+  offset: 0, 0
+  index: -1

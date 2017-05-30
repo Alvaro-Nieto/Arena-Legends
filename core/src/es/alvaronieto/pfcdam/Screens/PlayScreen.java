@@ -110,7 +110,7 @@ public class PlayScreen implements Screen {
         // Scenes
         debugHud = new DebugHud(juego.batch, player);
         pauseMenu = new PauseMenu(juego.batch);
-        hud = new Hud(juego.batch, game);
+        hud = new Hud(juego.batch, game, player);
 
         // Snapshots Stuff
         pendingInputs = new ArrayList<InputState>();

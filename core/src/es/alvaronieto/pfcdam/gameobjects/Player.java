@@ -1,5 +1,7 @@
 package es.alvaronieto.pfcdam.gameobjects;
 
+import static es.alvaronieto.pfcdam.Util.Constants.*;
+
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -25,10 +27,15 @@ public class Player implements Disposable {
 	private String pj;
 	private Vector2 position;
 	
+	private int health;
+	private int maxHealth;
+	
 	public Player(Game game, Vector2 position, long userID, String pj){
 		this.position = position;
 		this.userID = userID;
 		this.pj = pj;
+		
+		defineByPj(pj);
 		
 		this.setBody(position, game.getWorld());
 		
@@ -40,6 +47,16 @@ public class Player implements Disposable {
 		game.addPlayer(this);
 	}
 	
+	private void defineByPj(String pj) {
+		switch(pj){
+			case TRUEMO: 
+				maxHealth = 100;
+				health = maxHealth;
+				break;
+			default: break;
+		}
+	}
+
 	public Player(Game game, Vector2 position, long userID, String pj, Vector2 velocity){
 		this(game, position, userID, pj);
 		this.body.setLinearVelocity(velocity);
@@ -157,8 +174,13 @@ public class Player implements Disposable {
 	public Sprite getSprite(){
 		return this.sprite;
 	}
-	
 
+	public int getHealth() {
+		return this.health;
+	}
 	
+	public int getMaxHealth() {
+		return this.maxHealth;
+	}
 	
 }

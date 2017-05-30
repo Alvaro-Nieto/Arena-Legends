@@ -18,7 +18,7 @@ public class CountDownTimer {
 		running = false;
 		hasFinished = false;
 		try {
-			maxTime = TFORMAT.parse(String.format("%d:%d",minutes,seconds)).getTime();
+			maxTime = TFORMAT.parse(String.format("%2d:%2d",minutes,seconds)).getTime();
 		} catch (ParseException e) {
 			throw new IllegalArgumentException("Invalid time");
 		}
