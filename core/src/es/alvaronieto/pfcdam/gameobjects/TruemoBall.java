@@ -1,22 +1,19 @@
 package es.alvaronieto.pfcdam.gameobjects;
 
-import com.badlogic.gdx.Gdx;
+import static es.alvaronieto.pfcdam.Util.Constants.PPM;
+import static es.alvaronieto.pfcdam.Util.Constants.TRUEMOBALL;
+
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import es.alvaronieto.pfcdam.Util.Resources;
 
-import static es.alvaronieto.pfcdam.Util.Constants.PPM;
-import static es.alvaronieto.pfcdam.Util.Constants.TRUEMOBALL;
+import es.alvaronieto.pfcdam.Util.Resources;
 
 public class TruemoBall {
 	
@@ -28,8 +25,8 @@ public class TruemoBall {
 	private boolean disposed = false;
 	private boolean shouldDispose = false;
 	
-	public TruemoBall(World world, Vector2 position){
-			this.world = world;
+	public TruemoBall(Game game, Vector2 position){
+			this.world = game.getWorld();
 			BodyDef bdef = new BodyDef();	
 			CircleShape shape = new CircleShape();
 			FixtureDef fdef = new FixtureDef();
@@ -46,7 +43,7 @@ public class TruemoBall {
 			
 			
 
-			TextureAtlas atlas = Resources.getInstance().getAtlas();
+			TextureAtlas atlas = Resources.getInstance().getTruemoAtlas();
 			this.sprite = new Sprite(atlas.findRegion(TRUEMOBALL+"1"));
 			sprite.setBounds(0, 0, 32 / PPM, 32 / PPM);	
 		}

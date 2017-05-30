@@ -1,6 +1,7 @@
 package es.alvaronieto.pfcdam.net.kryoserver;
 
-import static es.alvaronieto.pfcdam.Util.Constants.*;
+import static es.alvaronieto.pfcdam.Util.Constants.STEP;
+import static es.alvaronieto.pfcdam.Util.Constants.TRUEMO;
 
 import java.io.IOException;
 import java.net.BindException;
@@ -14,8 +15,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
-import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
@@ -24,7 +23,6 @@ import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.Input.InputManager;
 import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
-import es.alvaronieto.pfcdam.gameobjects.Arena;
 import es.alvaronieto.pfcdam.gameobjects.Game;
 import es.alvaronieto.pfcdam.gameobjects.Player;
 import es.alvaronieto.pfcdam.net.Packets.Packet01Message;
@@ -46,7 +44,7 @@ public class TestServer extends Listener {
 	private HashMap<Long, ConnectedClient> clients;
 	
 	private Game game;
-	private World world;
+	//private World world;
 	
 	//
 	private Random rnd;
@@ -57,20 +55,19 @@ public class TestServer extends Listener {
 	
 	private volatile long currentTick;
 
-	private Arena arena;
 	
 	public TestServer(int maxClients) {
 		clients = new HashMap<Long, ConnectedClient>();
 		server = new Server();
 		
-		world = new World(Vector2.Zero, true);
-		game = new Game(ARENA_LAVA);
+		
 		
 		// TODO TEMP
 		// Esto debe generarse desde el lobby
 		GameRules gameRules = GameRules.getDefault();
 		MAX_CLIENTS = gameRules.getMaxPlayers();
-		this.arena = new Arena(gameRules.getArena(), world);
+		game = new Game(gameRules);
+		
 		//
 		
 		rnd = new Random();
@@ -95,15 +92,20 @@ public class TestServer extends Listener {
 
 	private void startSimulation() {
 		this.currentTick = 0;
+		game.start();
 		new ScheduledThreadPoolExecutor(1).scheduleAtFixedRate(new Runnable(){
 			@Override
 			public void run() {
-				currentTick++;
-				world.step(STEP, 6, 2);
-				sendSnapshot(currentTick);
+				tick();
 			}
 		}, 0, (long)(STEP*1000), TimeUnit.MILLISECONDS);
-		System.out.println(STEP+":"+(long)STEP);
+	}
+
+	private void tick() {
+		currentTick++;
+		game.update();
+		game.step();
+		sendSnapshot(currentTick);
 	}
 	
 	protected void sendSnapshot(long currentTick) {
@@ -175,7 +177,7 @@ public class TestServer extends Listener {
 	private void acceptConnection(Connection connection) {		
 		final Packet03ConnectionAccepted accepted = new Packet03ConnectionAccepted();
 		
-		Vector2 startPosition = new Vector2(arena.getMapWidth() / 2 ,arena.getMapHeight() / 2 );
+		Vector2 startPosition = new Vector2(game.getMapWidth() / 2, game.getMapHeight() / 2 );
 		
 		accepted.userID = getNewUserID();
 		accepted.timeStamp = new Date().getTime();
@@ -185,7 +187,7 @@ public class TestServer extends Listener {
 		Gdx.app.postRunnable(new Runnable() {
 		    @Override
 		    public void run() {
-		    	game.addPlayer(new Player(accepted.playerState, world));
+		    	new Player(accepted.playerState, game);
 		    }
 		});
 		connection.sendTCP(accepted);

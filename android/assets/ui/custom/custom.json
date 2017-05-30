@@ -1,0 +1,8 @@
+{
+com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
+	default-horizontal: {
+		background: progress-bar-horizontal
+		knobBefore: progress-bar-knob-horizontal
+	}
+}
+}

@@ -2,6 +2,7 @@ package es.alvaronieto.pfcdam.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+
 import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.Util.Constants;
 

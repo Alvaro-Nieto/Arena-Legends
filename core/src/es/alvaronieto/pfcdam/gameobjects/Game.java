@@ -1,29 +1,43 @@
 package es.alvaronieto.pfcdam.gameobjects;
 
-import java.util.HashMap;
+import static es.alvaronieto.pfcdam.Util.Constants.STEP;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
+import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.PlayerState;
+import es.alvaronieto.pfcdam.Util.CountDownTimer;
 
 public class Game implements Disposable {
 	
-	private String arena;
 	private HashMap<Long, Player> players;
+	private World world;
+	private GameRules gameRules;
+	private Arena arena;
+	private CountDownTimer timer;
 	
-	
-	public Game(String arena){
+	public Game(GameRules gameRules){
+		this.gameRules = gameRules;
+		this.world = new World(Vector2.Zero, true);
 		this.players = new HashMap<Long, Player>();
+		this.arena = new Arena(gameRules.getArena(), world);
+		this.timer = new CountDownTimer(gameRules.getGameLengthMinutes(),
+										gameRules.getGameLengthSeconds());
 	}
 	
-	public Game(World world, GameState gameState){
-		this(gameState.getArena());
+	public Game(GameState gameState){
+		this(gameState.getGameRules());
 		HashMap<Long, PlayerState> playerStates = gameState.getPlayers();
 		for(Long userID : playerStates.keySet()){
-			this.players.put(userID, new Player(playerStates.get(userID), world));
+			this.players.put(userID, new Player(playerStates.get(userID), this));
 		}
 	}
 	
@@ -48,23 +62,18 @@ public class Game implements Disposable {
 	}
 	
 	public GameState getGameState(){
-		return new GameState(players, arena);
+		return new GameState(players, gameRules);
 	}
 	
-	public World resetWorld(GameState gameState){
-		//this.dispose();
-		World world = new World(Vector2.Zero, true);
-		//this.players = new HashMap<Long, Player>();
+	public void resetWorld(GameState gameState){
+		world = new World(Vector2.Zero, true);
 		HashMap<Long, PlayerState> playerStates = gameState.getPlayers();
 		for(Long userID : playerStates.keySet()){
-			//System.out.println(playerStates.get(userID).getPj());
-			//this.players.put(userID, new Player(world, playerStates.get(userID)));
 			if(players.containsKey(userID))
 				players.get(userID).setBody(playerStates.get(userID), world);
 			else
-				players.put(userID, new Player(playerStates.get(userID), world));
+				players.put(userID, new Player(playerStates.get(userID), this));
 		}
-		return world;
 	}
 
 	@Override
@@ -72,16 +81,59 @@ public class Game implements Disposable {
 		for(Long userID : players.keySet()){
 			players.get(userID).dispose();
 		}
+		world.dispose();
+		arena.dispose();
 	}
 
-	public void fillWorld(GameState gameState, World world) {
+	public void fillWorld(GameState gameState) {
 		HashMap<Long, PlayerState> playerStates = gameState.getPlayers();
 		for(Long userID : playerStates.keySet()){
 			if(players.containsKey(userID))
 				players.get(userID).setBody(playerStates.get(userID), world);
 			else
-				players.put(userID, new Player(playerStates.get(userID), world));
+				players.put(userID, new Player(playerStates.get(userID), this));
 		}
+	}
+
+	public World getWorld() {
+		return world;
+	}
+
+	public void destroyBodies() {
+		for (Map.Entry<Long, Player> entry : players.entrySet()) {
+			Body body = entry.getValue().getBody();
+			if(body.isActive()){
+				this.world.destroyBody(body);
+			}
+		}
+	}
+	
+	public void step(){
+		world.step(STEP, 6, 2);
+	}
+	
+	public void start(){
+		timer.start();
+	}
+	
+	public void update(){
+		timer.update();
+	}
+	
+	public float getMapWidth(){
+		return arena.getMapWidth();
+	}
+	
+	public float getMapHeight(){
+		return arena.getMapHeight();
+	}
+
+	public OrthogonalTiledMapRenderer getMapRenderer() {
+		return arena.getRenderer();
+	}
+
+	public CountDownTimer getTimer() {
+		return this.timer;
 	}
 
 }

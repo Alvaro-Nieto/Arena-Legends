@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 public class PlayerState implements Serializable {
 	
 	private long userID;
-	private Vector2 position;
+	private Vector2 bodyPosition;
 	private Vector2 velocity;
 	private String pj;
 	
@@ -15,13 +15,13 @@ public class PlayerState implements Serializable {
 		
 	}
 	
-	public PlayerState(Vector2 position, Vector2 velocity){
-		this.position = position;
+	public PlayerState(Vector2 bodyPosition, Vector2 velocity){
+		this.bodyPosition = bodyPosition;
 		this.velocity = velocity;
 	}
 	
-	public PlayerState(Vector2 position, long userID, String pj, Vector2 velocity){
-		this(position, velocity);
+	public PlayerState(Vector2 bodyPosition, long userID, String pj, Vector2 velocity){
+		this(bodyPosition, velocity);
 		this.userID = userID;
 		this.pj = pj;
 	}
@@ -34,12 +34,12 @@ public class PlayerState implements Serializable {
 		this.userID = userID;
 	}
 
-	public Vector2 getPosition() {
-		return position;
+	public Vector2 getBodyPosition() {
+		return bodyPosition;
 	}
 
-	public void setPosition(Vector2 position) {
-		this.position = position;
+	public void setBodyPosition(Vector2 bodyPosition) {
+		this.bodyPosition = bodyPosition;
 	}
 
 	public String getPj() {
@@ -60,7 +60,7 @@ public class PlayerState implements Serializable {
 
 	@Override
 	public String toString() {
-		return "["+position.x + ","+ position.y +"]";
+		return "["+bodyPosition.x + ","+ bodyPosition.y +"]";
 	}
 		
 	

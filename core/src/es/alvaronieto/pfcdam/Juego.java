@@ -3,8 +3,6 @@ package es.alvaronieto.pfcdam;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import es.alvaronieto.pfcdam.Screens.MainScreen;
-import es.alvaronieto.pfcdam.Screens.PlayScreen;
 import es.alvaronieto.pfcdam.Screens.ScreenManager;
 
 public class Juego extends Game {

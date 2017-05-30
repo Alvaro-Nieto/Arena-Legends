@@ -1,9 +1,7 @@
 package es.alvaronieto.pfcdam.gameobjects;
 
-import static es.alvaronieto.pfcdam.Util.Constants.TRUEMOBALL;
+import static es.alvaronieto.pfcdam.Util.Constants.*;
 
-import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -16,8 +14,6 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
-import es.alvaronieto.pfcdam.Screens.PlayScreen;
-import es.alvaronieto.pfcdam.Screens.ScreenManager;
 import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.Util.Constants;
 import es.alvaronieto.pfcdam.Util.Resources;
@@ -29,36 +25,58 @@ public class Player implements Disposable {
 	private Sprite sprite;
 	private TextureRegion truenoStand;
 	private String pj;
+	private Vector2 position;
 	
-	public Player(World world, Vector2 position, long userID, String pj){
-		
+	private int health;
+	private int maxHealth;
+	
+	public Player(Game game, Vector2 position, long userID, String pj){
+		this.position = position;
 		this.userID = userID;
 		this.pj = pj;
 		
-		this.setBody(position, world);
+		defineByPj(pj);
 		
-		TextureAtlas atlas = Resources.getInstance().getAtlas();
+		this.setBody(position, game.getWorld());
+		
+		TextureAtlas atlas = Resources.getInstance().getTruemoAtlas();
 		this.sprite = new Sprite(atlas.findRegion(pj+"stand"));
 		truenoStand = new TextureRegion(atlas.findRegion(pj+"stand"));
 		sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
 		sprite.setRegion(truenoStand);
+		game.addPlayer(this);
 	}
 	
-	public Player(World world, Vector2 position, long userID, String pj, Vector2 velocity){
-		this(world, position, userID, pj);
+	private void defineByPj(String pj) {
+		switch(pj){
+			case TRUEMO: 
+				maxHealth = 100;
+				health = maxHealth;
+				break;
+			default: break;
+		}
+	}
+
+	public Player(Game game, Vector2 position, long userID, String pj, Vector2 velocity){
+		this(game, position, userID, pj);
 		this.body.setLinearVelocity(velocity);
 	}
 	
 	
-	public Player(PlayerState playerState, World world){
-		this(world, playerState.getPosition(), playerState.getUserID(), playerState.getPj(), playerState.getVelocity());
+	public Player(PlayerState playerState, Game game){
+		this(game, 
+			playerState.getBodyPosition(), 
+			playerState.getUserID(), 
+			playerState.getPj(), 
+			playerState.getVelocity());
+	}
+	
+	public void update(){
+		this.setPosition(getBodyPosition());
 	}
 	
 	public void update(Vector2 position){
-		//if(sprite != null){
-			sprite.setPosition(position.x - sprite.getWidth() / 2,
-					   position.y - sprite.getHeight() / 2);
-		//}
+		this.setPosition(position);
 	}
 	
 	public void setBody(Vector2 position, World world) {
@@ -81,7 +99,7 @@ public class Player implements Disposable {
 	}
 	
 	public void setBody(PlayerState playerState, World world){
-		this.setBody(playerState.getPosition(), world);
+		this.setBody(playerState.getBodyPosition(), world);
 		this.body.setLinearVelocity(playerState.getVelocity());
 	}
 	
@@ -104,16 +122,26 @@ public class Player implements Disposable {
 		return body;
 	}
 	
-	public Vector2 getPosition() {
+	public Vector2 getBodyPosition() {
 		return body.getPosition();
 	}
 	
-	public void setPosition(Vector2 position) {
+	public void setBodyPosition(Vector2 position) {
 		this.body.getPosition().set(position);
 	}
 	
+	public Vector2 getPosition() {
+		return position;
+	}
+
+	public void setPosition(Vector2 position) {
+		this.position.set(position.x - sprite.getWidth() / 2,
+				   position.y - sprite.getHeight() / 2);
+		sprite.setPosition(this.position.x , this.position.y);
+	}
+
 	public PlayerState getPlayerState(){
-		return new PlayerState(this.getPosition(), userID, this.getPj(), body.getLinearVelocity());
+		return new PlayerState(this.getBodyPosition(), userID, this.getPj(), body.getLinearVelocity());
 	}
 	
 	public String getPj() {
@@ -142,7 +170,17 @@ public class Player implements Disposable {
 	public void setBody(Body body) {
 		this.body = body;
 	}
-
 	
+	public Sprite getSprite(){
+		return this.sprite;
+	}
+
+	public int getHealth() {
+		return this.health;
+	}
+	
+	public int getMaxHealth() {
+		return this.maxHealth;
+	}
 	
 }

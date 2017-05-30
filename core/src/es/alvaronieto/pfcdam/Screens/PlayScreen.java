@@ -1,14 +1,13 @@
 package es.alvaronieto.pfcdam.Screens;
 
-import static es.alvaronieto.pfcdam.Util.Constants.*;
+import static es.alvaronieto.pfcdam.Util.Constants.PPM;
+import static es.alvaronieto.pfcdam.Util.Constants.STEP;
+import static es.alvaronieto.pfcdam.Util.Constants.TRUEMOBALL;
 
-import java.awt.SecondaryLoop;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -17,46 +16,32 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.Input.InputManager;
 import es.alvaronieto.pfcdam.Scenes.DebugHud;
-import es.alvaronieto.pfcdam.Scenes.PauseHud;
+import es.alvaronieto.pfcdam.Scenes.Hud;
+import es.alvaronieto.pfcdam.Scenes.PauseMenu;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
-import es.alvaronieto.pfcdam.gameobjects.Arena;
 import es.alvaronieto.pfcdam.gameobjects.Game;
 import es.alvaronieto.pfcdam.gameobjects.Player;
 import es.alvaronieto.pfcdam.gameobjects.TruemoBall;
-import es.alvaronieto.pfcdam.net.kryoserver.TestServer;
-
-import static es.alvaronieto.pfcdam.Util.Constants.PPM;
 
 public class PlayScreen implements Screen {
 
+	// Managers / Containers
 	private ScreenManager screenManager;
 	private Juego juego;
 	
@@ -64,46 +49,42 @@ public class PlayScreen implements Screen {
 	private OrthographicCamera gamecam;
     private Viewport gamePort;
     
-    // Arena
-    private Arena arena;
-    
-    // Box2D
-    private World world;
+    // Box2D Renderer
     private Box2DDebugRenderer b2dr;
     
-    // Hud
+	// Scenes
     private DebugHud debugHud;
-	private boolean freeCameraEnabled = false;
-	
-	// Pause Hud
-	private PauseHud pauseHud;
+	private PauseMenu pauseMenu;
+	private Hud hud;
 	
 	// Player
 	private Player player;
 	
-	// Testing Server
-	private TestServer server;
+	// Game
 	private Game game;
-	
+
+	// Networking stuff
 	private GameState lastSnapshot;
 	private long lastSnapshotTime;
-	
 	private List<InputState> pendingInputs;
 	private int inputSequenceNo = 0;
 	private long snapSequenceNumber;
-	private List<TruemoBall> balls;
 	
+	// Ticks
 	private double accumulator;
 	private long currentTick;
+	
+	// Checks
+	private boolean freeCameraEnabled = false;
 	private boolean interpolating = false;
 	
 	// Used to render debugging stuff
 	private ShapeRenderer sr;
 	
+	// Skills TEMP
+	private List<TruemoBall> balls;
 	private float skill1CD = 0.5f;
 	private float timeSinceSkill1 = skill1CD+1;
-	
-	private long timeLast = 0;
 	
 	public PlayScreen(ScreenManager screenManager, PlayerState playerState, GameState gameState) {
 		this.screenManager = screenManager;
@@ -111,49 +92,40 @@ public class PlayScreen implements Screen {
         
         this.balls = new ArrayList<TruemoBall>();
         this.currentTick = 0;
+        
+        // Game
+        game = new Game(gameState);
+        
         // SET CAMERA
         gamecam = new OrthographicCamera();
         gamePort = new FitViewport(Gdx.graphics.getWidth() / PPM,Gdx.graphics.getHeight() / PPM, gamecam);
+        gamecam.position.set(game.getMapWidth() / 2 ,game.getMapHeight() / 2, 0);
         
-        // Box2D
-        world = new World(Vector2.Zero, true);
         b2dr = new Box2DDebugRenderer();
         createCollisionListener();
-        
-        // LOAD TILED MAP
-        loadMap();
 	
         // Player
-        player = new Player(playerState, world);
+        player = new Player(playerState, game);
         
-        // Hud
+        // Scenes
         debugHud = new DebugHud(juego.batch, player);
-        
-        // Pause Hud 
-        pauseHud = new PauseHud(juego.batch);
-        
-        // Testing Server
-        game = new Game(world, gameState);
-        game.addPlayer(player);
+        pauseMenu = new PauseMenu(juego.batch);
+        hud = new Hud(juego.batch, game, player);
 
         // Snapshots Stuff
         pendingInputs = new ArrayList<InputState>();
         
         accumulator = 0;
-        sr = new ShapeRenderer();
         
-
+        sr = new ShapeRenderer();
         sr.setAutoShapeType(true);
-	}
-	
-	private void loadMap() {
-		this.arena = new Arena(ARENA_LAVA, world);
-		gamecam.position.set(gamePort.getWorldWidth() / 2, gamePort.getWorldHeight() / 2,0);
+        
+        game.start();
 	}
 	
 	private void createCollisionListener() {
 		// TODO some testing. this is temp
-        world.setContactListener(new ContactListener() {
+        game.getWorld().setContactListener(new ContactListener() {
 
 			@Override
 			public void beginContact(Contact contact) {
@@ -176,68 +148,47 @@ public class PlayScreen implements Screen {
 			}
 
 			@Override
-			public void endContact(Contact contact) {
-				
-			}
+			public void endContact(Contact contact) {}
 
 			@Override
-			public void preSolve(Contact contact, Manifold oldManifold) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void preSolve(Contact contact, Manifold oldManifold) {}
 
 			@Override
-			public void postSolve(Contact contact, ContactImpulse impulse) {
-				// TODO Auto-generated method stub
-				
-			}
-
-
-
+			public void postSolve(Contact contact, ContactImpulse impulse) {}
         });
     }
-
-	@Override
-	public void show() {
-		// TODO Auto-generated method stub
-	}
 
 	public void update(float dt) {
 		timeSinceSkill1 += dt;
 		accumulator += dt;
+		if(dt > 0.30f) dt = 0.30f;
 		while(accumulator >= STEP) {
 			tick(dt);
 			accumulator -= STEP;
-		} 
+			updateAllPlayers(dt);
+			updateAllBalls(dt);
+		}         
 		
-		updateAllPlayers(dt);
-		updateAllBalls(dt);
+		game.update();
 		debugHud.update(dt);
+		hud.update(100);
 		
 		if(!freeCameraEnabled){
 			camFollowPlayer();
 		}
 		
 		gamecam.update();
-		arena.getRenderer().setView(gamecam);
-		//System.out.println("UPDATE:"+player.getPosition());
+		game.getMapRenderer().setView(gamecam);
 	}
 
 	private void tick(float dt) {
 		handleInput(dt);
 		
-		//sendInput()
-		
-		
-		// Pruebas snapshots
 		if(lastSnapshot!=null){
-			newSnapshot();
+			applyLastSnapshot();
 		}
 		
-		//System.out.println("C >> "+currentTick);
 		currentTick++;
-		//world.step(STEP, 6, 2);
-		//System.out.println("["+snapSequenceNumber+"]"+"STEP:"+player.getPosition());
 	}
 
 	private void updateAllBalls(float dt) {
@@ -251,39 +202,17 @@ public class PlayScreen implements Screen {
 			Player player = players.get(userID);
 			if(interpolating ){
 				// TODO interpolating
-				// Vector2 targetPosition = lastSnapshot.getPlayers().get(userID).getPosition();
-				// getInterpolatedPosition(player.getPosition(),targetPosition,time);
 			}
 			else
-				player.update(player.getPosition());
+				player.update();
 		}
 	}
 
-	private void newSnapshot() {
-		destroyBodies();
-		game.fillWorld(lastSnapshot, world);
-		for (Map.Entry<Long, PlayerState> entry : lastSnapshot.getPlayers().entrySet()) {
-			
-		    long userID = entry.getKey();
-		    PlayerState playerState = entry.getValue();
-		    Player snapshotPlayer = getGame().getPlayer(userID);
-		    
-		    if(snapshotPlayer.equals(this.player)){
-		    	stateReconciliation(playerState);
-		    } else{
-		    	// TODO Do interpolation
-		    }
-		    
-		}
-	}
-
-	private void destroyBodies() {
-		for (Map.Entry<Long, Player> entry : game.getPlayers().entrySet()) {
-			Body body = entry.getValue().getBody();
-			if(body.isActive()){
-				this.world.destroyBody(body);
-			}
-		}
+	private void applyLastSnapshot() {
+		game.destroyBodies();
+		game.fillWorld(lastSnapshot);
+		PlayerState playerState = lastSnapshot.getPlayers().get(player.getUserID());
+		stateReconciliation(playerState);
 	}
 
 	private void camFollowPlayer() {
@@ -316,15 +245,12 @@ public class PlayScreen implements Screen {
 				it.remove();
 			}
 			else {
-				Body body = game.getPlayer(playerState.getUserID()).getBody();
 				InputManager.applyInputToPlayer(input, player);
-				//if(it.hasNext())
-					world.step(STEP, 6, 2);
+				game.step();
 			}
 		}
 		
 	}
-
 	
 	private void handleInput(float dt) {
 		if(freeCameraEnabled){
@@ -340,17 +266,12 @@ public class PlayScreen implements Screen {
 			
 			screenManager.getTestClient().sendInputState(inputState, player.getUserID());
 			pendingInputs.add(inputState);
-
-			//  THIS SHOULD BE CLIENT PREDICTION INPUT
-			//InputManager.applyInputToPlayer(inputState, player);
 			
 			// TODO implementar en net
-			
 			if(Gdx.input.isTouched() && skill1CD < timeSinceSkill1){
 				ballTest(dt);
 				timeSinceSkill1 = 0;
 			}
-			
 		}
 		
 		// Debug HUD
@@ -363,27 +284,26 @@ public class PlayScreen implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.F12))
         	freeCameraEnabled = !freeCameraEnabled;
         
-        // Pause HUD
+        // Pause Menu
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
-        	pauseHud.togglePauseMenu();
-        
+        	pauseMenu.togglePauseMenu();
 	}
 
 	private void ballTest(float dt) {
-		Vector2 position = player.getPosition();
+		Vector2 position = player.getBodyPosition();
 		Vector3 click = gamecam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 		Vector2 dir = new Vector2(click.x - position.x, click.y - position.y);
 		dir.nor();
 		
-		TruemoBall tball = new TruemoBall(world, new Vector2(position.x+dir.x*40/PPM, position.y+dir.y*40/PPM));
+		TruemoBall tball = new TruemoBall(game, new Vector2(position.x+dir.x*40/PPM, position.y+dir.y*40/PPM));
 		tball.getBody().setLinearVelocity(dir.scl(5f));
 
 		balls.add(tball);
 	}
 
 	private void moveFreeCamera(float dt) {
-		float mapHeight = arena.getMapHeight();
-		float mapWidth = arena.getMapWidth();
+		float mapHeight = game.getMapHeight();
+		float mapWidth = game.getMapWidth();
 		
 		if(Gdx.input.isKeyPressed(Input.Keys.UP)){
 			gamecam.position.y += 10 * dt;
@@ -412,7 +332,7 @@ public class PlayScreen implements Screen {
 	
 	
 	public void newNetworkPlayer(PlayerState playerState){
-		game.addPlayer(new Player(playerState, world));
+		new Player(playerState, game);
 	}
 
 	@Override
@@ -422,9 +342,9 @@ public class PlayScreen implements Screen {
 		Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
-        arena.getRenderer().render();
+        game.getMapRenderer().render();
         
-        //b2dr.render(world, gamecam.combined);
+        //b2dr.render(game.getWorld(), gamecam.combined);
         
         juego.batch.setProjectionMatrix(gamecam.combined);
         juego.batch.begin();
@@ -433,9 +353,12 @@ public class PlayScreen implements Screen {
         juego.batch.end();
         //drawGhost();
         
-    	juego.batch.setProjectionMatrix(debugHud.stage.getCamera().combined);
-        debugHud.stage.draw();
-        pauseHud.stage.draw();
+    	juego.batch.setProjectionMatrix(debugHud.getProjectionMatrix());
+        debugHud.draw();
+        juego.batch.setProjectionMatrix(pauseMenu.getProjectionMatrix());
+        pauseMenu.draw();
+        juego.batch.setProjectionMatrix(hud.getProjectionMatrix());
+        hud.draw();
 	}
 
 	/*
@@ -444,12 +367,13 @@ public class PlayScreen implements Screen {
 	private void drawGhost() {
 		if(lastSnapshot != null){
 			sr.setProjectionMatrix(gamecam.combined);
-        	Vector2 pos = lastSnapshot.getPlayers().get(player.getUserID()).getPosition();
+        	Vector2 pos = lastSnapshot.getPlayers().get(player.getUserID()).getBodyPosition();
+        	
         	sr.begin();
         	sr.setColor(Color.RED);
-            sr.rect(pos.x - 16 / PPM, pos.y - 16 / PPM, 32 / PPM, 32 / PPM);
+            sr.rect(pos.x - 16f / PPM, pos.y - 16f / PPM, 32f / PPM, 32f / PPM);
             sr.end();
-        }
+        } 
 	}
 
 	private void drawBalls() {
@@ -468,34 +392,31 @@ public class PlayScreen implements Screen {
 	@Override
 	public void resize(int width, int height) {
 		gamePort.update(width, height);
-		pauseHud.getViewPort().update(width, height);
+		pauseMenu.getViewPort().update(width, height);
 		debugHud.getViewPort().update(width, height);
+		hud.getViewPort().update(width, height);
 	}
 
+	
 	@Override
-	public void pause() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void show() {}
+	
+	@Override
+	public void pause() {}
 
 	@Override
-	public void resume() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void resume() {}
 
 	@Override
-	public void hide() {
-		// TODO Auto-generated method stub
-	}
+	public void hide() {}
 
 	@Override
 	public void dispose() {
-		arena.dispose();
-		world.dispose();
+		game.dispose();
 		b2dr.dispose();
 		debugHud.dispose();
-		pauseHud.dispose();
+		pauseMenu.dispose();
+		hud.dispose();
 	}
 
 	public Game getGame() {
