@@ -64,7 +64,7 @@ public class LobbyScreen extends MenuScreen{
 		
 		teamLists();
 		
-		TextButton startBtn = new TextButton("Comenzar", getSkin());
+		final TextButton startBtn = new TextButton("Comenzar", getSkin());
 		
 		startBtn.addListener(new InputListener(){
 			@Override
@@ -85,7 +85,7 @@ public class LobbyScreen extends MenuScreen{
 	}
 	
 	private void configurationBar(){ // TODO Hacer que los jugadores que no sean admins no puedan configurar la partida
-		table.debugTable().debugCell();
+		//table.debugTable().debugCell();
 		table.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		table.top();
 		table.padTop(100);
@@ -93,7 +93,7 @@ public class LobbyScreen extends MenuScreen{
 		Label numPlayers = new Label("Numero de \njuagadores: ", getSkin());
 		table.add(numPlayers).minWidth(50);
 		
-		SelectBox playersList = new SelectBox(getSkin());
+		final SelectBox playersList = new SelectBox(getSkin());
 		String[] playersNumbers = {"1v1", "2v2", "5v5"};
 		playersList.setItems(playersNumbers);
 		playersList.setSelectedIndex(0);
@@ -102,7 +102,7 @@ public class LobbyScreen extends MenuScreen{
 		
 		Label map = new Label("Mapa: ", getSkin());
 		table.add(map).minWidth(40).minHeight(50);
-		SelectBox mapsList = new SelectBox(getSkin());
+		final SelectBox mapsList = new SelectBox(getSkin());
 		String[] mapsNames = {"Lava arena", "Water arena"};
 		mapsList.setItems(mapsNames);
 		table.add(mapsList);
@@ -148,8 +148,8 @@ public class LobbyScreen extends MenuScreen{
 		Table team1 = new Table();
 		Table team2 = new Table();
 		
-		team1.debugAll();
-		team2.debugAll();
+		//team1.debugAll();
+		//team2.debugAll();
 		
 		team1.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		team2.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
