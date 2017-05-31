@@ -60,8 +60,13 @@ public class MainScreen extends MenuScreen {
         serverBtn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				screenManager.launchGameServer();
-				screenManager.launchGameClient();
+				//screenManager.launchGameServer(); // TODO Descomentar
+				//screenManager.launchGameClient();
+				
+				screenManager.setLobbyScreen(new LobbyScreen(screenManager, true));
+				screenManager.setCurrentScreen(Screens.LobbyScreen);
+				screenManager.getScreen().dispose();
+				screenManager.setScreen(screenManager.getLobbyScreen());
 				return false;
 			}
         });

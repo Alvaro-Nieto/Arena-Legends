@@ -23,8 +23,9 @@ public class ScreenManager implements ClientListener {
 	private ModeScreen modeScreen;
 	private CharSelectionScreen charSelectionScreen;
 	private SearchScreen searchScreen;
+	private LobbyScreen lobbyScreen;
 	
-	public enum Screens{TitleScreen, ModeScreen, MainScreen, PlayScreen, CharSelectionScreen, SearchScreen};
+	public enum Screens{TitleScreen, ModeScreen, MainScreen, PlayScreen, CharSelectionScreen, SearchScreen, LobbyScreen};
 	private Screens currentScreen;
 	private long lastSnap = Long.MIN_VALUE;
 	
@@ -178,5 +179,10 @@ public class ScreenManager implements ClientListener {
 	public void setSearchScreen(SearchScreen searchScreen){
 		this.searchScreen = searchScreen;
 	}
-	
+	public LobbyScreen getLobbyScreen(){
+		return lobbyScreen;
+	}
+	public void setLobbyScreen(LobbyScreen lobbyScreen){
+		this.lobbyScreen = lobbyScreen;
+	}
 }
