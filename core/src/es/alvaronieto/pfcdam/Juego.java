@@ -12,7 +12,7 @@ public class Juego extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		ScreenManager.getInstance(this);
+		ScreenManager.getInstance().initialize(this);
 	}
 
 	@Override

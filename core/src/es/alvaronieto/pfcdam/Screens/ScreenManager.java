@@ -28,19 +28,23 @@ public class ScreenManager implements ClientListener {
 	private Screens currentScreen;
 	private long lastSnap = Long.MIN_VALUE;
 	
-	private ScreenManager(Juego juego){
+	private ScreenManager(){
+		
+	}
+	
+	public static synchronized ScreenManager getInstance(){
+		if(screenManager == null){
+			screenManager = new ScreenManager();
+		}
+		return screenManager;
+	}
+	
+	public void initialize(Juego juego){
 		this.juego = juego;
 
 		titleScreen = new TitleScreen(this);
 		juego.setScreen(titleScreen);
 		currentScreen = Screens.TitleScreen;
-	}
-	
-	public static synchronized ScreenManager getInstance(Juego juego){
-		if(screenManager == null){
-			screenManager = new ScreenManager(juego);
-		}
-		return screenManager;
 	}
 	
 	public void launchGameServer(){
