@@ -10,19 +10,38 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
+import es.alvaronieto.pfcdam.GameRules;
+import es.alvaronieto.pfcdam.SecurityUtility;
 import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
+import es.alvaronieto.pfcdam.net.kryoclient.TestClient;
 
 public class SearchScreen extends MenuScreen {
 	private Drawable drawaUnico;
 	private Image personaje = new Image();
 	private Table table;
 	
+	private String ipAddress = "localhost";
+	private final TestClient client;
+	
 	public SearchScreen(final ScreenManager screenManager){
 		super(screenManager);
+		client = screenManager.launchGameClient();
+		discoverServers();
+	}
+
+	private void discoverServers() {
+		System.out.println("Empieza discover");
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				client.startServerDiscovery();
+			}
+		}).start();
+		System.out.println("Termina discover");
 	}
 
 	@Override
-	protected void stageDefinition() {
+	protected void buildStage() {
 		
         this.table = new Table();
         
@@ -67,21 +86,7 @@ public class SearchScreen extends MenuScreen {
 		Label seleccionar=new Label("Seleccionar", getSkin());
 		table.add(seleccionar).minWidth(25);	
 	    
-	    addEntry("Entrada de ejemplo 1","0/4","Lava cave");
-	    addEntry("Entrada de ejemplo 2","0/4","Lava cave");
-	    addEntry("Entrada de ejemplo 3","0/4","Lava cave");
-	    addEntry("Entrada de ejemplo 4","0/4","Lava cave");
-	    addEntry("Entrada de ejemplo 5","0/4","Lava cave");
-	    addEntry("Entrada de ejemplo 6","0/4","Lava cave");
-	    addEntry("Entrada de ejemplo 7","0/4","Lava cave");
-	    addEntry("Entrada de ejemplo 8","0/4","Lava cave");
-	    addEntry("Entrada de ejemplo 9","0/4","Lava cave");
-	    addEntry("Entrada de ejemplo 10","0/4","Lava cave");
-	    addEntry("Entrada de ejemplo 10","0/4","Lava cave");
-	    addEntry("Entrada de ejemplo 10","0/4","Lava cave");
-	    addEntry("Entrada de ejemplo 10","0/4","Lava cave");
-	    addEntry("Entrada de ejemplo 10","0/4","Lava cave");
-       
+	    //addEntry("LocalHost", GameRules.getDefault(), 0, "localhost");
         
         stage.addActor(tablaOpcion);
 
@@ -90,28 +95,34 @@ public class SearchScreen extends MenuScreen {
         scroll.setPosition(0, -100);
 		stage.addActor(scroll);
 		stage.setScrollFocus(scroll);
-		//stage.setDebugAll(true);
+		stage.setDebugAll(true);
 	}
 
-	public void addEntry(String nombre, String jugadores, String mapa) {
+	public void addEntry(String name, GameRules gameRules, int connectedPlayers, final String ipAddress) {
 		table.row().height(60f);
-		Label unserver=new Label(nombre, getSkin());
+		Label unserver = new Label(name, getSkin());
 	    table.add(unserver).expandX();    
-	    Label losplayers=new Label(jugadores, getSkin());
+	    Label losplayers = new Label(
+	    		String.format("%d//%d", connectedPlayers, gameRules.getMaxPlayers()), getSkin());
 		table.add(losplayers).expandX();	
-	    Label unmaps=new Label(mapa, getSkin());
+	    Label unmaps = new Label(gameRules.getArenaName(), getSkin());
 		table.add(unmaps).expandX();        
         TextButton btn = new TextButton("Unirse", getSkin());
         btn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				
-				screenManager.launchGameClient();
+				client.connect(ipAddress, SecurityUtility.getAdminToken());
 				return false;
 			}
         });
         table.add(btn).expandY();
 
+	}
+
+	@Override
+	protected void postBuild() {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

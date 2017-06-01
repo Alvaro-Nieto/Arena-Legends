@@ -23,7 +23,7 @@ public class CharSelectionScreen extends MenuScreen {
 	}
 	
 	@Override
-	protected void stageDefinition() {
+	protected void buildStage() {
 		
 		drawaUnico=new TextureRegionDrawable(new TextureRegion(new Texture("pruebaseleccion.png")));
         Table table = new Table();
@@ -197,6 +197,12 @@ public class CharSelectionScreen extends MenuScreen {
         stage.addActor(table);
         stage.addActor(tableopcion);
         stage.addActor(descripcion);	
+	}
+
+	@Override
+	protected void postBuild() {
+		// TODO Auto-generated method stub
+		
 	}
 }
 

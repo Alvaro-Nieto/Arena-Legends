@@ -3,8 +3,10 @@ package es.alvaronieto.pfcdam.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 
+import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.States.GameState;
+import es.alvaronieto.pfcdam.States.LobbyState;
 import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.net.ClientListener;
 import es.alvaronieto.pfcdam.net.kryoclient.TestClient;
@@ -48,12 +50,12 @@ public class ScreenManager implements ClientListener {
 		currentScreen = Screens.TitleScreen;
 	}
 	
-	public void launchGameServer(){
-		server = new TestServer(3);
+	public TestServer launchGameServer(GameRules gameRules, long adminToken){
+		return (server = new TestServer(gameRules, adminToken));
 	}
 	
-	public void launchGameClient() {
-        testClient = new TestClient(this);
+	public TestClient launchGameClient() {
+        return (testClient = new TestClient(this));
 	}
 
 	@Override
@@ -62,7 +64,7 @@ public class ScreenManager implements ClientListener {
 	}
 
 	@Override
-	public void connectionAccepted(final PlayerState playerState, final GameState gameState) {
+	public void startGame(final PlayerState playerState, final GameState gameState) {
 		
 		Gdx.app.postRunnable(new Runnable() {
 	        @Override
@@ -76,10 +78,11 @@ public class ScreenManager implements ClientListener {
 	}
 
 	@Override
-	public void newPlayerConnected(PlayerState playerState) {
-		if(currentScreen == Screens.PlayScreen){
+	public void newPlayerConnected(long userID) {
+		System.out.println("alguien más en el lobby");
+		/*if(currentScreen == Screens.PlayScreen){
 			playScreen.newNetworkPlayer(playerState);
-		}
+		}*/
 	}
 
 	@Override
@@ -96,6 +99,45 @@ public class ScreenManager implements ClientListener {
 		}
 		
 		lastSnap = timeStamp;
+	}
+	
+	@Override
+	public void newServerDiscovered(final String name, final GameRules gameRules, final int connectedPlayers, final String ipAddress) {
+		if(currentScreen == Screens.SearchScreen) {
+			Gdx.app.postRunnable(new Runnable() {
+		        @Override
+		        public void run() {
+		        	searchScreen.addEntry(name, gameRules, connectedPlayers, ipAddress);
+		        }
+			});
+			
+		}
+	}
+	
+	@Override
+	public void connectionAccepted(final long userID, final LobbyState lobbyState, final boolean admin) {
+		Gdx.app.postRunnable(new Runnable() {
+	        @Override
+	        public void run() {
+	        	screenManager.lobbyScreen = new LobbyScreen(ScreenManager.getInstance(), admin, lobbyState, userID);
+	        	screenManager.setCurrentScreen(Screens.LobbyScreen);
+	        	screenManager.getScreen().dispose();
+	        	screenManager.setScreen(screenManager.getLobbyScreen());
+	        }
+		});
+	}
+	
+	@Override
+	public void lobbyUpdate(final LobbyState lobbyState) {
+		Gdx.app.postRunnable(new Runnable() {
+	        @Override
+	        public void run() {
+	        	if(currentScreen == Screens.LobbyScreen){
+	    			lobbyScreen.updateLobby(lobbyState);
+	    		}
+	        }
+		});
+		
 	}
 
 	public void setScreen(Screen screen) {
@@ -185,4 +227,7 @@ public class ScreenManager implements ClientListener {
 	public void setLobbyScreen(LobbyScreen lobbyScreen){
 		this.lobbyScreen = lobbyScreen;
 	}
+
+	
+	
 }

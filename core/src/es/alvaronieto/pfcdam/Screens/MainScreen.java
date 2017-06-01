@@ -1,10 +1,14 @@
 package es.alvaronieto.pfcdam.Screens;
 
+import java.util.Random;
+
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
+import es.alvaronieto.pfcdam.GameRules;
+import es.alvaronieto.pfcdam.SecurityUtility;
 import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
 
 public class MainScreen extends MenuScreen {
@@ -14,7 +18,7 @@ public class MainScreen extends MenuScreen {
 	}
 	
 	@Override
-	protected void stageDefinition() {
+	protected void buildStage() {
 		// TODO Auto-generated method stub
 
 		
@@ -60,13 +64,14 @@ public class MainScreen extends MenuScreen {
         serverBtn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				//screenManager.launchGameServer(); // TODO Descomentar
-				//screenManager.launchGameClient();
+				long adminToken = SecurityUtility.getAdminToken();
+				screenManager.launchGameServer(GameRules.getDefault(), adminToken); // TODO Descomentar
+				screenManager.launchGameClient().connect("localhost", adminToken);
 				
-				screenManager.setLobbyScreen(new LobbyScreen(screenManager, true));
+				/*screenManager.setLobbyScreen(new LobbyScreen(screenManager, true));
 				screenManager.setCurrentScreen(Screens.LobbyScreen);
 				screenManager.getScreen().dispose();
-				screenManager.setScreen(screenManager.getLobbyScreen());
+				screenManager.setScreen(screenManager.getLobbyScreen());*/
 				return false;
 			}
         });
@@ -84,6 +89,12 @@ public class MainScreen extends MenuScreen {
 	@Override
 	public void render(float delta) {
 		super.render(delta);
+	}
+
+	@Override
+	protected void postBuild() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 

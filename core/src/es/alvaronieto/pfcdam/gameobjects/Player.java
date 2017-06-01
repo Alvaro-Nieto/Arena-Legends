@@ -29,11 +29,13 @@ public class Player implements Disposable {
 	
 	private int health;
 	private int maxHealth;
+	private int team;
 	
-	public Player(Game game, Vector2 position, long userID, String pj){
+	public Player(Game game, Vector2 position, long userID, String pj, int team){
 		this.position = position;
 		this.userID = userID;
 		this.pj = pj;
+		this.team = team;
 		
 		defineByPj(pj);
 		
@@ -57,8 +59,8 @@ public class Player implements Disposable {
 		}
 	}
 
-	public Player(Game game, Vector2 position, long userID, String pj, Vector2 velocity){
-		this(game, position, userID, pj);
+	public Player(Game game, Vector2 position, long userID, String pj, Vector2 velocity, int team){
+		this(game, position, userID, pj, team);
 		this.body.setLinearVelocity(velocity);
 	}
 	
@@ -68,7 +70,8 @@ public class Player implements Disposable {
 			playerState.getBodyPosition(), 
 			playerState.getUserID(), 
 			playerState.getPj(), 
-			playerState.getVelocity());
+			playerState.getVelocity(),
+			playerState.getTeam());
 	}
 	
 	public void update(){
@@ -141,7 +144,7 @@ public class Player implements Disposable {
 	}
 
 	public PlayerState getPlayerState(){
-		return new PlayerState(this.getBodyPosition(), userID, this.getPj(), body.getLinearVelocity());
+		return new PlayerState(this.getBodyPosition(), userID, this.getPj(), body.getLinearVelocity(), team);
 	}
 	
 	public String getPj() {

@@ -10,18 +10,19 @@ public class PlayerState implements Serializable {
 	private Vector2 bodyPosition;
 	private Vector2 velocity;
 	private String pj;
+	private int team;
 	
 	public PlayerState(){
 		
 	}
 	
-	public PlayerState(Vector2 bodyPosition, Vector2 velocity){
+	public PlayerState(Vector2 bodyPosition, Vector2 velocity, int team){
 		this.bodyPosition = bodyPosition;
 		this.velocity = velocity;
 	}
 	
-	public PlayerState(Vector2 bodyPosition, long userID, String pj, Vector2 velocity){
-		this(bodyPosition, velocity);
+	public PlayerState(Vector2 bodyPosition, long userID, String pj, Vector2 velocity, int team){
+		this(bodyPosition, velocity, team);
 		this.userID = userID;
 		this.pj = pj;
 	}
@@ -61,6 +62,10 @@ public class PlayerState implements Serializable {
 	@Override
 	public String toString() {
 		return "["+bodyPosition.x + ","+ bodyPosition.y +"]";
+	}
+
+	public int getTeam() {
+		return team;
 	}
 		
 	

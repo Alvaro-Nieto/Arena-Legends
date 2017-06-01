@@ -15,7 +15,7 @@ public class TitleScreen extends MenuScreen {
 	}
 
 	@Override
-	protected void stageDefinition() {
+	protected void buildStage() {
 	    Table table = new Table();
 	    table.pad(5f);
 	    table.setFillParent(true);
@@ -40,5 +40,11 @@ public class TitleScreen extends MenuScreen {
 	    table.row();
 	    table.add(startBtn);
 	    stage.addActor(table);
+	}
+
+	@Override
+	protected void postBuild() {
+		// TODO Auto-generated method stub
+		
 	}
 }

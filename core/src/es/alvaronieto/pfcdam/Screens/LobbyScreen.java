@@ -1,11 +1,13 @@
 package es.alvaronieto.pfcdam.Screens;
 
+import static es.alvaronieto.pfcdam.Util.Constants.*;
+
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.List;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
@@ -13,23 +15,44 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 
+import es.alvaronieto.pfcdam.GameRules;
+import es.alvaronieto.pfcdam.SecurityUtility;
 import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
+import es.alvaronieto.pfcdam.States.LobbyState;
+import es.alvaronieto.pfcdam.States.PlayerSlot;
 import es.alvaronieto.pfcdam.Util.Constants;
+
 
 public class LobbyScreen extends MenuScreen{
 	
 	private Table table;
+	private Table startTable;
 	private boolean admin;
 	private int totalPlayers;
 	private String level;
-		
-	public LobbyScreen(final ScreenManager screenManager, boolean admin){
+	private LobbyState lobbyState;
+	private long userID;
+	
+	private List team1List;
+	private List team2List;
+	private SelectBox playersList;
+	private SelectBox mapsList;
+	
+	public LobbyScreen(final ScreenManager screenManager, boolean admin, LobbyState lobbyState, long userID){
 		super(screenManager);
 		this.admin = admin;
+		System.out.println("Hay admin" +admin);
+		table.setTouchable(admin ? Touchable.enabled : Touchable.disabled);
+		//startTable.setTouchable(admin ? Touchable.enabled : Touchable.disabled);	
+		this.userID = userID;
+		this.lobbyState = lobbyState;
+		applyLobbyStateToScene();
 	}
 	
+
 	@Override
-	protected void stageDefinition(){
+	protected void buildStage(){
+		
 		this.table = new Table();
 		
 		Table backTable = new Table();
@@ -54,11 +77,11 @@ public class LobbyScreen extends MenuScreen{
 		stage.addActor(backTable);
 
 		
-		Label config = new Label("CONFIGURAR PARTIDA", getSkin());
-		config.setFontScale(1.5f);
-		config.setPosition(Gdx.graphics.getWidth()/3, Gdx.graphics.getHeight()-50f);
+		Label lblTitulo = new Label("Lobby", getSkin());
+		lblTitulo.setFontScale(1.5f);
+		lblTitulo.setPosition(Gdx.graphics.getWidth()/2 - lblTitulo.getWidth() / 2, Gdx.graphics.getHeight()-50f);
 		
-		stage.addActor(config);
+		stage.addActor(lblTitulo);
 		
 		configurationBar();
 		
@@ -69,19 +92,22 @@ public class LobbyScreen extends MenuScreen{
 		startBtn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-				startBtn.setTouchable(Touchable.disabled);
-				screenManager.launchGameServer();
-				screenManager.launchGameClient();
+				//startBtn.setTouchable(Touchable.disabled);
+				screenManager.getTestClient().sendStartRequest(SecurityUtility.getAdminToken());
+				//screenManager.launchGameServer(new GameRules(level, totalPlayers, 0, 30));
+				//screenManager.launchGameClient();
 				return false;
 			}
 		});
 		
-		Table startTable = new Table();
+		startTable = new Table();
 		startTable.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		startTable.bottom().right();
 		startTable.add(startBtn);
 		
 		stage.addActor(startTable);
+		
+		
 	}
 	
 	private void configurationBar(){ // TODO Hacer que los jugadores que no sean admins no puedan configurar la partida
@@ -90,10 +116,10 @@ public class LobbyScreen extends MenuScreen{
 		table.top();
 		table.padTop(100);
 		
-		Label numPlayers = new Label("Numero de \njuagadores: ", getSkin());
+		Label numPlayers = new Label("Numero de \njugadores: ", getSkin());
 		table.add(numPlayers).minWidth(50);
 		
-		final SelectBox playersList = new SelectBox(getSkin());
+		playersList = new SelectBox(getSkin());
 		String[] playersNumbers = {"1v1", "2v2", "5v5"};
 		playersList.setItems(playersNumbers);
 		playersList.setSelectedIndex(0);
@@ -102,7 +128,7 @@ public class LobbyScreen extends MenuScreen{
 		
 		Label map = new Label("Mapa: ", getSkin());
 		table.add(map).minWidth(40).minHeight(50);
-		final SelectBox mapsList = new SelectBox(getSkin());
+		mapsList = new SelectBox(getSkin());
 		String[] mapsNames = {"Lava arena", "Water arena"};
 		mapsList.setItems(mapsNames);
 		table.add(mapsList);
@@ -125,23 +151,55 @@ public class LobbyScreen extends MenuScreen{
 		acceptBtn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-				switch(playersList.getSelectedIndex()){
-					case 0: totalPlayers = 2;break;
-					case 1: totalPlayers = 4;break;
-					case 2: totalPlayers = 10;
-				}
-				
-				switch(mapsList.getSelectedIndex()){
-					case 0: level = Constants.ARENA_LAVA;break;
-					case 1: level = Constants.ARENA_WATER;
-				}
+				setMaxPlayers(playersList);
+				setArena(mapsList);
+				screenManager.getTestClient().sendGameRulesUpdate(new GameRules(level, totalPlayers, 0, 30), SecurityUtility.getAdminToken());
 				return false;
 			}
 		});
 		
 		table.add(acceptBtn);
-		
 		stage.addActor(table);
+		
+		setMaxPlayers(playersList);
+		setArena(mapsList);
+		System.out.println(admin);
+	}
+	
+
+	private void setArena(final SelectBox mapsList) {
+		switch(mapsList.getSelectedIndex()){
+			case 0: 
+				level = Constants.ARENA_LAVA;
+				break;
+			case 1: level = Constants.ARENA_WATER;
+		}
+	}
+	
+	private void setMaxPlayers(final SelectBox playersList) {
+		switch(playersList.getSelectedIndex()){
+			case 0: 
+				totalPlayers = 2;
+				break;
+			case 1: 
+				totalPlayers = 4;
+				break;
+			case 2: 
+				totalPlayers = 10;
+		}
+	}
+	
+	private int getIndexOfMaxPlayersList(int maxPlayers){
+		int index = 0;
+		switch(maxPlayers) {
+			case 4:
+				index = 1;
+				break;
+			case 10:
+				index = 2;
+				break;
+			}
+		return index;
 	}
 	
 	private void teamLists(){ // Players would appear in these tables
@@ -160,17 +218,68 @@ public class LobbyScreen extends MenuScreen{
 		team1.left();
 		team2.right();
 		
-		List team1List = new List(getSkin());
-		String s = "Team 1";
-		team1List.setItems(s);
+		
+		Label lblTeam1 = new Label("Team 1", getSkin());
+		Label lblTeam2 = new Label("Team 2", getSkin());
+		team1List = new List(getSkin());
+		
+		//team1List.setItems(new PlayerSlot());
+		team1.add(lblTeam1);
+		team1.row();
 		team1.add(team1List).minWidth(250);
 		
-		List team2List = new List(getSkin());
-		String s2 = "Team 2";
-		team2List.setItems(s2);
+		team2List = new List(getSkin());
+		
+		//team2List.setItems(new PlayerSlot());
+		team2.add(lblTeam2);
+		team2.row();
 		team2.add(team2List).minWidth(250);
 		
 		stage.addActor(team1);
 		stage.addActor(team2);
+		
+
+	}
+	
+	private int getMapIndex(String arenaPath) {
+		int index = 0;
+		if(arenaPath.equals(ARENA_WATER))
+			index = 1;
+		return index;
+	}
+
+
+	public void applyLobbyStateToScene(){
+		String[] arrTeam1 = new String[lobbyState.getMaxPlayersPerTeam()];
+		for(int i = 0; i < arrTeam1.length; i++){
+			if(i < lobbyState.getPlayersTeam1())
+				arrTeam1[i] = "PlayerName"; // TODO Hacer que los jugadores tengan un nombre
+			else
+				arrTeam1[i] = "Empty";
+		}
+		String[] arrTeam2 = new String[lobbyState.getMaxPlayersPerTeam()];
+		for(int i = 0; i < arrTeam2.length; i++){
+			if(i < lobbyState.getPlayersTeam2())
+				arrTeam2[i] = "PlayerName"; // TODO Hacer que los jugadores tengan un nombre
+			else
+				arrTeam2[i] = "Empty";
+		}
+		team1List.setItems(arrTeam1);
+		team2List.setItems(arrTeam2);
+		
+		playersList.setSelectedIndex(getIndexOfMaxPlayersList(lobbyState.getMaxPlayersPerTeam() * 2));
+
+		mapsList.setSelectedIndex(getMapIndex(lobbyState.getGameRules().getArenaPath()));
+	}
+
+	@Override
+	protected void postBuild() {
+		// TODO Auto-generated method stub
+	}
+
+	public void updateLobby(LobbyState lobbyState) {
+		this.lobbyState = lobbyState;
+		applyLobbyStateToScene();
+		// Redibuja como sea oportuno
 	}
 }

@@ -9,4 +9,5 @@ public class Constants {
 	public static final float STEP = 1f/60f;
 	public static final String ARENA_LAVA = "testlevel2.tmx";
 	public static final String ARENA_WATER = "testlevel3.tmx";
+	public static final int SERVER_PORT = 25565;
 }

@@ -30,11 +30,12 @@ public abstract class MenuScreen implements Screen {
         viewPort = new FitViewport(Constants.V_WIDTH,Constants.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewPort, juego.batch);
         Gdx.input.setInputProcessor(stage);
-        stageDefinition();
+        buildStage();
+        postBuild();
 	}
 	
-	protected abstract void stageDefinition();
-	
+	protected abstract void buildStage();
+	protected abstract void postBuild();
 	protected Skin getSkin() {
 		return skin;
 	}

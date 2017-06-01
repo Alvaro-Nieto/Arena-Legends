@@ -13,6 +13,8 @@ import com.badlogic.gdx.utils.Disposable;
 
 import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.States.GameState;
+import es.alvaronieto.pfcdam.States.LobbyState;
+import es.alvaronieto.pfcdam.States.PlayerSlot;
 import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.Util.CountDownTimer;
 
@@ -28,7 +30,7 @@ public class Game implements Disposable {
 		this.gameRules = gameRules;
 		this.world = new World(Vector2.Zero, true);
 		this.players = new HashMap<Long, Player>();
-		this.arena = new Arena(gameRules.getArena(), world);
+		this.arena = new Arena(gameRules.getArenaPath(), world);
 		this.timer = new CountDownTimer(gameRules.getGameLengthMinutes(),
 										gameRules.getGameLengthSeconds());
 	}
@@ -41,6 +43,17 @@ public class Game implements Disposable {
 		}
 	}
 	
+	public Game(LobbyState lobbyState) {
+		this(lobbyState.getGameRules());
+		HashMap<Long, PlayerSlot> playerSlots = lobbyState.getPlayerSlots();
+		for(Long userID : playerSlots.keySet()){
+			// TODO Crear metodo para calcular la posición de comienzo
+			Vector2 position = new Vector2(getMapWidth() / 2, getMapHeight() / 2);
+			PlayerSlot slot = playerSlots.get(userID);
+			this.players.put(userID, new Player(this, position, userID, slot.getPj(), slot.getTeam()));
+		}
+	}
+
 	public void addPlayer(Player player){
 		players.put(player.getUserID(), player);
 	}

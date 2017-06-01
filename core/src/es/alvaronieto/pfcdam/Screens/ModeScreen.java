@@ -10,12 +10,13 @@ import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
 
 public class ModeScreen extends MenuScreen {
 	
+	
 	public ModeScreen(final ScreenManager screenManager){
 		super(screenManager);
 	}
 
 	@Override
-	protected void stageDefinition() {
+	protected void buildStage() {
 		Table table = new Table();
         table.pad(5f);
         table.setFillParent(true);
@@ -74,6 +75,12 @@ public class ModeScreen extends MenuScreen {
         tableatras.add(atrasBtn);
         stage.addActor(table);
         stage.addActor(tableatras);
+	}
+
+	@Override
+	protected void postBuild() {
+		// TODO Auto-generated method stub
+		
 	}
 }
 
