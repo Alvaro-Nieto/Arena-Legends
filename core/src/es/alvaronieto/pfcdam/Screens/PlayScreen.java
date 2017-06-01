@@ -86,7 +86,7 @@ public class PlayScreen implements Screen {
 	private float skill1CD = 0.5f;
 	private float timeSinceSkill1 = skill1CD+1;
 	
-	public PlayScreen(ScreenManager screenManager, PlayerState playerState, GameState gameState) {
+	public PlayScreen(ScreenManager screenManager, long userID, GameState gameState) {
 		this.screenManager = screenManager;
         this.juego = screenManager.getJuego();
         
@@ -105,7 +105,7 @@ public class PlayScreen implements Screen {
         createCollisionListener();
 	
         // Player
-        player = new Player(playerState, game);
+        player = game.getPlayer(userID);
         
         // Scenes
         debugHud = new DebugHud(juego.batch, player);
@@ -344,14 +344,14 @@ public class PlayScreen implements Screen {
         
         game.getMapRenderer().render();
         
-        //b2dr.render(game.getWorld(), gamecam.combined);
+        b2dr.render(game.getWorld(), gamecam.combined);
         
         juego.batch.setProjectionMatrix(gamecam.combined);
         juego.batch.begin();
         drawAllPlayers();
         drawBalls();
         juego.batch.end();
-        //drawGhost();
+        drawGhost();
         
     	juego.batch.setProjectionMatrix(debugHud.getProjectionMatrix());
         debugHud.draw();

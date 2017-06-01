@@ -42,10 +42,7 @@ public class SearchScreen extends MenuScreen {
 
 	@Override
 	protected void buildStage() {
-		
         this.table = new Table();
-        
-      
         
         Table tablaOpcion=new Table();
         //table.pad(5f);
@@ -122,7 +119,6 @@ public class SearchScreen extends MenuScreen {
 	@Override
 	protected void postBuild() {
 		// TODO Auto-generated method stub
-		
 	}
 }
 

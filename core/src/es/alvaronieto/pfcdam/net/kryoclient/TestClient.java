@@ -147,7 +147,6 @@ public class TestClient extends Listener{
 				client.sendUDP(request);
 			} catch (IOException e) {
 				e.printStackTrace();
-				//clientListener.couldNotConnect();
 			}
 		}
 	}

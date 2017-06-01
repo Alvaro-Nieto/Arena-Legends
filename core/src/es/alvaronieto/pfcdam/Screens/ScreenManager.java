@@ -69,7 +69,7 @@ public class ScreenManager implements ClientListener {
 		Gdx.app.postRunnable(new Runnable() {
 	        @Override
 	        public void run() {
-	        	screenManager.setPlayScreen(new PlayScreen(screenManager, playerState, gameState));
+	        	screenManager.setPlayScreen(new PlayScreen(screenManager, playerState.getUserID(), gameState));
 	        	screenManager.setCurrentScreen(Screens.PlayScreen);
 	        	screenManager.getScreen().dispose();
 	        	screenManager.setScreen(screenManager.getPlayScreen());

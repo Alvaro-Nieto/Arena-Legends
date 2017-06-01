@@ -184,9 +184,6 @@ public class TestServer extends Listener {
 	}
 
 	private void processStartRequest(Packet13StartRequest startRequest) {
-		System.out.println("STARTREQUEST RECIBIDO");
-		System.out.println(lobbyState.isReadyToStart());
-		System.out.println(lobbyState.getPlayerSlots().size());
 		if(lobbyState.isReadyToStart() && startRequest.adminToken == this.adminToken)
 			startGame();
 	}
@@ -224,7 +221,6 @@ public class TestServer extends Listener {
 	}
 
 	private void startGame() {
-		System.out.println("STARTING GAME");
 		gameStarted = true;
 		
 		Gdx.app.postRunnable(new Runnable(){
@@ -232,6 +228,7 @@ public class TestServer extends Listener {
 			@Override
 			public void run() {
 				game = new Game(lobbyState);
+				System.out.println("[Debug] Players: "+game.getPlayers().size());
 				for(Map.Entry<Long, ConnectedClient> entry : clients.entrySet()){
 					Packet12GameStarted gameStarted = new Packet12GameStarted();
 					ConnectedClient client = entry.getValue();
@@ -258,8 +255,6 @@ public class TestServer extends Listener {
 	}
 
 	private void acceptConnection(Connection connection, boolean admin) {
-		if(admin)
-			System.out.println("Server: admin conectado");
 		
 		long userID = getNewUserID();
 		if(lobbyState.newPlayer(userID)){
