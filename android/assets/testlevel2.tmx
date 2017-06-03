@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="180" height="180" tilewidth="16" tileheight="16" nextobjectid="32">
+<map version="1.0.0" orientation="orthogonal" renderorder="right-down" width="180" height="180" tilewidth="16" tileheight="16" nextobjectid="32">
  <tileset firstgid="1" name="terrain_atlas" tilewidth="16" tileheight="16" spacing="2" margin="1" tilecount="3136" columns="56">
   <image source="terrain_atlas.png" width="1024" height="1024"/>
+  <tile id="924">
+   <properties>
+    <property name="LiquidFrame" type="int" value="1"/>
+   </properties>
+  </tile>
+  <tile id="925">
+   <properties>
+    <property name="LiquidFrame" type="int" value="2"/>
+   </properties>
+  </tile>
+  <tile id="982">
+   <properties>
+    <property name="LiquidFrame" type="int" value="3"/>
+   </properties>
+  </tile>
  </tileset>
  <layer name="Capa de Patrones 1" width="180" height="180">
   <data encoding="base64" compression="zlib">

@@ -5,6 +5,7 @@ import static es.alvaronieto.pfcdam.Util.Constants.STEP;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -25,6 +26,7 @@ public class Game implements Disposable {
 	private GameRules gameRules;
 	private Arena arena;
 	private CountDownTimer timer;
+	
 	
 	public Game(GameRules gameRules){
 		this.gameRules = gameRules;
@@ -143,6 +145,10 @@ public class Game implements Disposable {
 
 	public OrthogonalTiledMapRenderer getMapRenderer() {
 		return arena.getRenderer();
+	}
+	
+	public void updateLiquidAnimations(){
+		arena.updateCells();
 	}
 
 	public CountDownTimer getTimer() {

@@ -343,6 +343,7 @@ public class PlayScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         game.getMapRenderer().render();
+        game.updateLiquidAnimations();
         
         b2dr.render(game.getWorld(), gamecam.combined);
         
