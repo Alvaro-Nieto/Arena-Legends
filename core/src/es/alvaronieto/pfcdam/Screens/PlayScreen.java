@@ -371,6 +371,7 @@ public class PlayScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         game.getMapRenderer().render();
+        game.updateLiquidAnimations();
         
         juego.batch.setProjectionMatrix(gamecam.combined);
         juego.batch.begin();
