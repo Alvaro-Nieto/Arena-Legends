@@ -43,7 +43,7 @@ public class CharSelectionScreen extends MenuScreen {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				
-				//CARGA DE UNA IMAGEN Y DESCRIPCIÓN A LA DERECHA DE LA PANTALLA
+				//CARGA DE UNA IMAGEN Y DESCRIPCIÃ“N A LA DERECHA DE LA PANTALLA
 				//NO FUNCIONA LA CARGA DE IMAGEN, HAY QUE SOLUCIONARLO
 				personaje=new Image(drawaUnico);
 				return false;
@@ -54,7 +54,7 @@ public class CharSelectionScreen extends MenuScreen {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				
-				//CARGA DE UNA IMAGEN Y DESCRIPCIÓN A LA DERECHA DE LA PANTALLA
+				//CARGA DE UNA IMAGEN Y DESCRIPCIï¿½N A LA DERECHA DE LA PANTALLA
 				//NO FUNCIONA LA CARGA DE IMAGEN, HAY QUE SOLUCIONARLO
 				personaje=new Image(drawaUnico);
 				return false;
@@ -65,7 +65,7 @@ public class CharSelectionScreen extends MenuScreen {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				
-				//CARGA DE UNA IMAGEN Y DESCRIPCIÓN A LA DERECHA DE LA PANTALLA
+				//CARGA DE UNA IMAGEN Y DESCRIPCIï¿½N A LA DERECHA DE LA PANTALLA
 				//NO FUNCIONA LA CARGA DE IMAGEN, HAY QUE SOLUCIONARLO
 				personaje=new Image(drawaUnico);
 				return false;
@@ -76,7 +76,7 @@ public class CharSelectionScreen extends MenuScreen {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				
-				//CARGA DE UNA IMAGEN Y DESCRIPCIÓN A LA DERECHA DE LA PANTALLA
+				//CARGA DE UNA IMAGEN Y DESCRIPCIï¿½N A LA DERECHA DE LA PANTALLA
 				//NO FUNCIONA LA CARGA DE IMAGEN, HAY QUE SOLUCIONARLO
 				personaje=new Image(drawaUnico);
 				return false;
@@ -87,7 +87,7 @@ public class CharSelectionScreen extends MenuScreen {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				
-				//CARGA DE UNA IMAGEN Y DESCRIPCIÓN A LA DERECHA DE LA PANTALLA
+				//CARGA DE UNA IMAGEN Y DESCRIPCIï¿½N A LA DERECHA DE LA PANTALLA
 				//NO FUNCIONA LA CARGA DE IMAGEN, HAY QUE SOLUCIONARLO
 				personaje=new Image(drawaUnico);
 				return false;
@@ -98,7 +98,7 @@ public class CharSelectionScreen extends MenuScreen {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				
-				//CARGA DE UNA IMAGEN Y DESCRIPCIÓN A LA DERECHA DE LA PANTALLA
+				//CARGA DE UNA IMAGEN Y DESCRIPCIï¿½N A LA DERECHA DE LA PANTALLA
 				//NO FUNCIONA LA CARGA DE IMAGEN, HAY QUE SOLUCIONARLO
 				personaje=new Image(drawaUnico);
 				return false;
@@ -109,7 +109,7 @@ public class CharSelectionScreen extends MenuScreen {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				
-				//CARGA DE UNA IMAGEN Y DESCRIPCIÓN A LA DERECHA DE LA PANTALLA
+				//CARGA DE UNA IMAGEN Y DESCRIPCIï¿½N A LA DERECHA DE LA PANTALLA
 				//NO FUNCIONA LA CARGA DE IMAGEN, HAY QUE SOLUCIONARLO
 				personaje=new Image(drawaUnico);
 				return false;
@@ -120,7 +120,7 @@ public class CharSelectionScreen extends MenuScreen {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				
-				//CARGA DE UNA IMAGEN Y DESCRIPCIÓN A LA DERECHA DE LA PANTALLA
+				//CARGA DE UNA IMAGEN Y DESCRIPCIï¿½N A LA DERECHA DE LA PANTALLA
 				//NO FUNCIONA LA CARGA DE IMAGEN, HAY QUE SOLUCIONARLO
 				personaje=new Image(drawaUnico);
 				return false;
@@ -187,7 +187,7 @@ public class CharSelectionScreen extends MenuScreen {
         descripcion.add(cualidad1);
         descripcion.add(personaje);
         descripcion.row();
-        //Falta añadir una imagen por cada cualidad que determine el nivel que tiene de esa habilidad a la derecha o abajo       
+        //Falta aï¿½adir una imagen por cada cualidad que determine el nivel que tiene de esa habilidad a la derecha o abajo       
         descripcion.add(cualidad1);
         descripcion.row();
         descripcion.add(cualidad2);

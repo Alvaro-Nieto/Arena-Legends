@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter;
 
 import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.SecurityUtility;
@@ -37,6 +38,7 @@ public class LobbyScreen extends MenuScreen{
 	private List team2List;
 	private SelectBox playersList;
 	private SelectBox mapsList;
+	private TextField txtRounds;
 	
 	public LobbyScreen(final ScreenManager screenManager, boolean admin, LobbyState lobbyState, long userID){
 		super(screenManager);
@@ -47,6 +49,7 @@ public class LobbyScreen extends MenuScreen{
 		this.userID = userID;
 		this.lobbyState = lobbyState;
 		applyLobbyStateToScene();
+		stage.setDebugAll(true);
 	}
 	
 
@@ -141,7 +144,15 @@ public class LobbyScreen extends MenuScreen{
 		
 		Label rounds = new Label("Rondas: ", getSkin());
 		table.add(rounds).minWidth(40).minHeight(50);
-		TextField txtRounds = new TextField("", getSkin());
+		txtRounds = new TextField("", getSkin());
+		txtRounds.setTextFieldFilter(new TextFieldFilter(){
+			
+			@Override
+			public boolean acceptChar(TextField textField, char c) {
+				return Character.isDigit(c);
+			}
+			
+		});
 		txtRounds.setMaxLength(1);
 		txtRounds.setText("1");
 		table.add(txtRounds).maxWidth(60);
@@ -153,7 +164,7 @@ public class LobbyScreen extends MenuScreen{
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
 				setMaxPlayers(playersList);
 				setArena(mapsList);
-				screenManager.getTestClient().sendGameRulesUpdate(new GameRules(level, totalPlayers, 0, 30), SecurityUtility.getAdminToken());
+				screenManager.getTestClient().sendGameRulesUpdate(new GameRules(level, totalPlayers, 0, 30, Integer.parseInt(txtRounds.getText())), SecurityUtility.getAdminToken());
 				return false;
 			}
 		});
@@ -270,6 +281,8 @@ public class LobbyScreen extends MenuScreen{
 		playersList.setSelectedIndex(getIndexOfMaxPlayersList(lobbyState.getMaxPlayersPerTeam() * 2));
 
 		mapsList.setSelectedIndex(getMapIndex(lobbyState.getGameRules().getArenaPath()));
+		
+		txtRounds.setText(Integer.toString(lobbyState.getGameRules().getRounds()));
 	}
 
 	@Override
@@ -280,6 +293,5 @@ public class LobbyScreen extends MenuScreen{
 	public void updateLobby(LobbyState lobbyState) {
 		this.lobbyState = lobbyState;
 		applyLobbyStateToScene();
-		// Redibuja como sea oportuno
 	}
 }

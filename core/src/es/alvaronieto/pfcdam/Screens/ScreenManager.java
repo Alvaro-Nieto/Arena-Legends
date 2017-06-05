@@ -27,7 +27,16 @@ public class ScreenManager implements ClientListener {
 	private SearchScreen searchScreen;
 	private LobbyScreen lobbyScreen;
 	
-	public enum Screens{TitleScreen, ModeScreen, MainScreen, PlayScreen, CharSelectionScreen, SearchScreen, LobbyScreen};
+	public enum Screens{
+		TitleScreen, 
+		ModeScreen, 
+		MainScreen, 
+		PlayScreen, 
+		CharSelectionScreen, 
+		SearchScreen, 
+		LobbyScreen
+	};
+	
 	private Screens currentScreen;
 	private long lastSnap = Long.MIN_VALUE;
 	
@@ -79,7 +88,7 @@ public class ScreenManager implements ClientListener {
 
 	@Override
 	public void newPlayerConnected(long userID) {
-		System.out.println("alguien m·s en el lobby");
+		System.out.println("alguien m√°s en el lobby");
 		/*if(currentScreen == Screens.PlayScreen){
 			playScreen.newNetworkPlayer(playerState);
 		}*/
@@ -109,8 +118,7 @@ public class ScreenManager implements ClientListener {
 		        public void run() {
 		        	searchScreen.addEntry(name, gameRules, connectedPlayers, ipAddress);
 		        }
-			});
-			
+			});	
 		}
 	}
 	
@@ -203,31 +211,37 @@ public class ScreenManager implements ClientListener {
 	public void setMainScreen(MainScreen mainScreen) {
 		this.mainScreen = mainScreen;
 	}
+	
 	public ModeScreen getModeScreen(){
 		return modeScreen;
 	}
+	
 	public void setModeScreen(ModeScreen modeScreen){
 		this.modeScreen=modeScreen;
 	}
+	
 	public CharSelectionScreen getCharSelectionScreen(){
 		return charSelectionScreen;
 	}
+	
 	public void setCharSelectionScreen(CharSelectionScreen charSelectionScreen){
 		this.charSelectionScreen = charSelectionScreen;
 	}
+	
 	public SearchScreen getSearchScreen(){
 		return searchScreen;
 	}
+	
 	public void setSearchScreen(SearchScreen searchScreen){
 		this.searchScreen = searchScreen;
 	}
+	
 	public LobbyScreen getLobbyScreen(){
 		return lobbyScreen;
 	}
+	
 	public void setLobbyScreen(LobbyScreen lobbyScreen){
 		this.lobbyScreen = lobbyScreen;
 	}
 
-	
-	
 }

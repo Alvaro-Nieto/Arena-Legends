@@ -42,7 +42,7 @@ public abstract class MenuScreen implements Screen {
 	
 	public void update(float dt) {
 		gamecam.update();
-		stage.act();
+		stage.act(dt);
 	}
 	
 	@Override

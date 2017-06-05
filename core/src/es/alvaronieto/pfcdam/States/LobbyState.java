@@ -17,7 +17,7 @@ public class LobbyState {
 
 	public LobbyState() {
 		this.gameRules = GameRules.getDefault();
-		this.slots = new HashMap<>();
+		this.slots = new HashMap<Long, PlayerSlot>();
 		this.maxPlayersPerTeam = gameRules.getMaxPlayers() / 2;
 		this.playersTeam1 = 0;
 		this.playersTeam2 = 0;

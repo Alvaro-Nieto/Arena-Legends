@@ -20,7 +20,7 @@ import es.alvaronieto.pfcdam.Util.Constants;
 import es.alvaronieto.pfcdam.Util.Resources;
 
 /*
- * Clase que se encarga de mostrar el menú de pausa in-game
+ * Clase que se encarga de mostrar el menÃº de pausa in-game
  */
 
 public class PauseMenu implements Disposable{
@@ -62,7 +62,7 @@ public class PauseMenu implements Disposable{
 		btnExit.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-				Gdx.app.exit(); //TODO Cuando esté el lobby completado hacer que vuelva a él
+				Gdx.app.exit(); //TODO Cuando estÃ© el lobby completado hacer que vuelva a ï¿½l
 				return false;
 			}
 		});

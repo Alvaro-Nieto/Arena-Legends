@@ -44,6 +44,7 @@ project(":core") {
         compile "net.dermetfan.libgdx-utils:libgdx-utils:0.13.4"
         compile "net.dermetfan.libgdx-utils:libgdx-utils-box2d:0.13.4"
         compile "com.esotericsoftware:kryonet:2.22.0-RC1"
+        compile "com.strongjoshua:libgdx-inGameConsole:0.5.3"
     }
 }
 

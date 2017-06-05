@@ -3,6 +3,8 @@ package es.alvaronieto.pfcdam.Screens;
 import static es.alvaronieto.pfcdam.Util.Constants.PPM;
 import static es.alvaronieto.pfcdam.Util.Constants.STEP;
 import static es.alvaronieto.pfcdam.Util.Constants.TRUEMOBALL;
+import static es.alvaronieto.pfcdam.Util.Constants.V_HEIGHT;
+import static es.alvaronieto.pfcdam.Util.Constants.V_WIDTH;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +28,9 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.strongjoshua.console.CommandExecutor;
+import com.strongjoshua.console.Console;
+import com.strongjoshua.console.GUIConsole;
 
 import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.Input.InputManager;
@@ -85,6 +90,10 @@ public class PlayScreen implements Screen {
 	private List<TruemoBall> balls;
 	private float skill1CD = 0.5f;
 	private float timeSinceSkill1 = skill1CD+1;
+	private boolean drawDebugBoxes = false;
+	private boolean drawHud = true;
+
+	private Console console;
 	
 	public PlayScreen(ScreenManager screenManager, long userID, GameState gameState) {
 		this.screenManager = screenManager;
@@ -98,7 +107,7 @@ public class PlayScreen implements Screen {
         
         // SET CAMERA
         gamecam = new OrthographicCamera();
-        gamePort = new FitViewport(Gdx.graphics.getWidth() / PPM,Gdx.graphics.getHeight() / PPM, gamecam);
+        gamePort = new FitViewport(V_WIDTH / PPM, V_HEIGHT / PPM, gamecam);
         gamecam.position.set(game.getMapWidth() / 2 ,game.getMapHeight() / 2, 0);
         
         b2dr = new Box2DDebugRenderer();
@@ -121,6 +130,14 @@ public class PlayScreen implements Screen {
         sr.setAutoShapeType(true);
         
         game.start();
+        
+        console = new GUIConsole();
+        console.setCommandExecutor(new CommandExecutor(){
+        	public void toggleDebug() {
+        		drawDebugBoxes = !drawDebugBoxes;
+        	}
+        });
+        console.setDisplayKeyID(Input.Keys.F1);
 	}
 	
 	private void createCollisionListener() {
@@ -162,6 +179,7 @@ public class PlayScreen implements Screen {
 		timeSinceSkill1 += dt;
 		accumulator += dt;
 		if(dt > 0.30f) dt = 0.30f;
+		handleInstantInput(dt);
 		while(accumulator >= STEP) {
 			tick(dt);
 			accumulator -= STEP;
@@ -274,7 +292,17 @@ public class PlayScreen implements Screen {
 			}
 		}
 		
+		
+	}
+
+	private void handleInstantInput(float dt) {
 		// Debug HUD
+		if(Gdx.input.isKeyJustPressed(Input.Keys.F8))
+        	drawDebugBoxes  = !drawDebugBoxes;
+		
+		//if(Gdx.input.isKeyJustPressed(Input.Keys.F9))
+        	//
+			
 		if(Gdx.input.isKeyJustPressed(Input.Keys.F10))
         	debugHud.toggleFPS();
 		
@@ -344,21 +372,30 @@ public class PlayScreen implements Screen {
         
         game.getMapRenderer().render();
         
-        b2dr.render(game.getWorld(), gamecam.combined);
-        
         juego.batch.setProjectionMatrix(gamecam.combined);
         juego.batch.begin();
         drawAllPlayers();
         drawBalls();
         juego.batch.end();
-        drawGhost();
         
-    	juego.batch.setProjectionMatrix(debugHud.getProjectionMatrix());
+        if(drawDebugBoxes){
+        	b2dr.render(game.getWorld(), gamecam.combined);
+            drawGhost();
+        }
+        
+        juego.batch.setProjectionMatrix(debugHud.getProjectionMatrix());
         debugHud.draw();
         juego.batch.setProjectionMatrix(pauseMenu.getProjectionMatrix());
         pauseMenu.draw();
-        juego.batch.setProjectionMatrix(hud.getProjectionMatrix());
-        hud.draw();
+        
+        if(drawHud ){
+            juego.batch.setProjectionMatrix(hud.getProjectionMatrix());
+            hud.draw();
+        }
+        
+        console.draw();
+        
+    	
 	}
 
 	/*

@@ -63,7 +63,7 @@ public class TestServer extends Listener {
 	//
 	private Random rnd;
 	private SimpleDateFormat dateFormat;
-	private final int MAX_CLIENTS;
+	//private final int MAX_CLIENTS;
 	
 	private boolean gameStarted;
 	
@@ -80,9 +80,9 @@ public class TestServer extends Listener {
 		clients = new HashMap<Long, ConnectedClient>();
 		server = new Server();
 		
-		this.initialPlayerStates = new HashMap<>();
+		this.initialPlayerStates = new HashMap<Long, PlayerState>();
 		
-		MAX_CLIENTS = gameRules.getMaxPlayers();
+		//MAX_CLIENTS = gameRules.getMaxPlayers();
 		//game = new Game(gameRules);
 		
 		//
@@ -193,7 +193,7 @@ public class TestServer extends Listener {
 	}
 
 	private void processConnectionRequest(Connection connection, Packet02ConnectionRequest request) {
-		if(clients.size() >= MAX_CLIENTS)
+		if(clients.size() >=  lobbyState.getMaxPlayersPerTeam()*2)
 			rejectConnection(connection);
 		else {
 			acceptConnection(connection, request.adminToken == this.adminToken);
@@ -250,7 +250,7 @@ public class TestServer extends Listener {
 		Packet04ConnectionRejected rejected = new Packet04ConnectionRejected();
 		rejected.timeStamp = new Date().getTime();
 		// TODO
-		System.out.println("[S] Conexión rechazada a un cliente");
+		System.out.println("[S] ConexiÃ³n rechazada a un cliente");
 		connection.close();
 	}
 
@@ -325,4 +325,6 @@ public class TestServer extends Listener {
 			;
 		return userID;
 	}
+	
+	
 }
