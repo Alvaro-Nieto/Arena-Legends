@@ -2,6 +2,9 @@ package es.alvaronieto.pfcdam.gameobjects;
 
 import static es.alvaronieto.pfcdam.Util.Constants.*;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -23,9 +26,11 @@ public class Player implements Disposable {
 	private Body body;
 	private long userID;
 	private Sprite sprite;
-	private TextureRegion truenoStand;
+	private TextureRegion[] truenoStand;
 	private String pj;
 	private Vector2 position;
+	private Animation animation;
+	private float enlapsedTime;
 	
 	private int health;
 	private int maxHealth;
@@ -43,9 +48,15 @@ public class Player implements Disposable {
 		
 		TextureAtlas atlas = Resources.getInstance().getTruemoAtlas();
 		this.sprite = new Sprite(atlas.findRegion(pj+"stand"));
-		truenoStand = new TextureRegion(atlas.findRegion(pj+"stand"));
+		
+		truenoStand = new TextureRegion[4];
+		truenoStand[0] = new TextureRegion(atlas.findRegion(pj+"fist"));
+		truenoStand[1] = new TextureRegion(atlas.findRegion(pj+"stand"));
+		truenoStand[2] = new TextureRegion(atlas.findRegion(pj+"walk1"));
+		truenoStand[3] = new TextureRegion(atlas.findRegion(pj+"walk2"));
 		sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
-		sprite.setRegion(truenoStand);
+		sprite.setRegion(truenoStand[1]);
+		animation = new Animation(1f/4f, truenoStand);
 		game.addPlayer(this);
 	}
 	
@@ -75,6 +86,7 @@ public class Player implements Disposable {
 	}
 	
 	public void update(){
+		enlapsedTime+=Gdx.graphics.getDeltaTime();
 		this.setPosition(getBodyPosition());
 	}
 	
@@ -109,7 +121,9 @@ public class Player implements Disposable {
 
 	public void draw(Batch batch){
 		//if(sprite != null)
-			sprite.draw(batch);
+			//sprite.draw(batch);
+			batch.draw((TextureRegion)animation.getKeyFrame(enlapsedTime, true), position.x, position.y, 2, 2,
+					sprite.getWidth(), sprite.getHeight(), sprite.getScaleX(), sprite.getScaleY(), 0);
 	}
 
 	
