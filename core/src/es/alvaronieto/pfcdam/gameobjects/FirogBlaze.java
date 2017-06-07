@@ -1,7 +1,7 @@
 package es.alvaronieto.pfcdam.gameobjects;
 
 import static es.alvaronieto.pfcdam.Util.Constants.PPM;
-import static es.alvaronieto.pfcdam.Util.Constants.TRUEMOTHUNDER;
+import static es.alvaronieto.pfcdam.Util.Constants.FIROGBLAZE;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -15,7 +15,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import es.alvaronieto.pfcdam.Util.Resources;
 
-public class Thunderbolt {
+public class FirogBlaze {
 	
 	private Body body;
 	private Sprite sprite;
@@ -25,7 +25,7 @@ public class Thunderbolt {
 	private boolean disposed = false;
 	private boolean shouldDispose = false;
 	
-	public Thunderbolt(Game game, Vector2 position){
+	public FirogBlaze(Game game, Vector2 position){
 			this.world = game.getWorld();
 			BodyDef bdef = new BodyDef();	
 			CircleShape shape = new CircleShape();
@@ -38,13 +38,13 @@ public class Thunderbolt {
 			fdef.shape = shape;
 			
 			body = world.createBody(bdef);
-			body.setUserData(TRUEMOTHUNDER);
+			body.setUserData(FIROGBLAZE);
 			body.createFixture(fdef);	
 			
 			
 
 			TextureAtlas atlas = Resources.getInstance().getTruemoAtlas();
-			this.sprite = new Sprite(atlas.findRegion(TRUEMOTHUNDER+"1"));
+			this.sprite = new Sprite(atlas.findRegion(FIROGBLAZE+"1"));
 			sprite.setBounds(0, 0, 32 / PPM, 32 / PPM);	
 		}
 

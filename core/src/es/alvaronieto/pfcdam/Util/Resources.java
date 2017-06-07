@@ -10,10 +10,12 @@ public class Resources {
 
 	private static Resources resources;
 	private TextureAtlas truemoAtlas;
+	private TextureAtlas firogAtlas;
 	private Skin skin;
 	
 	private Resources(){
 		this.truemoAtlas = new TextureAtlas("truemo.pack");
+		this.firogAtlas = new TextureAtlas("firog.pack");
 		this.skin = new Skin(Gdx.files.internal("ui/star-soldier-ui.json"));
 	}
 	
@@ -25,6 +27,9 @@ public class Resources {
 	
 	public TextureAtlas getTruemoAtlas(){
 		return this.truemoAtlas;
+	}
+	public TextureAtlas getFirogAtlas(){
+		return this.firogAtlas;
 	}
 
 	public Skin getSkin() {

@@ -138,88 +138,151 @@ public class Player implements Disposable {
 			sprite.setRegion(stand[1]);
 			animation = new Animation(1f/4f, stand);
 		}else if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
-			if(Gdx.input.isKeyJustPressed(20)){
-				stand = new TextureRegion[1];
-				stand[0] = new TextureRegion(atlas.findRegion(pj+"fistdown"));
-				sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
-				sprite.setRegion(stand[0]);
-				animation = new Animation(1f/4f, stand);
-			}
-			if(Gdx.input.isKeyJustPressed(19)){
-				stand = new TextureRegion[1];
-				stand[0] = new TextureRegion(atlas.findRegion(pj+"fistup"));
-				sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
-				sprite.setRegion(stand[0]);
-				animation = new Animation(1f/4f, stand);
-			}
-			if(Gdx.input.isKeyJustPressed(21)){
-				stand = new TextureRegion[1];
-				stand[0] = new TextureRegion(atlas.findRegion(pj+"fistrigth"));
-				stand[0].flip(true, false);
-				sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
-				sprite.setRegion(stand[0]);
-				animation = new Animation(1f/4f, stand);
-			}if(Gdx.input.isKeyJustPressed(22)){
-				stand = new TextureRegion[1];
-				stand[0] = new TextureRegion(atlas.findRegion(pj+"fistrigth"));
-				sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
-				sprite.setRegion(stand[0]);
-				animation = new Animation(1f/4f, stand);
+			System.out.println(pj);
+			if(pj.equals("truemo")){
+				if(Gdx.input.isKeyJustPressed(20)){
+					stand = new TextureRegion[1];
+					stand[0] = new TextureRegion(atlas.findRegion(pj+"fistdown"));
+					sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
+					sprite.setRegion(stand[0]);
+					animation = new Animation(1f/4f, stand);
+				}
+				if(Gdx.input.isKeyJustPressed(19)){
+					stand = new TextureRegion[1];
+					stand[0] = new TextureRegion(atlas.findRegion(pj+"fistup"));
+					sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
+					sprite.setRegion(stand[0]);
+					animation = new Animation(1f/4f, stand);
+				}
+				if(Gdx.input.isKeyJustPressed(21)){
+					stand = new TextureRegion[1];
+					stand[0] = new TextureRegion(atlas.findRegion(pj+"fistrigth"));
+					stand[0].flip(true, false);
+					sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
+					sprite.setRegion(stand[0]);
+					animation = new Animation(1f/4f, stand);
+				}if(Gdx.input.isKeyJustPressed(22)){
+					stand = new TextureRegion[1];
+					stand[0] = new TextureRegion(atlas.findRegion(pj+"fistrigth"));
+					sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
+					sprite.setRegion(stand[0]);
+					animation = new Animation(1f/4f, stand);
+				}
+			}else if(pj.equals("firog")){
+				if(Gdx.input.isKeyJustPressed(20)){
+					stand = new TextureRegion[1];
+					stand[0] = new TextureRegion(atlas.findRegion(pj+"ascuadown"));
+					sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
+					sprite.setRegion(stand[0]);
+					animation = new Animation(1f/4f, stand);
+				}
+				if(Gdx.input.isKeyJustPressed(19)){
+					stand = new TextureRegion[1];
+					stand[0] = new TextureRegion(atlas.findRegion(pj+"ascuaup"));
+					sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
+					sprite.setRegion(stand[0]);
+					animation = new Animation(1f/4f, stand);
+				}
+				if(Gdx.input.isKeyJustPressed(21)){
+					stand = new TextureRegion[1];
+					stand[0] = new TextureRegion(atlas.findRegion(pj+"ascuarigth"));
+					stand[0].flip(true, false);
+					sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
+					sprite.setRegion(stand[0]);
+					animation = new Animation(1f/4f, stand);
+				}if(Gdx.input.isKeyJustPressed(22)){
+					stand = new TextureRegion[1];
+					stand[0] = new TextureRegion(atlas.findRegion(pj+"ascuarigth"));
+					sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
+					sprite.setRegion(stand[0]);
+					animation = new Animation(1f/4f, stand);
+				}
 			}
 		}else if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT)){
-			if(Gdx.input.isKeyJustPressed(20)){
-				stand = new TextureRegion[1];
-				stand[0] = new TextureRegion(atlas.findRegion(pj+"stormdown"));
-				sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
-				sprite.setRegion(stand[0]);
-				animation = new Animation(1f/4f, stand);
-			}
-			if(Gdx.input.isKeyJustPressed(19)){
-				stand = new TextureRegion[1];
-				stand[0] = new TextureRegion(atlas.findRegion(pj+"stormup"));
-				sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
-				sprite.setRegion(stand[0]);
-				animation = new Animation(1f/4f, stand);
-			}
-			if(Gdx.input.isKeyJustPressed(21)){
-				stand = new TextureRegion[1];
-				stand[0] = new TextureRegion(atlas.findRegion(pj+"stormrigth"));
-				stand[0].flip(true, false);
-				sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
-				sprite.setRegion(stand[0]);
-				animation = new Animation(1f/4f, stand);
-			}if(Gdx.input.isKeyJustPressed(22)){
-				stand = new TextureRegion[1];
-				stand[0] = new TextureRegion(atlas.findRegion(pj+"stormrigth"));
-				sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
-				sprite.setRegion(stand[0]);
-				animation = new Animation(1f/4f, stand);
+			if(pj.equals("truemo")){
+				if(Gdx.input.isKeyJustPressed(20)){
+					stand = new TextureRegion[1];
+					stand[0] = new TextureRegion(atlas.findRegion(pj+"stormdown"));
+					sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
+					sprite.setRegion(stand[0]);
+					animation = new Animation(1f/4f, stand);
+				}
+				if(Gdx.input.isKeyJustPressed(19)){
+					stand = new TextureRegion[1];
+					stand[0] = new TextureRegion(atlas.findRegion(pj+"stormup"));
+					sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
+					sprite.setRegion(stand[0]);
+					animation = new Animation(1f/4f, stand);
+				}
+				if(Gdx.input.isKeyJustPressed(21)){
+					stand = new TextureRegion[1];
+					stand[0] = new TextureRegion(atlas.findRegion(pj+"stormrigth"));
+					stand[0].flip(true, false);
+					sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
+					sprite.setRegion(stand[0]);
+					animation = new Animation(1f/4f, stand);
+				}if(Gdx.input.isKeyJustPressed(22)){
+					stand = new TextureRegion[1];
+					stand[0] = new TextureRegion(atlas.findRegion(pj+"stormrigth"));
+					sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
+					sprite.setRegion(stand[0]);
+					animation = new Animation(1f/4f, stand);
+				}
+			}else if(pj.equals("firog")){
+				if(Gdx.input.isKeyJustPressed(20)){
+					stand = new TextureRegion[1];
+					stand[0] = new TextureRegion(atlas.findRegion(pj+"ascuadown"));
+					sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
+					sprite.setRegion(stand[0]);
+					animation = new Animation(1f/4f, stand);
+				}
+				if(Gdx.input.isKeyJustPressed(19)){
+					stand = new TextureRegion[1];
+					stand[0] = new TextureRegion(atlas.findRegion(pj+"ascuaup"));
+					sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
+					sprite.setRegion(stand[0]);
+					animation = new Animation(1f/4f, stand);
+				}
+				if(Gdx.input.isKeyJustPressed(21)){
+					stand = new TextureRegion[1];
+					stand[0] = new TextureRegion(atlas.findRegion(pj+"ascuarigth"));
+					stand[0].flip(true, false);
+					sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
+					sprite.setRegion(stand[0]);
+					animation = new Animation(1f/4f, stand);
+				}if(Gdx.input.isKeyJustPressed(22)){
+					stand = new TextureRegion[1];
+					stand[0] = new TextureRegion(atlas.findRegion(pj+"ascuarigth"));
+					sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
+					sprite.setRegion(stand[0]);
+					animation = new Animation(1f/4f, stand);
+				}
 			}
 		}else{
 			if(Gdx.input.isKeyJustPressed(20)){
 				stand = new TextureRegion[1];
-				stand[0] = new TextureRegion(atlas.findRegion(pj+"stormdown"));
+				stand[0] = new TextureRegion(atlas.findRegion(pj+"standdown"));
 				sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
 				sprite.setRegion(stand[0]);
 				animation = new Animation(1f/4f, stand);
 			}
 			if(Gdx.input.isKeyJustPressed(19)){
 				stand = new TextureRegion[1];
-				stand[0] = new TextureRegion(atlas.findRegion(pj+"stormup"));
+				stand[0] = new TextureRegion(atlas.findRegion(pj+"standup"));
 				sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
 				sprite.setRegion(stand[0]);
 				animation = new Animation(1f/4f, stand);
 			}
 			if(Gdx.input.isKeyJustPressed(21)){
 				stand = new TextureRegion[1];
-				stand[0] = new TextureRegion(atlas.findRegion(pj+"stormrigth"));
+				stand[0] = new TextureRegion(atlas.findRegion(pj+"standrigth"));
 				stand[0].flip(true, false);
 				sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
 				sprite.setRegion(stand[0]);
 				animation = new Animation(1f/4f, stand);
 			}if(Gdx.input.isKeyJustPressed(22)){
 				stand = new TextureRegion[1];
-				stand[0] = new TextureRegion(atlas.findRegion(pj+"stormrigth"));
+				stand[0] = new TextureRegion(atlas.findRegion(pj+"standrigth"));
 				sprite.setBounds(0, 0, 32 / Constants.PPM, 32 / Constants.PPM);
 				sprite.setRegion(stand[0]);
 				animation = new Animation(1f/4f, stand);
@@ -230,6 +293,10 @@ public class Player implements Disposable {
 	private void defineByPj(String pj) {
 		switch(pj){
 			case TRUEMO: 
+				maxHealth = 100;
+				health = maxHealth;
+				break;
+			case FIROG:
 				maxHealth = 100;
 				health = maxHealth;
 				break;

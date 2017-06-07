@@ -2,6 +2,9 @@ package es.alvaronieto.pfcdam.Util;
 
 public class Constants {
 	public static final String TRUEMO = "truemo";
+	public static final String FIROG = "firog";
+	public static final String FIROGEMBER = "firogember";
+	public static final String FIROGBLAZE = "firogblaze";
 	public static final String TRUEMOBALL = "truemoball";
 	public static final String TRUEMOTHUNDER = "truemothunder";
 	public static final int V_WIDTH = 1280;
