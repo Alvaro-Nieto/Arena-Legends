@@ -42,6 +42,7 @@ import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.gameobjects.Game;
 import es.alvaronieto.pfcdam.gameobjects.Player;
+import es.alvaronieto.pfcdam.gameobjects.Thunderbolt;
 import es.alvaronieto.pfcdam.gameobjects.TruemoBall;
 
 public class PlayScreen implements Screen {
@@ -88,6 +89,7 @@ public class PlayScreen implements Screen {
 	
 	// Skills TEMP
 	private List<TruemoBall> balls;
+	private List<Thunderbolt> thunders;
 	private float skill1CD = 0.5f;
 	private float timeSinceSkill1 = skill1CD+1;
 	private boolean drawDebugBoxes = false;
@@ -100,6 +102,7 @@ public class PlayScreen implements Screen {
         this.juego = screenManager.getJuego();
         
         this.balls = new ArrayList<TruemoBall>();
+        this.thunders = new ArrayList<Thunderbolt>();
         this.currentTick = 0;
         
         // Game
@@ -216,6 +219,10 @@ public class PlayScreen implements Screen {
 		for(TruemoBall ball : balls)
 			ball.update(dt);
 	}
+	private void updateAllThunders(float dt){
+		for(Thunderbolt bolt : thunders)
+			bolt.update(dt);
+	}
 
 	private void updateAllPlayers(float dt) {
 		HashMap<Long, Player> players =  game.getPlayers();
@@ -331,6 +338,17 @@ public class PlayScreen implements Screen {
 
 		balls.add(tball);
 	}
+	private void boltTest(float dt) {
+		Vector2 position = player.getBodyPosition();
+		Vector3 click = gamecam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+		Vector2 dir = new Vector2(click.x - position.x, click.y - position.y);
+		dir.nor();
+		
+		Thunderbolt tbolt = new Thunderbolt(game, new Vector2(position.x+dir.x*40/PPM, position.y+dir.y*40/PPM));
+		tbolt.getBody().setLinearVelocity(dir.scl(5f));
+
+		thunders.add(tbolt);
+	}
 
 	private void moveFreeCamera(float dt) {
 		float mapHeight = game.getMapHeight();
@@ -421,6 +439,11 @@ public class PlayScreen implements Screen {
 		for(TruemoBall ball : balls){
 			ball.draw(juego.batch);
 		}		
+	}
+	private void drawThunders() {
+		for(Thunderbolt bolt : thunders){
+			bolt.draw(juego.batch);
+		}
 	}
 
 	private void drawAllPlayers() {
