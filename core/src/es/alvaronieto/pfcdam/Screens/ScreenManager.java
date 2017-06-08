@@ -74,18 +74,14 @@ public class ScreenManager implements ClientListener {
 
 	@Override
 	public void startGame(final PlayerState playerState, final GameState gameState) {
-		
 		Gdx.app.postRunnable(new Runnable() {
 	        @Override
 	        public void run() {
-	        	screenManager.setPlayScreen(new PlayScreen(screenManager, playerState.getUserID(), gameState));
-	        	screenManager.setCurrentScreen(Screens.PlayScreen);
-	        	screenManager.getScreen().dispose();
-	        	screenManager.setScreen(screenManager.getPlayScreen());
+	        	screenManager.showPlayScreen(playerState.getUserID(), gameState);
 	        }
 		});
 	}
-
+	
 	@Override
 	public void newPlayerConnected(long userID) {
 		System.out.println("alguien más en el lobby");
@@ -127,14 +123,11 @@ public class ScreenManager implements ClientListener {
 		Gdx.app.postRunnable(new Runnable() {
 	        @Override
 	        public void run() {
-	        	screenManager.lobbyScreen = new LobbyScreen(ScreenManager.getInstance(), admin, lobbyState, userID);
-	        	screenManager.setCurrentScreen(Screens.LobbyScreen);
-	        	screenManager.getScreen().dispose();
-	        	screenManager.setScreen(screenManager.getLobbyScreen());
+	        	screenManager.showLobbyScreen(admin, lobbyState, userID);
 	        }
 		});
 	}
-	
+
 	@Override
 	public void lobbyUpdate(final LobbyState lobbyState) {
 		Gdx.app.postRunnable(new Runnable() {
@@ -145,39 +138,6 @@ public class ScreenManager implements ClientListener {
 	    		}
 	        }
 		});
-		
-	}
-
-	public void setScreen(Screen screen) {
-		juego.setScreen(screen);
-	}
-
-	public Screen getScreen() {
-		return juego.getScreen();
-	}
-	
-	public TestServer getServer() {
-		return server;
-	}
-
-	public void setServer(TestServer server) {
-		this.server = server;
-	}
-
-	public PlayScreen getPlayScreen() {
-		return playScreen;
-	}
-
-	public void setPlayScreen(PlayScreen playScreen) {
-		this.playScreen = playScreen;
-	}
-
-	public Screens getCurrentScreen() {
-		return currentScreen;
-	}
-
-	public void setCurrentScreen(Screens currentScreen) {
-		this.currentScreen = currentScreen;
 	}
 
 	public Juego getJuego() {
@@ -192,71 +152,50 @@ public class ScreenManager implements ClientListener {
 		return testClient;
 	}
 
-	public void setTestClient(TestClient testClient) {
-		this.testClient = testClient;
-	}
-	
-	public TitleScreen getTitleScreen() {
-		return titleScreen;
-	}
-
-	public void setTitleScreen(TitleScreen titleScreen) {
-		this.titleScreen = titleScreen;
-	}
-
-	public MainScreen getMainScreen() {
-		return mainScreen;
-	}
-
-	public void setMainScreen(MainScreen mainScreen) {
-		this.mainScreen = mainScreen;
-	}
-	
-	public ModeScreen getModeScreen(){
-		return modeScreen;
-	}
-	
-	public void setModeScreen(ModeScreen modeScreen){
-		this.modeScreen=modeScreen;
-	}
-	
-	public CharSelectionScreen getCharSelectionScreen(){
-		return charSelectionScreen;
-	}
-	
-	public void setCharSelectionScreen(CharSelectionScreen charSelectionScreen){
-		this.charSelectionScreen = charSelectionScreen;
-	}
-	
-	public SearchScreen getSearchScreen(){
-		return searchScreen;
-	}
-	
-	public void setSearchScreen(SearchScreen searchScreen){
-		this.searchScreen = searchScreen;
-	}
-	
-	public LobbyScreen getLobbyScreen(){
-		return lobbyScreen;
-	}
-	
-	public void setLobbyScreen(LobbyScreen lobbyScreen){
-		this.lobbyScreen = lobbyScreen;
-	}
-	
 	public void showTitleScreen(){
 		juego.getScreen().dispose();
 		this.titleScreen = new TitleScreen(this);
+		currentScreen = Screens.TitleScreen;
 		juego.setScreen(titleScreen);
 	}
-	/*
-	TitleScreen, 
-	ModeScreen, 
-	MainScreen, 
-	PlayScreen, 
-	CharSelectionScreen, 
-	SearchScreen, 
-	LobbyScreen
-	*/
+	
+	public void showModeScreen(){
+		juego.getScreen().dispose();
+		modeScreen = new ModeScreen(this);
+    	currentScreen = Screens.ModeScreen;
+    	juego.setScreen(modeScreen);
+	}
+
+	public void showMainScreen() {
+		juego.getScreen().dispose();
+		mainScreen = new MainScreen(this);
+    	currentScreen = Screens.MainScreen;
+    	juego.setScreen(mainScreen);
+	}
+
+	public void showSearchScreen() {
+		juego.getScreen().dispose();
+		searchScreen = new SearchScreen(this);
+    	currentScreen = Screens.SearchScreen;
+    	juego.setScreen(searchScreen);
+	}
+	
+	protected void showLobbyScreen(boolean admin, LobbyState lobbyState, long userID) {
+		juego.getScreen().dispose();
+		lobbyScreen = new LobbyScreen(this, admin, lobbyState, userID);
+    	currentScreen = Screens.LobbyScreen;
+    	juego.setScreen(lobbyScreen);
+	}
+	
+	private void showPlayScreen(long userID, GameState gameState) {
+		juego.getScreen().dispose();
+		playScreen = new PlayScreen(this, userID, gameState);
+    	currentScreen = Screens.PlayScreen;
+    	juego.setScreen(playScreen);
+	}
+	
+	private void showCharSelectionScreen() {
+		// TODO
+	}
 
 }

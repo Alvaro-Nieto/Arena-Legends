@@ -25,11 +25,7 @@ public class TitleScreen extends MenuScreen {
 	    startBtn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				
-				screenManager.setModeScreen(new ModeScreen(screenManager));
-	        	screenManager.setCurrentScreen(Screens.ModeScreen);
-	        	screenManager.getJuego().getScreen().dispose();
-	        	screenManager.getJuego().setScreen(screenManager.getModeScreen());
+				screenManager.showModeScreen();
 				return false;
 			}
 	    });

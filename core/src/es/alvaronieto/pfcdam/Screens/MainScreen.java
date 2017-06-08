@@ -31,10 +31,7 @@ public class MainScreen extends MenuScreen {
         atrasBtn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				screenManager.setModeScreen(new ModeScreen(screenManager));
-	        	screenManager.setCurrentScreen(Screens.ModeScreen);
-	        	screenManager.getScreen().dispose();
-	        	screenManager.setScreen(screenManager.getModeScreen());
+				screenManager.showModeScreen();
 				return false;
 			}
         });
@@ -51,10 +48,7 @@ public class MainScreen extends MenuScreen {
         clienteBtn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				screenManager.setSearchScreen(new SearchScreen(screenManager));
-	        	screenManager.setCurrentScreen(Screens.SearchScreen);
-	        	screenManager.getScreen().dispose();
-	        	screenManager.setScreen(screenManager.getSearchScreen());
+				screenManager.showSearchScreen();
 				return false;
 				
 			}
@@ -67,11 +61,6 @@ public class MainScreen extends MenuScreen {
 				long adminToken = SecurityUtility.getAdminToken();
 				screenManager.launchGameServer(GameRules.getDefault(), adminToken); // TODO Descomentar
 				screenManager.launchGameClient().connect("localhost", adminToken);
-				
-				/*screenManager.setLobbyScreen(new LobbyScreen(screenManager, true));
-				screenManager.setCurrentScreen(Screens.LobbyScreen);
-				screenManager.getScreen().dispose();
-				screenManager.setScreen(screenManager.getLobbyScreen());*/
 				return false;
 			}
         });

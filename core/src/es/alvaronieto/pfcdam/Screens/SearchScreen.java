@@ -55,10 +55,7 @@ public class SearchScreen extends MenuScreen {
         atrasBtn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				screenManager.setMainScreen(new MainScreen(screenManager));
-	        	screenManager.setCurrentScreen(Screens.MainScreen);
-	        	screenManager.getScreen().dispose();
-	        	screenManager.setScreen(screenManager.getMainScreen());
+				screenManager.showMainScreen();
 				return false;
 			}
         });

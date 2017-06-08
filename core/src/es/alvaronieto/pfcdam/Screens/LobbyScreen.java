@@ -66,10 +66,7 @@ public class LobbyScreen extends MenuScreen{
 		backBtn.addListener(new InputListener(){
 			 @Override
 			 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-				 screenManager.setMainScreen(new MainScreen(screenManager));
-				 screenManager.setCurrentScreen(Screens.LobbyScreen);
-				 screenManager.getScreen().dispose();
-				 screenManager.setScreen(screenManager.getMainScreen());
+				 screenManager.showMainScreen();
 				 return false;
 			 }
 		});
