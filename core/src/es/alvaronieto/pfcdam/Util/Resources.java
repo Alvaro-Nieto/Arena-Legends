@@ -1,5 +1,7 @@
 package es.alvaronieto.pfcdam.Util;
 
+import static es.alvaronieto.pfcdam.Util.Constants.*;
+
 import java.text.SimpleDateFormat;
 
 import com.badlogic.gdx.Gdx;
@@ -30,6 +32,15 @@ public class Resources {
 	}
 	public TextureAtlas getFirogAtlas(){
 		return this.firogAtlas;
+	}
+	
+	public TextureAtlas getPjAtlas(String pj){
+		switch (pj){
+			case FIROG:
+				return getFirogAtlas();
+			default:
+				return getTruemoAtlas();
+		}
 	}
 
 	public Skin getSkin() {

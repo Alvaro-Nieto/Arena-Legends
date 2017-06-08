@@ -24,7 +24,7 @@ firogascuadown
   orig: 32, 32
   offset: 1, 0
   index: -1
-firogascuarigth
+firogascuaright
   rotate: false
   xy: 98, 69
   size: 29, 32
@@ -52,14 +52,14 @@ firogllamaradadown2
   orig: 32, 32
   offset: 1, 0
   index: -1
-firogllamaradarigth1
+firogllamaradaright1
   rotate: false
   xy: 129, 69
   size: 29, 32
   orig: 32, 32
   offset: 2, 0
   index: -1
-firogllamaradarigth2
+firogllamaradaright2
   rotate: false
   xy: 67, 1
   size: 30, 32
@@ -73,7 +73,7 @@ firogstanddown
   orig: 32, 32
   offset: 1, 0
   index: -1
-firogstandrigth
+firogstandright
   rotate: false
   xy: 130, 35
   size: 29, 32
@@ -101,14 +101,14 @@ firogwalkdown2
   orig: 32, 32
   offset: 1, 0
   index: -1
-firogwalkrigth1
+firogwalkright1
   rotate: false
   xy: 131, 1
   size: 29, 32
   orig: 32, 32
   offset: 2, 0
   index: -1
-firogwalkrigth2
+firogwalkright2
   rotate: false
   xy: 160, 69
   size: 29, 32

@@ -232,7 +232,7 @@ public class PlayScreen implements Screen {
 				// TODO interpolating
 			}
 			else
-				player.update();
+				player.update(dt);
 		}
 	}
 

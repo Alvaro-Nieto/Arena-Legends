@@ -1,6 +1,6 @@
 package es.alvaronieto.pfcdam.States;
 
-import static es.alvaronieto.pfcdam.Util.Constants.TRUEMO;
+import static es.alvaronieto.pfcdam.Util.Constants.*;
 
 import java.util.HashMap;
 
@@ -87,7 +87,7 @@ public class LobbyState {
 		if(slots.size() < gameRules.getMaxPlayers() && !slots.containsKey(userID)) {
 			
 			int team = playersTeam1 <= playersTeam2 ? 1 : 2;
-			String pj = TRUEMO;
+			String pj = FIROG;
 			
 			slots.put(userID, new PlayerSlot(team, pj, userID));
 			
