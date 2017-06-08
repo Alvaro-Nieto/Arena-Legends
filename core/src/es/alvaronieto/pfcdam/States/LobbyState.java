@@ -87,7 +87,7 @@ public class LobbyState {
 		if(slots.size() < gameRules.getMaxPlayers() && !slots.containsKey(userID)) {
 			
 			int team = playersTeam1 <= playersTeam2 ? 1 : 2;
-			String pj = FIROG;
+			String pj = TRUEMO;
 			
 			slots.put(userID, new PlayerSlot(team, pj, userID));
 			

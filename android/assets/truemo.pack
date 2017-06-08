@@ -24,7 +24,7 @@ truemofistdown
   orig: 32, 32
   offset: 0, 0
   index: -1
-truemofistrigth
+truemofistright
   rotate: false
   xy: 35, 1
   size: 32, 32
@@ -45,7 +45,7 @@ truemostanddown
   orig: 32, 32
   offset: 0, 0
   index: -1
-truemostandrigth
+truemostandright
   rotate: false
   xy: 69, 1
   size: 32, 32
@@ -66,7 +66,7 @@ truemostormdown
   orig: 32, 32
   offset: 0, 0
   index: -1
-truemostormrigth
+truemostormright
   rotate: false
   xy: 103, 1
   size: 32, 32
@@ -108,14 +108,14 @@ truemowalkdown2
   orig: 32, 32
   offset: 0, 0
   index: -1
-truemowalkrigth1
+truemowalkright1
   rotate: false
   xy: 137, 35
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-truemowalkrigth2
+truemowalkright2
   rotate: false
   xy: 137, 69
   size: 32, 32
