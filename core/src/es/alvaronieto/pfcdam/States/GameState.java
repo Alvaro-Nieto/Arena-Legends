@@ -18,6 +18,12 @@ public class GameState {
 		this();
 		this.gameRules = gameRules;
 	}
+	
+	public GameState(GameRules gameRules, PlayerState playerState){
+		this();
+		this.gameRules = gameRules;
+		playerStates.put(playerState.getUserID(), playerState);
+	}
 
 	public GameState(HashMap<Long, Player> players, GameRules gameRules) {
 		this(gameRules);

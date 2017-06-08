@@ -90,14 +90,13 @@ public class TestClient extends Listener{
 		else if( obj instanceof Packet03ConnectionAccepted ){
 			Packet03ConnectionAccepted accepted = (Packet03ConnectionAccepted)obj;
 			System.out.println("[C] >> " + "Conexión aceptada");
-			clientListener.connectionAccepted(accepted.userID, accepted.lobbyState, accepted.admin);
+			clientListener.connectionAccepted(accepted.userID, accepted.lobbyState, accepted.admin, connection.getRemoteAddressTCP().getHostString());
 			System.out.println("Client: aceptado "+ (accepted.admin ? "con admin" : "sin admin"));
 		}
 		
 		else if( obj instanceof Packet04ConnectionRejected ){
 			Packet04ConnectionRejected rejected = (Packet04ConnectionRejected)obj;
-			System.err.println("[C] >> " + "Conexión rechazada");
-			Gdx.app.exit();
+			clientListener.connectionRejected(connection.getRemoteAddressTCP().getHostString(), rejected.reason);
 		}
 	
 		else if( obj instanceof Packet05ClientConnected ){

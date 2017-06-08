@@ -68,13 +68,13 @@ public class TestServer extends Listener {
 	private boolean gameStarted;
 	
 	private volatile long currentTick;
-	
+	private boolean isDemo;
 
 	private long adminToken;
 
-	public TestServer(GameRules gameRules, long adminToken) {
+	public TestServer(GameRules gameRules, long adminToken, boolean isDemo) {
 		this.adminToken = adminToken;
-		
+		this.isDemo = isDemo;
 		this.lobbyState = new LobbyState(gameRules);
 		
 		clients = new HashMap<Long, ConnectedClient>();
@@ -184,7 +184,7 @@ public class TestServer extends Listener {
 	}
 
 	private void processStartRequest(Packet13StartRequest startRequest) {
-		if(lobbyState.isReadyToStart() && startRequest.adminToken == this.adminToken)
+		if((lobbyState.isReadyToStart() || isDemo ) && startRequest.adminToken == this.adminToken)
 			startGame();
 	}
 
@@ -194,7 +194,7 @@ public class TestServer extends Listener {
 
 	private void processConnectionRequest(Connection connection, Packet02ConnectionRequest request) {
 		if(clients.size() >=  lobbyState.getMaxPlayersPerTeam()*2)
-			rejectConnection(connection);
+			rejectConnection(connection, "Lobby full");
 		else {
 			acceptConnection(connection, request.adminToken == this.adminToken);
 		}
@@ -246,11 +246,11 @@ public class TestServer extends Listener {
 		});
 	}
 
-	private void rejectConnection(Connection connection) {
+	private void rejectConnection(Connection connection, String reason) {
 		Packet04ConnectionRejected rejected = new Packet04ConnectionRejected();
 		rejected.timeStamp = new Date().getTime();
-		// TODO
-		System.out.println("[S] Conexión rechazada a un cliente");
+		rejected.reason = reason;
+		connection.sendUDP(rejected);
 		connection.close();
 	}
 

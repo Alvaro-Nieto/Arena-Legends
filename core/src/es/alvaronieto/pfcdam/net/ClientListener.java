@@ -11,6 +11,7 @@ public interface ClientListener {
 	public void newPlayerConnected(long userID);
 	public void snapShotReceived(long timeStamp, GameState gameState, long sequenceNumber);
 	public void newServerDiscovered(String name, GameRules gameRules, int connectedPlayers, String ipAddress);
-	public void connectionAccepted(long userID, LobbyState lobbyState, boolean admin);
+	public void connectionAccepted(long userID, LobbyState lobbyState, boolean admin, String ipAddress);
+	public void connectionRejected(String ipAddress, String reason);
 	public void lobbyUpdate(LobbyState lobbyState);
 }

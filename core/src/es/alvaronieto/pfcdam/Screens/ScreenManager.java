@@ -2,12 +2,15 @@ package es.alvaronieto.pfcdam.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.strongjoshua.console.Console;
+import com.strongjoshua.console.LogLevel;
 
 import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.LobbyState;
 import es.alvaronieto.pfcdam.States.PlayerState;
+import es.alvaronieto.pfcdam.Util.Resources;
 import es.alvaronieto.pfcdam.net.ClientListener;
 import es.alvaronieto.pfcdam.net.kryoclient.TestClient;
 import es.alvaronieto.pfcdam.net.kryoserver.TestServer;
@@ -26,6 +29,7 @@ public class ScreenManager implements ClientListener {
 	private CharSelectionScreen charSelectionScreen;
 	private SearchScreen searchScreen;
 	private LobbyScreen lobbyScreen;
+	private Console console;
 	
 	public enum Screens{
 		TitleScreen, 
@@ -57,10 +61,15 @@ public class ScreenManager implements ClientListener {
 		titleScreen = new TitleScreen(this);
 		juego.setScreen(titleScreen);
 		currentScreen = Screens.TitleScreen;
+		this.console = Resources.getInstance().getConsole();
 	}
 	
 	public TestServer launchGameServer(GameRules gameRules, long adminToken){
-		return (server = new TestServer(gameRules, adminToken));
+		return (server = new TestServer(gameRules, adminToken, false));
+	}
+	
+	public TestServer launchDemoServer(GameRules gameRules, long adminToken) {
+		return (server = new TestServer(gameRules, adminToken, true));
 	}
 	
 	public TestClient launchGameClient() {
@@ -74,6 +83,7 @@ public class ScreenManager implements ClientListener {
 
 	@Override
 	public void startGame(final PlayerState playerState, final GameState gameState) {
+		console.log("Starting game...");
 		Gdx.app.postRunnable(new Runnable() {
 	        @Override
 	        public void run() {
@@ -119,13 +129,19 @@ public class ScreenManager implements ClientListener {
 	}
 	
 	@Override
-	public void connectionAccepted(final long userID, final LobbyState lobbyState, final boolean admin) {
+	public void connectionAccepted(final long userID, final LobbyState lobbyState, final boolean admin, String ipAddress) {
+		console.log("Succesfuly connected to lobby at "+ipAddress, LogLevel.SUCCESS);
 		Gdx.app.postRunnable(new Runnable() {
 	        @Override
 	        public void run() {
 	        	screenManager.showLobbyScreen(admin, lobbyState, userID);
 	        }
 		});
+	}
+	
+	@Override
+	public void connectionRejected(String ipAddress, String reason) {
+		console.log("Connection rejected from "+ipAddress+": '"+reason+"'", LogLevel.ERROR);
 	}
 
 	@Override
@@ -180,22 +196,24 @@ public class ScreenManager implements ClientListener {
     	juego.setScreen(searchScreen);
 	}
 	
-	protected void showLobbyScreen(boolean admin, LobbyState lobbyState, long userID) {
+	public void showLobbyScreen(boolean admin, LobbyState lobbyState, long userID) {
 		juego.getScreen().dispose();
 		lobbyScreen = new LobbyScreen(this, admin, lobbyState, userID);
     	currentScreen = Screens.LobbyScreen;
     	juego.setScreen(lobbyScreen);
 	}
 	
-	private void showPlayScreen(long userID, GameState gameState) {
+	public void showPlayScreen(long userID, GameState gameState) {
 		juego.getScreen().dispose();
 		playScreen = new PlayScreen(this, userID, gameState);
     	currentScreen = Screens.PlayScreen;
     	juego.setScreen(playScreen);
 	}
 	
-	private void showCharSelectionScreen() {
+	public void showCharSelectionScreen() {
 		// TODO
 	}
+
+
 
 }

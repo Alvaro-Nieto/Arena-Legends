@@ -30,6 +30,7 @@ public class Packets {
 	
 	public static class Packet04ConnectionRejected { 
 		public long timeStamp;
+		public String reason;
 	} 
 	
 	public static class Packet05ClientConnected { 
