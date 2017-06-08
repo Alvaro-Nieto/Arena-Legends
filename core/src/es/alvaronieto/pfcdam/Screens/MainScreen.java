@@ -81,7 +81,7 @@ public class MainScreen extends MenuScreen {
 	}
 
 	@Override
-	protected void postBuild() {
+	protected void beforeBuild() {
 		// TODO Auto-generated method stub
 		
 	}

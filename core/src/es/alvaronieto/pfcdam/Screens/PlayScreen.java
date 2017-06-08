@@ -33,6 +33,7 @@ import com.strongjoshua.console.Console;
 import com.strongjoshua.console.GUIConsole;
 
 import es.alvaronieto.pfcdam.Juego;
+import es.alvaronieto.pfcdam.SecurityUtility;
 import es.alvaronieto.pfcdam.Input.InputManager;
 import es.alvaronieto.pfcdam.Scenes.DebugHud;
 import es.alvaronieto.pfcdam.Scenes.Hud;
@@ -40,6 +41,7 @@ import es.alvaronieto.pfcdam.Scenes.PauseMenu;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
+import es.alvaronieto.pfcdam.Util.Resources;
 import es.alvaronieto.pfcdam.gameobjects.Game;
 import es.alvaronieto.pfcdam.gameobjects.Player;
 import es.alvaronieto.pfcdam.gameobjects.Thunderbolt;
@@ -134,13 +136,19 @@ public class PlayScreen implements Screen {
         
         game.start();
         
-        console = new GUIConsole();
-        console.setCommandExecutor(new CommandExecutor(){
+        console = Resources.getInstance().getConsole();
+        console.resetInputProcessing();
+        /*console.setCommandExecutor(new CommandExecutor(){
         	public void toggleDebug() {
         		drawDebugBoxes = !drawDebugBoxes;
         	}
+        	
+        	public void connect(String address){
+        		ScreenManager.getInstance().launchGameClient().connect(
+        				address, SecurityUtility.getAdminToken());
+        	}
         });
-        console.setDisplayKeyID(Input.Keys.F1);
+        console.setDisplayKeyID(Input.Keys.F1);*/
         
 	}
 	

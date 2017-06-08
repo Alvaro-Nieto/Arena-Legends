@@ -5,8 +5,15 @@ import static es.alvaronieto.pfcdam.Util.Constants.*;
 import java.text.SimpleDateFormat;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.strongjoshua.console.CommandExecutor;
+import com.strongjoshua.console.Console;
+import com.strongjoshua.console.GUIConsole;
+
+import es.alvaronieto.pfcdam.SecurityUtility;
+import es.alvaronieto.pfcdam.Screens.ScreenManager;
 
 public class Resources {
 
@@ -14,11 +21,24 @@ public class Resources {
 	private TextureAtlas truemoAtlas;
 	private TextureAtlas firogAtlas;
 	private Skin skin;
+	private Console console;
 	
 	private Resources(){
 		this.truemoAtlas = new TextureAtlas("truemo.pack");
 		this.firogAtlas = new TextureAtlas("firog.pack");
 		this.skin = new Skin(Gdx.files.internal("ui/star-soldier-ui.json"));
+		this.console = new GUIConsole();
+		console.setCommandExecutor(new CommandExecutor(){
+        	/*public void toggleDebug() {
+        		drawDebugBoxes = !drawDebugBoxes;
+        	}*/
+        	
+        	public void connect(String address){
+        		ScreenManager.getInstance().launchGameClient().connect(
+        				address, SecurityUtility.getAdminToken());
+        	}
+        });
+		this.console.setDisplayKeyID(Input.Keys.F1);
 	}
 	
 	public static synchronized Resources getInstance(){
@@ -45,6 +65,10 @@ public class Resources {
 
 	public Skin getSkin() {
 		return skin;
+	}
+	
+	public Console getConsole(){
+		return this.console;
 	}
 	
 }

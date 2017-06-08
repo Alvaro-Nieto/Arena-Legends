@@ -8,9 +8,11 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.strongjoshua.console.Console;
 
 import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.Util.Constants;
+import es.alvaronieto.pfcdam.Util.Resources;
 
 public abstract class MenuScreen implements Screen {
 	
@@ -20,22 +22,27 @@ public abstract class MenuScreen implements Screen {
     protected Stage stage;
 	private Skin skin;
 	protected ScreenManager screenManager;
+	private Console console;
 	
 	public MenuScreen(final ScreenManager screenManager){
 		this.screenManager = screenManager;
         this.juego = screenManager.getJuego();
         this.skin = new Skin(Gdx.files.internal("ui/star-soldier-ui.json"));
+        this.console = Resources.getInstance().getConsole();
+        
         // SET CAMERA
         gamecam = new OrthographicCamera();
         viewPort = new FitViewport(Constants.V_WIDTH,Constants.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewPort, juego.batch);
         Gdx.input.setInputProcessor(stage);
+        console.resetInputProcessing();
+        beforeBuild();
         buildStage();
-        postBuild();
 	}
 	
 	protected abstract void buildStage();
-	protected abstract void postBuild();
+	protected abstract void beforeBuild();
+	
 	protected Skin getSkin() {
 		return skin;
 	}
@@ -57,10 +64,13 @@ public abstract class MenuScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     	juego.batch.setProjectionMatrix(stage.getCamera().combined);
         stage.draw();
+        console.draw();
 	}
 
 	@Override
 	public void resize(int width, int height) {
+		viewPort.update(width, height, true);
+		console.refresh();
 		viewPort.update(width, height, true);
 	}
 
