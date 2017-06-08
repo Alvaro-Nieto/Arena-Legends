@@ -138,6 +138,7 @@ public class PlayScreen implements Screen {
         	}
         });
         console.setDisplayKeyID(Input.Keys.F1);
+        
 	}
 	
 	private void createCollisionListener() {
@@ -179,7 +180,8 @@ public class PlayScreen implements Screen {
 		timeSinceSkill1 += dt;
 		accumulator += dt;
 		if(dt > 0.30f) dt = 0.30f;
-		handleInstantInput(dt);
+		if(!console.isVisible())
+			handleInstantInput(dt);
 		while(accumulator >= STEP) {
 			tick(dt);
 			accumulator -= STEP;
@@ -200,7 +202,8 @@ public class PlayScreen implements Screen {
 	}
 
 	private void tick(float dt) {
-		handleInput(dt);
+		if(!console.isVisible())
+			handleInput(dt);
 		
 		if(lastSnapshot!=null){
 			applyLastSnapshot();
@@ -429,6 +432,7 @@ public class PlayScreen implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
+		console.refresh();
 		gamePort.update(width, height);
 		pauseMenu.getViewPort().update(width, height);
 		debugHud.getViewPort().update(width, height);
