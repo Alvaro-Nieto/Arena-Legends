@@ -8,7 +8,7 @@ import es.alvaronieto.pfcdam.gameobjects.Player;
 
 public class InputManager {
 
-	private static float v = 0.5f;
+	private static float v = 0.35f;
 	
 	public static void applyInputToPlayer(InputState input, Player player) {
 	

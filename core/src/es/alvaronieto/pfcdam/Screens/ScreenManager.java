@@ -243,5 +243,20 @@ public class ScreenManager implements ClientListener {
 	public void setLobbyScreen(LobbyScreen lobbyScreen){
 		this.lobbyScreen = lobbyScreen;
 	}
+	
+	public void showTitleScreen(){
+		juego.getScreen().dispose();
+		this.titleScreen = new TitleScreen(this);
+		juego.setScreen(titleScreen);
+	}
+	/*
+	TitleScreen, 
+	ModeScreen, 
+	MainScreen, 
+	PlayScreen, 
+	CharSelectionScreen, 
+	SearchScreen, 
+	LobbyScreen
+	*/
 
 }

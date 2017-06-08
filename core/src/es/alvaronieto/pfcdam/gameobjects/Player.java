@@ -128,13 +128,16 @@ public class Player implements Disposable {
 				break;
 		}
 		
-		stateTimer = currentState == previousState ? stateTimer + dt : 0;
+		Vector2 v = body.getLinearVelocity();
+		float sp = Math.abs(v.x) + Math.abs(v.y);
+		
+		stateTimer = currentState == previousState ? stateTimer + dt * sp : 0;
 		previousState = currentState;
 	}
 	
 	private void setCurrentState() {
 		Vector2 velocity = body.getLinearVelocity();
-		if(velocity.x == 0 && velocity.y == 0){
+		if(Math.abs(velocity.x) <= 0.20f && Math.abs(velocity.y) <= 0.20f){
 			if(previousState == State.RUNNING_DOWN)
 				currentState = State.STANDING_DOWN;
 			
