@@ -42,7 +42,7 @@ import es.alvaronieto.pfcdam.net.Packets.Packet15SlotUpdate;
 import es.alvaronieto.pfcdam.net.Packets.Packet16LobbyUpdate;
 import es.alvaronieto.pfcdam.net.Util;
 
-public class TestServer extends Listener {
+public class KryoServer extends Listener {
 	// Connection info
 	int serverPort = SERVER_PORT;
 	
@@ -72,7 +72,7 @@ public class TestServer extends Listener {
 
 	private long adminToken;
 
-	public TestServer(GameRules gameRules, long adminToken, boolean isDemo) {
+	public KryoServer(GameRules gameRules, long adminToken, boolean isDemo) {
 		this.adminToken = adminToken;
 		this.isDemo = isDemo;
 		this.lobbyState = new LobbyState(gameRules);
@@ -196,7 +196,7 @@ public class TestServer extends Listener {
 		if(clients.size() >=  lobbyState.getMaxPlayersPerTeam()*2)
 			rejectConnection(connection, "Lobby full");
 		else {
-			acceptConnection(connection, request.adminToken == this.adminToken);
+			acceptConnection(connection, request.adminToken == this.adminToken, request.clientName);
 		}
 	}
 	
@@ -254,10 +254,10 @@ public class TestServer extends Listener {
 		connection.close();
 	}
 
-	private void acceptConnection(Connection connection, boolean admin) {
+	private void acceptConnection(Connection connection, boolean admin, String clientName) {
 		
 		long userID = getNewUserID();
-		if(lobbyState.newPlayer(userID)){
+		if(lobbyState.newPlayer(userID, clientName)){
 			final Packet03ConnectionAccepted accepted = new Packet03ConnectionAccepted();
 			accepted.userID = userID;
 			accepted.timeStamp = new Date().getTime();

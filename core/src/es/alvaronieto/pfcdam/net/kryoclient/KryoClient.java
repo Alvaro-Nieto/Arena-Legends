@@ -30,9 +30,7 @@ import es.alvaronieto.pfcdam.net.Packets.Packet14GameRulesChangeRequest;
 import es.alvaronieto.pfcdam.net.Packets.Packet16LobbyUpdate;
 import es.alvaronieto.pfcdam.net.Util;
 
-public class TestClient extends Listener{
-	// Connection stuff
-	//String ipAddress = "localhost";
+public class KryoClient extends Listener{
 	
 	// Kryonet stuff
 	private Client client;
@@ -40,8 +38,7 @@ public class TestClient extends Listener{
 	// Game stuff
 	private ClientListener clientListener;
 	
-	
-	public TestClient(ClientListener clientListener){
+	public KryoClient(ClientListener clientListener){
 		this.clientListener = clientListener;
 		client = new Client();
 		client.addListener(this);
@@ -49,12 +46,12 @@ public class TestClient extends Listener{
 		client.start();
 	}
 
-	public void connect(String ipAddress, long adminToken) {
+	public void connect(String ipAddress, long adminToken, String clientName) {
 		try {
 			System.out.println("Client: adminToken->"+adminToken);
 			client.connect(5000, ipAddress, SERVER_PORT, SERVER_PORT);
 			Packet02ConnectionRequest request = new Packet02ConnectionRequest();
-			request.clientName = "NOT DEFINED"; // TODO
+			request.clientName = clientName;
 			request.timeStamp = new Date().getTime();
 			request.adminToken = adminToken;
 			client.sendTCP(request);

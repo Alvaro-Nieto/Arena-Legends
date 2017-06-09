@@ -12,16 +12,16 @@ import es.alvaronieto.pfcdam.States.LobbyState;
 import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.Util.Resources;
 import es.alvaronieto.pfcdam.net.ClientListener;
-import es.alvaronieto.pfcdam.net.kryoclient.TestClient;
-import es.alvaronieto.pfcdam.net.kryoserver.TestServer;
+import es.alvaronieto.pfcdam.net.kryoclient.KryoClient;
+import es.alvaronieto.pfcdam.net.kryoserver.KryoServer;
 
 public class ScreenManager implements ClientListener {
 
 	private static ScreenManager screenManager;
 	
 	private Juego juego;
-	private TestServer server;
-	private TestClient testClient;
+	private KryoServer server;
+	private KryoClient testClient;
 	private TitleScreen titleScreen;
 	private MainScreen mainScreen;
 	private PlayScreen playScreen;
@@ -64,16 +64,16 @@ public class ScreenManager implements ClientListener {
 		this.console = Resources.getInstance().getConsole();
 	}
 	
-	public TestServer launchGameServer(GameRules gameRules, long adminToken){
-		return (server = new TestServer(gameRules, adminToken, false));
+	public KryoServer launchGameServer(GameRules gameRules, long adminToken){
+		return (server = new KryoServer(gameRules, adminToken, false));
 	}
 	
-	public TestServer launchDemoServer(GameRules gameRules, long adminToken) {
-		return (server = new TestServer(gameRules, adminToken, true));
+	public KryoServer launchDemoServer(GameRules gameRules, long adminToken) {
+		return (server = new KryoServer(gameRules, adminToken, true));
 	}
 	
-	public TestClient launchGameClient() {
-        return (testClient = new TestClient(this));
+	public KryoClient launchGameClient() {
+        return (testClient = new KryoClient(this));
 	}
 
 	@Override
@@ -164,7 +164,7 @@ public class ScreenManager implements ClientListener {
 		this.juego = juego;
 	}
 
-	public TestClient getTestClient() {
+	public KryoClient getTestClient() {
 		return testClient;
 	}
 

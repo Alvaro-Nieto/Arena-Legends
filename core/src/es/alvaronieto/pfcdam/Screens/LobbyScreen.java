@@ -3,6 +3,7 @@ package es.alvaronieto.pfcdam.Screens;
 import static es.alvaronieto.pfcdam.Util.Constants.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -258,19 +259,30 @@ public class LobbyScreen extends MenuScreen{
 
 
 	public void applyLobbyStateToScene(){
+		
 		String[] arrTeam1 = new String[lobbyState.getMaxPlayersPerTeam()];
-		for(int i = 0; i < arrTeam1.length; i++){
-			if(i < lobbyState.getPlayersTeam1())
-				arrTeam1[i] = "PlayerName"; // TODO Hacer que los jugadores tengan un nombre
-			else
-				arrTeam1[i] = "Empty";
-		}
 		String[] arrTeam2 = new String[lobbyState.getMaxPlayersPerTeam()];
-		for(int i = 0; i < arrTeam2.length; i++){
-			if(i < lobbyState.getPlayersTeam2())
-				arrTeam2[i] = "PlayerName"; // TODO Hacer que los jugadores tengan un nombre
-			else
-				arrTeam2[i] = "Empty";
+		
+		HashMap<Long, PlayerSlot> slots = lobbyState.getPlayerSlots();
+		int t1Index = 0;
+		int t2Index = 0;
+		for(Long userID : slots.keySet()){
+			PlayerSlot slot = slots.get(userID);
+			if(slot.getTeam() == 1){
+				arrTeam1[t1Index] = slot.getPlayerName();
+				t1Index++;
+			} else {
+				arrTeam2[t2Index] = slot.getPlayerName();
+				t2Index++;
+			}
+		}
+		
+		for(int i = t1Index; i < arrTeam1.length; i++){
+			arrTeam1[i] = "Empty";
+		}
+		
+		for(int i = t2Index; i < arrTeam2.length; i++){
+			arrTeam2[i] = "Empty";
 		}
 		team1List.setItems(arrTeam1);
 		team2List.setItems(arrTeam2);

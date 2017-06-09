@@ -47,37 +47,7 @@ public class Resources {
 	}
 	
 	private void setCommandExecutor() {
-		console.setCommandExecutor(new CommandExecutor(){
-        	/*public void toggleDebug() {
-        		drawDebugBoxes = !drawDebugBoxes;
-        	}*/
-        	
-        	public void connect(String address){
-        		ScreenManager.getInstance().launchGameClient().connect(
-        				address, SecurityUtility.getAdminToken());
-        	}
-        	
-        	public void show(String fieldName){
-        		Field[] fields = Constants.class.getFields();
-        		for(Field field : fields){
-        			if(field.getName().equals(fieldName)){
-        				try {
-							console.log(fieldName+" = "+field.get(Resources.getInstance()));
-							return;
-        				} catch (Exception e) {} 
-        			}
-        		}
-        		console.log("Invalid constant", LogLevel.ERROR);
-        	}
-        	
-        	public void demo(){
-        		ScreenManager sm = ScreenManager.getInstance();
-        		long adminToken = SecurityUtility.getAdminToken();
-        		sm.launchDemoServer(GameRules.getDefault(), adminToken);
-        		sm.launchGameClient().connect("localhost", adminToken);
-        		sm.getTestClient().sendStartRequest(adminToken);
-        	}
-        });
+		console.setCommandExecutor(Commands.getInstance());
 	}
 	
 	public TextureAtlas getTruemoAtlas(){

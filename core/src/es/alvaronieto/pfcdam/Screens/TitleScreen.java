@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
+import es.alvaronieto.pfcdam.Util.Config;
 import es.alvaronieto.pfcdam.Util.Resources;
 
 public class TitleScreen extends MenuScreen {
@@ -14,6 +15,7 @@ public class TitleScreen extends MenuScreen {
 	public TitleScreen(ScreenManager screenManager) {
 		super(screenManager);
 		Resources.getInstance().getConsole().log("PFC DAM");
+		Config.getInstance();
 	}
 
 	@Override

@@ -2,6 +2,8 @@ package es.alvaronieto.pfcdam.Screens;
 
 import java.util.Random;
 
+import javax.security.auth.login.Configuration;
+
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -10,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.SecurityUtility;
 import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
+import es.alvaronieto.pfcdam.Util.Config;
 
 public class MainScreen extends MenuScreen {
 
@@ -60,7 +63,7 @@ public class MainScreen extends MenuScreen {
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 				long adminToken = SecurityUtility.getAdminToken();
 				screenManager.launchGameServer(GameRules.getDefault(), adminToken); // TODO Descomentar
-				screenManager.launchGameClient().connect("localhost", adminToken);
+				screenManager.launchGameClient().connect("localhost", adminToken, Config.getInstance().playerName);
 				return false;
 			}
         });

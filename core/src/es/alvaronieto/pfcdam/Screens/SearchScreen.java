@@ -13,7 +13,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.SecurityUtility;
 import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
-import es.alvaronieto.pfcdam.net.kryoclient.TestClient;
+import es.alvaronieto.pfcdam.Util.Config;
+import es.alvaronieto.pfcdam.net.kryoclient.KryoClient;
 
 public class SearchScreen extends MenuScreen {
 	private Drawable drawaUnico;
@@ -21,7 +22,7 @@ public class SearchScreen extends MenuScreen {
 	private Table table;
 	
 	private String ipAddress = "localhost";
-	private final TestClient client;
+	private final KryoClient client;
 	
 	public SearchScreen(final ScreenManager screenManager){
 		super(screenManager);
@@ -105,7 +106,7 @@ public class SearchScreen extends MenuScreen {
         btn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				client.connect(ipAddress, SecurityUtility.getAdminToken());
+				client.connect(ipAddress, SecurityUtility.getAdminToken(), Config.getInstance().playerName);
 				return false;
 			}
         });

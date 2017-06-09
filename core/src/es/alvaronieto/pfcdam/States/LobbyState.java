@@ -83,13 +83,13 @@ public class LobbyState {
 		return success;
 	}
 
-	public boolean newPlayer(long userID){
+	public boolean newPlayer(long userID, String playerName){
 		if(slots.size() < gameRules.getMaxPlayers() && !slots.containsKey(userID)) {
 			
 			int team = playersTeam1 <= playersTeam2 ? 1 : 2;
 			String pj = TRUEMO;
 			
-			slots.put(userID, new PlayerSlot(team, pj, userID));
+			slots.put(userID, new PlayerSlot(team, pj, userID, playerName));
 			
 			if(team == 1)
 				playersTeam1++;

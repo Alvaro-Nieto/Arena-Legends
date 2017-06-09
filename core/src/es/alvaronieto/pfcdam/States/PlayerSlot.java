@@ -5,16 +5,18 @@ public class PlayerSlot {
 	private int team;
 	private String pj;
 	private long userID;
+	private String playerName;
 	
 	public PlayerSlot() {
 		super();
 	}
 
-	public PlayerSlot(int team, String pj, long userID) {
+	public PlayerSlot(int team, String pj, long userID, String playerName) {
 		super();
 		this.team = team;
 		this.pj = pj;
 		this.userID = userID;
+		this.playerName = playerName;
 	}
 
 	public int getTeam() {
@@ -42,7 +44,11 @@ public class PlayerSlot {
 
 	@Override
 	public String toString() {
-		return "Empty";
+		return playerName;
+	}
+
+	public String getPlayerName() {
+		return playerName;
 	}
 	
 	
