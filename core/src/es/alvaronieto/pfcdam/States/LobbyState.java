@@ -4,7 +4,7 @@ import static es.alvaronieto.pfcdam.Util.Constants.*;
 
 import java.util.HashMap;
 
-import es.alvaronieto.pfcdam.GameRules;
+import es.alvaronieto.pfcdam.gameobjects.GameRules;
 
 public class LobbyState {
 	private GameRules gameRules;

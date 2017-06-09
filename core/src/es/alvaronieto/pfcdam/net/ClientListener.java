@@ -1,9 +1,9 @@
 package es.alvaronieto.pfcdam.net;
 
-import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.LobbyState;
 import es.alvaronieto.pfcdam.States.PlayerState;
+import es.alvaronieto.pfcdam.gameobjects.GameRules;
 
 public interface ClientListener {
 	public void couldNotConnect();

@@ -15,12 +15,11 @@ import com.strongjoshua.console.Console;
 import com.strongjoshua.console.GUIConsole;
 import com.strongjoshua.console.LogLevel;
 
-import es.alvaronieto.pfcdam.GameRules;
-import es.alvaronieto.pfcdam.SecurityUtility;
 import es.alvaronieto.pfcdam.Screens.ScreenManager;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.gameobjects.Game;
+import es.alvaronieto.pfcdam.gameobjects.GameRules;
 import es.alvaronieto.pfcdam.gameobjects.Player;
 
 public class Resources {

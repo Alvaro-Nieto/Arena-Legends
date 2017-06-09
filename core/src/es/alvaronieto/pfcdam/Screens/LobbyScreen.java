@@ -17,12 +17,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter;
 
-import es.alvaronieto.pfcdam.GameRules;
-import es.alvaronieto.pfcdam.SecurityUtility;
 import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
 import es.alvaronieto.pfcdam.States.LobbyState;
 import es.alvaronieto.pfcdam.States.PlayerSlot;
 import es.alvaronieto.pfcdam.Util.Constants;
+import es.alvaronieto.pfcdam.Util.SecurityUtility;
+import es.alvaronieto.pfcdam.gameobjects.GameRules;
 
 
 public class LobbyScreen extends MenuScreen{

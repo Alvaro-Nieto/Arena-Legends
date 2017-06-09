@@ -5,12 +5,12 @@ import com.badlogic.gdx.Screen;
 import com.strongjoshua.console.Console;
 import com.strongjoshua.console.LogLevel;
 
-import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.Juego;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.LobbyState;
 import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.Util.Resources;
+import es.alvaronieto.pfcdam.gameobjects.GameRules;
 import es.alvaronieto.pfcdam.net.ClientListener;
 import es.alvaronieto.pfcdam.net.kryoclient.KryoClient;
 import es.alvaronieto.pfcdam.net.kryoserver.KryoServer;

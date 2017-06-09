@@ -33,7 +33,6 @@ import com.strongjoshua.console.Console;
 import com.strongjoshua.console.GUIConsole;
 
 import es.alvaronieto.pfcdam.Juego;
-import es.alvaronieto.pfcdam.SecurityUtility;
 import es.alvaronieto.pfcdam.Input.InputManager;
 import es.alvaronieto.pfcdam.Scenes.DebugHud;
 import es.alvaronieto.pfcdam.Scenes.Hud;
@@ -42,6 +41,7 @@ import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.Util.Resources;
+import es.alvaronieto.pfcdam.Util.SecurityUtility;
 import es.alvaronieto.pfcdam.gameobjects.Game;
 import es.alvaronieto.pfcdam.gameobjects.Player;
 import es.alvaronieto.pfcdam.gameobjects.Thunderbolt;

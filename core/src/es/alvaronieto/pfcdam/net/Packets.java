@@ -1,11 +1,11 @@
 package es.alvaronieto.pfcdam.net;
 
-import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.LobbyState;
 import es.alvaronieto.pfcdam.States.PlayerSlot;
 import es.alvaronieto.pfcdam.States.PlayerState;
+import es.alvaronieto.pfcdam.gameobjects.GameRules;
 
 public class Packets {
 	public static class Packet01Message { 

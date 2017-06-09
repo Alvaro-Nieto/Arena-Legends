@@ -9,10 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
-import es.alvaronieto.pfcdam.GameRules;
-import es.alvaronieto.pfcdam.SecurityUtility;
 import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
 import es.alvaronieto.pfcdam.Util.Config;
+import es.alvaronieto.pfcdam.Util.SecurityUtility;
+import es.alvaronieto.pfcdam.gameobjects.GameRules;
 
 public class MainScreen extends MenuScreen {
 

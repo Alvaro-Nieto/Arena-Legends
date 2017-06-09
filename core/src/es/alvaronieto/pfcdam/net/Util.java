@@ -5,12 +5,12 @@ import java.util.HashMap;
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryo.Kryo;
 
-import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.LobbyState;
 import es.alvaronieto.pfcdam.States.PlayerSlot;
 import es.alvaronieto.pfcdam.States.PlayerState;
+import es.alvaronieto.pfcdam.gameobjects.GameRules;
 
 public class Util {
 	public static void registerPackets(Kryo kryo){

@@ -1,4 +1,4 @@
-package es.alvaronieto.pfcdam;
+package es.alvaronieto.pfcdam.gameobjects;
 
 import static es.alvaronieto.pfcdam.Util.Constants.ARENA_WATER;
 import static es.alvaronieto.pfcdam.Util.Constants.ARENA_LAVA;

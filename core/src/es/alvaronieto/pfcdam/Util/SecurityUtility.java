@@ -1,4 +1,4 @@
-package es.alvaronieto.pfcdam;
+package es.alvaronieto.pfcdam.Util;
 
 import java.util.Random;
 

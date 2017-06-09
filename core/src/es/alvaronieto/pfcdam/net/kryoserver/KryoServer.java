@@ -18,13 +18,13 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 
-import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.Input.InputManager;
 import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.LobbyState;
 import es.alvaronieto.pfcdam.States.PlayerSlot;
 import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.gameobjects.Game;
+import es.alvaronieto.pfcdam.gameobjects.GameRules;
 import es.alvaronieto.pfcdam.gameobjects.Player;
 import es.alvaronieto.pfcdam.net.Packets.Packet01Message;
 import es.alvaronieto.pfcdam.net.Packets.Packet02ConnectionRequest;

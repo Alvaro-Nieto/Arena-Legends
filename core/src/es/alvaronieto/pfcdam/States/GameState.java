@@ -2,7 +2,7 @@ package es.alvaronieto.pfcdam.States;
 
 import java.util.HashMap;
 
-import es.alvaronieto.pfcdam.GameRules;
+import es.alvaronieto.pfcdam.gameobjects.GameRules;
 import es.alvaronieto.pfcdam.gameobjects.Player;
 
 public class GameState {

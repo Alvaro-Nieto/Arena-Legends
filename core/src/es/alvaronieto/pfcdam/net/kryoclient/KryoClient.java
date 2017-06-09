@@ -12,8 +12,8 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
-import es.alvaronieto.pfcdam.GameRules;
 import es.alvaronieto.pfcdam.States.InputState;
+import es.alvaronieto.pfcdam.gameobjects.GameRules;
 import es.alvaronieto.pfcdam.net.ClientListener;
 import es.alvaronieto.pfcdam.net.Packets.Packet01Message;
 import es.alvaronieto.pfcdam.net.Packets.Packet02ConnectionRequest;
