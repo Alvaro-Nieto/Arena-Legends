@@ -92,7 +92,7 @@ public class PlayScreen implements Screen {
 	private List<Projectile> projectiles;
 	private float skill1CD = 0.5f;
 	private float timeSinceSkill1 = skill1CD+1;
-	private boolean drawDebugBoxes = false;
+	private boolean debugging = false;
 	private boolean drawHud = true;
 
 	private Console console;
@@ -283,20 +283,21 @@ public class PlayScreen implements Screen {
 	private void handleInstantInput(float dt) {
 		// Debug HUD
 		if(Gdx.input.isKeyJustPressed(Input.Keys.F8))
-        	drawDebugBoxes  = !drawDebugBoxes;
+        	debugging  = !debugging;
 		
 		//if(Gdx.input.isKeyJustPressed(Input.Keys.F9))
         	//
+		if(debugging){
+			if(Gdx.input.isKeyJustPressed(Input.Keys.F10))
+	        	debugHud.toggleFPS();
 			
-		if(Gdx.input.isKeyJustPressed(Input.Keys.F10))
-        	debugHud.toggleFPS();
-		
-		if(Gdx.input.isKeyJustPressed(Input.Keys.F11))
-        	debugHud.toggleInfoPlayer();
-        	
-        if(Gdx.input.isKeyJustPressed(Input.Keys.F12))
-        	freeCameraEnabled = !freeCameraEnabled;
-        
+			if(Gdx.input.isKeyJustPressed(Input.Keys.F11))
+	        	debugHud.toggleInfoPlayer();
+	        	
+	        if(Gdx.input.isKeyJustPressed(Input.Keys.F12))
+	        	freeCameraEnabled = !freeCameraEnabled;
+		}
+
         // Pause Menu
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
         	pauseMenu.togglePauseMenu();
@@ -364,13 +365,14 @@ public class PlayScreen implements Screen {
         drawProjectiles();
         juego.batch.end();
         
-        if(drawDebugBoxes){
+        if(debugging){
         	b2dr.render(game.getWorld(), gamecam.combined);
             drawGhost();
+            juego.batch.setProjectionMatrix(debugHud.getProjectionMatrix());
+            debugHud.draw();
         }
         
-        juego.batch.setProjectionMatrix(debugHud.getProjectionMatrix());
-        debugHud.draw();
+       
         juego.batch.setProjectionMatrix(pauseMenu.getProjectionMatrix());
         pauseMenu.draw();
         
