@@ -1,7 +1,10 @@
 package es.alvaronieto.pfcdam.Screens;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -24,8 +27,8 @@ public class TitleScreen extends MenuScreen {
 	    table.pad(5f);
 	    table.setFillParent(true);
 	
-	    Label label=new Label("TITULO DE JUEGO. EL JUEGAZO DE LAS PELEAS TURBO DASH POWER OVERFLOW BROS", getSkin());
-	    TextButton startBtn = new TextButton("Pulsa para empezar", getSkin());
+	    Image logo = new Image(new Texture(Gdx.files.internal("logo.png")));
+	    TextButton startBtn = new TextButton("START", getSkin());
 	    startBtn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -36,7 +39,7 @@ public class TitleScreen extends MenuScreen {
 	   
 	    startBtn.center();
 	    
-	    table.add(label);
+	    table.add(logo);
 	    table.row();
 	    table.add(startBtn);
 	    stage.addActor(table);

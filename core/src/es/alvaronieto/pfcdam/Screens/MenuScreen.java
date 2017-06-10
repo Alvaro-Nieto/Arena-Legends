@@ -85,7 +85,6 @@ public abstract class MenuScreen implements Screen {
 	public void dispose() {
 		stage.dispose();
 		skin.dispose();
-		
 	}
 
 	public Juego getJuego() {
