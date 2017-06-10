@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import es.alvaronieto.pfcdam.Screens.ScreenManager;
 
-public class Juego extends Game {
+public class ArenaLegends extends Game {
 	
 	public SpriteBatch batch;
 	

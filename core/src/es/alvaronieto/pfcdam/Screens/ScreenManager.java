@@ -5,7 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.strongjoshua.console.Console;
 import com.strongjoshua.console.LogLevel;
 
-import es.alvaronieto.pfcdam.Juego;
+import es.alvaronieto.pfcdam.ArenaLegends;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.LobbyState;
 import es.alvaronieto.pfcdam.States.PlayerState;
@@ -19,7 +19,7 @@ public class ScreenManager implements ClientListener {
 
 	private static ScreenManager screenManager;
 	
-	private Juego juego;
+	private ArenaLegends arenaLegends;
 	private KryoServer server;
 	private KryoClient testClient;
 	private TitleScreen titleScreen;
@@ -52,11 +52,11 @@ public class ScreenManager implements ClientListener {
 		return screenManager;
 	}
 	
-	public void initialize(Juego juego){
-		this.juego = juego;
+	public void initialize(ArenaLegends arenaLegends){
+		this.arenaLegends = arenaLegends;
 
 		titleScreen = new TitleScreen(this);
-		juego.setScreen(titleScreen);
+		arenaLegends.setScreen(titleScreen);
 		currentScreen = Screens.TitleScreen;
 		this.console = Resources.getInstance().getConsole();
 	}
@@ -147,12 +147,8 @@ public class ScreenManager implements ClientListener {
 		});
 	}
 
-	public Juego getJuego() {
-		return juego;
-	}
-
-	public void setJuego(Juego juego) {
-		this.juego = juego;
+	public ArenaLegends getArenaLegends() {
+		return arenaLegends;
 	}
 
 	public KryoClient getTestClient() {
@@ -160,45 +156,45 @@ public class ScreenManager implements ClientListener {
 	}
 
 	public void showTitleScreen(){
-		juego.getScreen().dispose();
+		arenaLegends.getScreen().dispose();
 		this.titleScreen = new TitleScreen(this);
 		currentScreen = Screens.TitleScreen;
-		juego.setScreen(titleScreen);
+		arenaLegends.setScreen(titleScreen);
 	}
 	
 	public void showModeScreen(){
-		juego.getScreen().dispose();
+		arenaLegends.getScreen().dispose();
 		modeScreen = new ModeScreen(this);
     	currentScreen = Screens.ModeScreen;
-    	juego.setScreen(modeScreen);
+    	arenaLegends.setScreen(modeScreen);
 	}
 
 	public void showMainScreen() {
-		juego.getScreen().dispose();
+		arenaLegends.getScreen().dispose();
 		mainScreen = new MainScreen(this);
     	currentScreen = Screens.MainScreen;
-    	juego.setScreen(mainScreen);
+    	arenaLegends.setScreen(mainScreen);
 	}
 
 	public void showSearchScreen() {
-		juego.getScreen().dispose();
+		arenaLegends.getScreen().dispose();
 		searchScreen = new SearchScreen(this);
     	currentScreen = Screens.SearchScreen;
-    	juego.setScreen(searchScreen);
+    	arenaLegends.setScreen(searchScreen);
 	}
 	
 	public void showLobbyScreen(boolean admin, LobbyState lobbyState, long userID) {
-		juego.getScreen().dispose();
+		arenaLegends.getScreen().dispose();
 		lobbyScreen = new LobbyScreen(this, admin, lobbyState, userID);
     	currentScreen = Screens.LobbyScreen;
-    	juego.setScreen(lobbyScreen);
+    	arenaLegends.setScreen(lobbyScreen);
 	}
 	
 	public void showPlayScreen(long userID, GameState gameState) {
-		juego.getScreen().dispose();
+		arenaLegends.getScreen().dispose();
 		playScreen = new PlayScreen(this, userID, gameState);
     	currentScreen = Screens.PlayScreen;
-    	juego.setScreen(playScreen);
+    	arenaLegends.setScreen(playScreen);
 	}
 	
 	public void showCharSelectionScreen() {

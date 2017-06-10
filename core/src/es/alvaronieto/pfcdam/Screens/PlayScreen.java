@@ -32,7 +32,7 @@ import com.strongjoshua.console.CommandExecutor;
 import com.strongjoshua.console.Console;
 import com.strongjoshua.console.GUIConsole;
 
-import es.alvaronieto.pfcdam.Juego;
+import es.alvaronieto.pfcdam.ArenaLegends;
 import es.alvaronieto.pfcdam.Input.InputManager;
 import es.alvaronieto.pfcdam.Scenes.DebugHud;
 import es.alvaronieto.pfcdam.Scenes.Hud;
@@ -50,7 +50,7 @@ public class PlayScreen implements Screen {
 
 	// Managers / Containers
 	private ScreenManager screenManager;
-	private Juego juego;
+	private ArenaLegends juego;
 	
 	// Camera
 	private OrthographicCamera gamecam;
@@ -99,7 +99,7 @@ public class PlayScreen implements Screen {
 	
 	public PlayScreen(ScreenManager screenManager, long userID, GameState gameState) {
 		this.screenManager = screenManager;
-        this.juego = screenManager.getJuego();
+        this.juego = screenManager.getArenaLegends();
         
         this.projectiles = new ArrayList<Projectile>();
         this.currentTick = 0;

@@ -11,6 +11,6 @@ public class AndroidLauncher extends AndroidApplication {
 		super.onCreate(savedInstanceState);
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		config.useImmersiveMode = true; 
-		initialize(new Juego(), config);
+		initialize(new ArenaLegends(), config);
 	}
 }
