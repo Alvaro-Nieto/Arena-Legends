@@ -19,6 +19,7 @@ import es.alvaronieto.pfcdam.Util.Resources;
 import es.alvaronieto.pfcdam.gameobjects.Player;
 
 public class DebugHud implements Disposable{
+	
 	private Stage stage;
     private Viewport viewport;
     private Player player;

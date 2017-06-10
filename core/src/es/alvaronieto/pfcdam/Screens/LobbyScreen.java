@@ -24,7 +24,6 @@ import es.alvaronieto.pfcdam.Util.Constants;
 import es.alvaronieto.pfcdam.Util.SecurityUtility;
 import es.alvaronieto.pfcdam.gameobjects.GameRules;
 
-
 public class LobbyScreen extends MenuScreen{
 	
 	private Table table;
@@ -93,10 +92,7 @@ public class LobbyScreen extends MenuScreen{
 		startBtn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-				//startBtn.setTouchable(Touchable.disabled);
 				screenManager.getTestClient().sendStartRequest(SecurityUtility.getAdminToken());
-				//screenManager.launchGameServer(new GameRules(level, totalPlayers, 0, 30));
-				//screenManager.launchGameClient();
 				return false;
 			}
 		});
@@ -107,7 +103,6 @@ public class LobbyScreen extends MenuScreen{
 		startTable.add(startBtn);
 		
 		stage.addActor(startTable);
-		
 		
 	}
 	
@@ -232,14 +227,12 @@ public class LobbyScreen extends MenuScreen{
 		Label lblTeam2 = new Label("Team 2", getSkin());
 		team1List = new List(getSkin());
 		
-		//team1List.setItems(new PlayerSlot());
 		team1.add(lblTeam1);
 		team1.row();
 		team1.add(team1List).minWidth(250);
 		
 		team2List = new List(getSkin());
 		
-		//team2List.setItems(new PlayerSlot());
 		team2.add(lblTeam2);
 		team2.row();
 		team2.add(team2List).minWidth(250);
@@ -247,7 +240,6 @@ public class LobbyScreen extends MenuScreen{
 		stage.addActor(team1);
 		stage.addActor(team2);
 		
-
 	}
 	
 	private int getMapIndex(String arenaPath) {

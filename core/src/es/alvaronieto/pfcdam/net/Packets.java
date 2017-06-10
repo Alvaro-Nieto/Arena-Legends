@@ -8,6 +8,7 @@ import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.gameobjects.GameRules;
 
 public class Packets {
+	
 	public static class Packet01Message { 
 		public long timeStamp;
 		public String message;

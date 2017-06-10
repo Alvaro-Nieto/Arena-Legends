@@ -3,6 +3,7 @@ package es.alvaronieto.pfcdam.net.kryoserver;
 import com.esotericsoftware.kryonet.Connection;
 
 public class ConnectedClient {
+	
 	private long userID;
 	private Connection connection;
 	private long lastInputAccepted;

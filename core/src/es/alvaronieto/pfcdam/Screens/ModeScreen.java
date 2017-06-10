@@ -10,7 +10,6 @@ import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
 
 public class ModeScreen extends MenuScreen {
 	
-	
 	public ModeScreen(final ScreenManager screenManager){
 		super(screenManager);
 	}
@@ -69,7 +68,6 @@ public class ModeScreen extends MenuScreen {
 	@Override
 	protected void beforeBuild() {
 		// TODO Auto-generated method stub
-		
 	}
 }
 

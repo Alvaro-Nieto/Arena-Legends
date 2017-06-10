@@ -7,6 +7,7 @@ import java.util.HashMap;
 import es.alvaronieto.pfcdam.gameobjects.GameRules;
 
 public class LobbyState {
+	
 	private GameRules gameRules;
 	private HashMap<Long, PlayerSlot> slots;
 	private int maxPlayersPerTeam;
@@ -153,7 +154,5 @@ public class LobbyState {
 	public boolean isGameRunning() {
 		return gameRunning;
 	}
-	
-	
 	
 }

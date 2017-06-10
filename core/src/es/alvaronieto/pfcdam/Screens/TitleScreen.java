@@ -45,6 +45,5 @@ public class TitleScreen extends MenuScreen {
 	@Override
 	protected void beforeBuild() {
 		// TODO Auto-generated method stub
-		
 	}
 }

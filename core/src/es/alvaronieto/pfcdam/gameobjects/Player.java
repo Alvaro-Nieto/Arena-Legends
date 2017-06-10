@@ -274,8 +274,7 @@ public class Player implements Disposable {
 
 	@Override
 	public void dispose() {
-		//sprite.getTexture().dispose();
-		//truenoStand.getTexture().dispose();
+		sprite.getTexture().dispose();
 	}
 
 	public void setBody(Body body) {

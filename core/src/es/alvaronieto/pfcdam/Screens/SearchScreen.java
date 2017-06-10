@@ -17,6 +17,7 @@ import es.alvaronieto.pfcdam.gameobjects.GameRules;
 import es.alvaronieto.pfcdam.net.kryoclient.KryoClient;
 
 public class SearchScreen extends MenuScreen {
+	
 	private Drawable drawaUnico;
 	private Image personaje = new Image();
 	private Table table;
@@ -46,8 +47,6 @@ public class SearchScreen extends MenuScreen {
         this.table = new Table();
         
         Table tablaOpcion=new Table();
-        //table.pad(5f);
-        //table.setFillParent(true);
         
         tablaOpcion.pad(5f);
         tablaOpcion.setFillParent(true);

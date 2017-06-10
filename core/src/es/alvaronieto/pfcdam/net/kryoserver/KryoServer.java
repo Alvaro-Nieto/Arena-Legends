@@ -64,6 +64,7 @@ public class KryoServer extends Listener {
 	private long adminToken;
 
 	public KryoServer(GameRules gameRules, long adminToken, boolean isDemo) {
+		
 		this.adminToken = adminToken;
 		this.isDemo = isDemo;
 		this.lobbyState = new LobbyState(gameRules);
@@ -124,15 +125,10 @@ public class KryoServer extends Listener {
 	}
 	
 	@Override
-	public void connected(Connection connection) {
-		//System.out.println("[S]Someone has connected");
-		//clients.add(connection);
-	}
+	public void connected(Connection connection) {}
 
 	@Override
-	public void disconnected(Connection connection) {
-		//System.out.println("[S]Someone has disconnected");
-	}
+	public void disconnected(Connection connection) {}
 
 	@Override
 	public void received(Connection connection, Object obj) {
@@ -175,7 +171,7 @@ public class KryoServer extends Listener {
 	}
 
 	private void processMessage(Packet01Message msg) {
-		System.out.println(dateFormat.format(new Date((msg.timeStamp)))+" : [S](CLIENT) >> " + msg.message);
+		// TODO
 	}
 
 	private void processConnectionRequest(Connection connection, Packet02ConnectionRequest request) {
@@ -313,4 +309,7 @@ public class KryoServer extends Listener {
 		return userID;
 	}
 	
+	public void stop() {
+		server.stop();
+	}
 }

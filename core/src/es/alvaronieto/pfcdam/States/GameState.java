@@ -32,7 +32,6 @@ public class GameState {
 		}
 	}
 
-
 	public HashMap<Long, PlayerState> getPlayers() {
 		return playerStates;
 	}

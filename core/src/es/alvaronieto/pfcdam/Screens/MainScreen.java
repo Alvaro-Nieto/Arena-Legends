@@ -1,15 +1,10 @@
 package es.alvaronieto.pfcdam.Screens;
 
-import java.util.Random;
-
-import javax.security.auth.login.Configuration;
-
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
-import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
 import es.alvaronieto.pfcdam.Util.Config;
 import es.alvaronieto.pfcdam.Util.SecurityUtility;
 import es.alvaronieto.pfcdam.gameobjects.GameRules;
@@ -22,8 +17,6 @@ public class MainScreen extends MenuScreen {
 	
 	@Override
 	protected void buildStage() {
-		// TODO Auto-generated method stub
-
 		
 		Table tableatras=new Table();
         
@@ -86,7 +79,6 @@ public class MainScreen extends MenuScreen {
 	@Override
 	protected void beforeBuild() {
 		// TODO Auto-generated method stub
-		
 	}
 	
 

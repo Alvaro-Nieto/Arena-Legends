@@ -30,7 +30,7 @@ import es.alvaronieto.pfcdam.net.Packets.Packet14GameRulesChangeRequest;
 import es.alvaronieto.pfcdam.net.Packets.Packet16LobbyUpdate;
 import es.alvaronieto.pfcdam.net.Util;
 
-public class KryoClient extends Listener{
+public class KryoClient extends Listener {
 	
 	// Kryonet stuff
 	private Client client;
@@ -63,9 +63,7 @@ public class KryoClient extends Listener{
 	
 	@Override
 	public void connected(Connection connection) {
-		System.out.println("[C] >> You have connected.");
-		
-		
+		//		
 	}
 	
 	private void registerPackets() {
@@ -74,11 +72,12 @@ public class KryoClient extends Listener{
 	
 	@Override
 	public void disconnected(Connection connection) {
-		System.out.println("[C] >> You have disconnected.");
+		//
 	}
 
 	@Override
 	public void received(Connection connection, Object obj) {
+		
 		if( obj instanceof Packet01Message ){
 			Packet01Message p = (Packet01Message)obj;
 			System.out.println("[C](SERVER) >> " + p.message);
@@ -112,6 +111,7 @@ public class KryoClient extends Listener{
 			String ipAddress = connection.getRemoteAddressUDP().getAddress().getHostAddress();
 			clientListener.newServerDiscovered(info.name, info.gameRules, info.connectedPlayers, ipAddress);
 		}
+		
 		else if( obj instanceof Packet12GameStarted){
 			Packet12GameStarted gameStarted = (Packet12GameStarted)obj;
 			clientListener.startGame(gameStarted.playerState, gameStarted.gameState);
@@ -129,12 +129,13 @@ public class KryoClient extends Listener{
 		inputPacket.userID = userID;
 		inputPacket.timeStamp = new Date().getTime();
 		inputPacket.inputState = inputState;
-		//System.out.println(inputState.getSequenceNumber());
 		client.sendUDP(inputPacket);
 	}
 
 	public void startServerDiscovery() {
+		
 		List<InetAddress> list = client.discoverHosts(SERVER_PORT, 500);
+		
 		for(InetAddress address: list){
 			try {
 				client.connect(500, address, SERVER_PORT, SERVER_PORT);
@@ -162,4 +163,8 @@ public class KryoClient extends Listener{
 		client.sendUDP(startRequest);
 	}
 
+	public void stop() {
+		client.stop();
+	}
+	
 }

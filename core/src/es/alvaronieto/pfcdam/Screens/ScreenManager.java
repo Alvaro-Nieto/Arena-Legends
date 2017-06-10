@@ -30,6 +30,8 @@ public class ScreenManager implements ClientListener {
 	private SearchScreen searchScreen;
 	private LobbyScreen lobbyScreen;
 	private Console console;
+	private Screens currentScreen;
+	private long lastSnap = Long.MIN_VALUE;
 	
 	public enum Screens{
 		TitleScreen, 
@@ -41,12 +43,7 @@ public class ScreenManager implements ClientListener {
 		LobbyScreen
 	};
 	
-	private Screens currentScreen;
-	private long lastSnap = Long.MIN_VALUE;
-	
-	private ScreenManager(){
-		
-	}
+	private ScreenManager() {}
 	
 	public static synchronized ScreenManager getInstance(){
 		if(screenManager == null){
@@ -78,7 +75,7 @@ public class ScreenManager implements ClientListener {
 
 	@Override
 	public void couldNotConnect() {
-		System.out.println("No se puede conectar al server");
+		console.log("Couldn't connect", LogLevel.ERROR);
 	}
 
 	@Override
@@ -93,16 +90,10 @@ public class ScreenManager implements ClientListener {
 	}
 	
 	@Override
-	public void newPlayerConnected(long userID) {
-		System.out.println("alguien más en el lobby");
-		/*if(currentScreen == Screens.PlayScreen){
-			playScreen.newNetworkPlayer(playerState);
-		}*/
-	}
+	public void newPlayerConnected(long userID) {}
 
 	@Override
 	public void snapShotReceived(long timeStamp, GameState gameState, long sequenceNumber) {
-		// DANDO POR HECHO QUE NO HAY CLIENT PREDICTION
 
 		if(currentScreen == Screens.PlayScreen && timeStamp > lastSnap){
 			// TODO Esto es muy cutre, hay que arreglarlo
@@ -213,7 +204,5 @@ public class ScreenManager implements ClientListener {
 	public void showCharSelectionScreen() {
 		// TODO
 	}
-
-
 
 }

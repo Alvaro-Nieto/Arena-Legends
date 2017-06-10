@@ -50,9 +50,7 @@ public class MenuListener extends ClickListener {
 				btn.addAction(Actions.fadeOut(0));
 				//btn.setVisible(false);
 			}
-		}
-		
-			
+		}	
 	}
 
 	private boolean isAnyChildActive() {

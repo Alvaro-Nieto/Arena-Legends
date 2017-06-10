@@ -44,8 +44,7 @@ import es.alvaronieto.pfcdam.Util.Resources;
 import es.alvaronieto.pfcdam.Util.SecurityUtility;
 import es.alvaronieto.pfcdam.gameobjects.Game;
 import es.alvaronieto.pfcdam.gameobjects.Player;
-import es.alvaronieto.pfcdam.gameobjects.Thunderbolt;
-import es.alvaronieto.pfcdam.gameobjects.TruemoBall;
+import es.alvaronieto.pfcdam.gameobjects.Projectile;
 
 public class PlayScreen implements Screen {
 
@@ -90,8 +89,7 @@ public class PlayScreen implements Screen {
 	private ShapeRenderer sr;
 	
 	// Skills TEMP
-	private List<TruemoBall> balls;
-	private List<Thunderbolt> thunders;
+	private List<Projectile> projectiles;
 	private float skill1CD = 0.5f;
 	private float timeSinceSkill1 = skill1CD+1;
 	private boolean drawDebugBoxes = false;
@@ -103,8 +101,7 @@ public class PlayScreen implements Screen {
 		this.screenManager = screenManager;
         this.juego = screenManager.getJuego();
         
-        this.balls = new ArrayList<TruemoBall>();
-        this.thunders = new ArrayList<Thunderbolt>();
+        this.projectiles = new ArrayList<Projectile>();
         this.currentTick = 0;
         
         // Game
@@ -138,18 +135,6 @@ public class PlayScreen implements Screen {
         
         console = Resources.getInstance().getConsole();
         console.resetInputProcessing();
-        /*console.setCommandExecutor(new CommandExecutor(){
-        	public void toggleDebug() {
-        		drawDebugBoxes = !drawDebugBoxes;
-        	}
-        	
-        	public void connect(String address){
-        		ScreenManager.getInstance().launchGameClient().connect(
-        				address, SecurityUtility.getAdminToken());
-        	}
-        });
-        console.setDisplayKeyID(Input.Keys.F1);*/
-        
 	}
 	
 	private void createCollisionListener() {
@@ -162,15 +147,15 @@ public class PlayScreen implements Screen {
                 Fixture fixtureB = contact.getFixtureB();
                 //TEMP
                 if(fixtureA.getBody().getUserData().equals(TRUEMOBALL)){
-                	for(TruemoBall ball : balls){
-                		if(ball.getBody().equals(fixtureA.getBody())){
-                			ball.disposeNextUpdate();
+                	for(Projectile projectile : projectiles){
+                		if(projectile.getBody().equals(fixtureA.getBody())){
+                			projectile.disposeNextUpdate();
                 		}
                 	}
                 } else if(fixtureB.getBody().getUserData().equals(TRUEMOBALL)){
-                	for(TruemoBall ball : balls){
-                		if(ball.getBody().equals(fixtureB.getBody())){
-                			ball.disposeNextUpdate();
+                	for(Projectile projectile : projectiles){
+                		if(projectile.getBody().equals(fixtureB.getBody())){
+                			projectile.disposeNextUpdate();
                 		}
                 	}
                 }
@@ -197,7 +182,7 @@ public class PlayScreen implements Screen {
 			tick(dt);
 			accumulator -= STEP;
 			updateAllPlayers(dt);
-			updateAllBalls(dt);
+			updateAllProjectiles(dt);
 		}         
 		
 		game.update();
@@ -223,13 +208,9 @@ public class PlayScreen implements Screen {
 		currentTick++;
 	}
 
-	private void updateAllBalls(float dt) {
-		for(TruemoBall ball : balls)
-			ball.update(dt);
-	}
-	private void updateAllThunders(float dt){
-		for(Thunderbolt bolt : thunders)
-			bolt.update(dt);
+	private void updateAllProjectiles(float dt) {
+		for(Projectile projectile : projectiles)
+			projectile.update(dt);
 	}
 
 	private void updateAllPlayers(float dt) {
@@ -257,20 +238,6 @@ public class PlayScreen implements Screen {
 		gamecam.position.y += (player.getBody().getPosition().y - gamecam.position.y) * 5f * dt;
 		gamecam.position.x += (player.getBody().getPosition().x - gamecam.position.x) * 5f * dt;
 		
-		/*
-		gamecam.position.y = player.getBody().getPosition().y;
-		if(player.getBody().getPosition().y - gamecam.viewportHeight / 2 < 0) {
-		    gamecam.position.y = gamecam.viewportHeight / 2;
-		} else if(player.getBody().getPosition().y + gamecam.viewportHeight / 2 > mapHeight){
-		    gamecam.position.y = mapHeight - gamecam.viewportHeight / 2;
-		}
-		
-		gamecam.position.x = player.getBody().getPosition().x;
-		if(player.getBody().getPosition().x - gamecam.viewportWidth / 2 < 0) {
-		    gamecam.position.x = gamecam.viewportWidth / 2;
-		} else if(player.getBody().getPosition().x + gamecam.viewportWidth / 2 > mapWidth){
-		    gamecam.position.x = mapWidth - gamecam.viewportWidth / 2;
-		}*/
 	}
 	
 	private void stateReconciliation(PlayerState playerState) {
@@ -341,21 +308,10 @@ public class PlayScreen implements Screen {
 		Vector2 dir = new Vector2(click.x - position.x, click.y - position.y);
 		dir.nor();
 		
-		TruemoBall tball = new TruemoBall(game, new Vector2(position.x+dir.x*40/PPM, position.y+dir.y*40/PPM));
-		tball.getBody().setLinearVelocity(dir.scl(5f));
+		Projectile projectile = new Projectile(game, new Vector2(position.x+dir.x*40/PPM, position.y+dir.y*40/PPM), TRUEMOBALL);
+		projectile.getBody().setLinearVelocity(dir.scl(5f));
 
-		balls.add(tball);
-	}
-	private void boltTest(float dt) {
-		Vector2 position = player.getBodyPosition();
-		Vector3 click = gamecam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
-		Vector2 dir = new Vector2(click.x - position.x, click.y - position.y);
-		dir.nor();
-		
-		Thunderbolt tbolt = new Thunderbolt(game, new Vector2(position.x+dir.x*40/PPM, position.y+dir.y*40/PPM));
-		tbolt.getBody().setLinearVelocity(dir.scl(5f));
-
-		thunders.add(tbolt);
+		projectiles.add(projectile);
 	}
 
 	private void moveFreeCamera(float dt) {
@@ -405,7 +361,7 @@ public class PlayScreen implements Screen {
         juego.batch.setProjectionMatrix(gamecam.combined);
         juego.batch.begin();
         drawAllPlayers();
-        drawBalls();
+        drawProjectiles();
         juego.batch.end();
         
         if(drawDebugBoxes){
@@ -443,16 +399,12 @@ public class PlayScreen implements Screen {
         } 
 	}
 
-	private void drawBalls() {
-		for(TruemoBall ball : balls){
-			ball.draw(juego.batch);
+	private void drawProjectiles() {
+		for(Projectile projectile : projectiles){
+			projectile.draw(juego.batch);
 		}		
 	}
-	private void drawThunders() {
-		for(Thunderbolt bolt : thunders){
-			bolt.draw(juego.batch);
-		}
-	}
+
 
 	private void drawAllPlayers() {
 		HashMap<Long, Player> players =  game.getPlayers();

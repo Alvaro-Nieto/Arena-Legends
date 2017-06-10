@@ -15,7 +15,7 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import es.alvaronieto.pfcdam.Util.Resources;
 
-public class TruemoBall {
+public class Projectile {
 	
 	private Body body;
 	private Sprite sprite;
@@ -25,7 +25,7 @@ public class TruemoBall {
 	private boolean disposed = false;
 	private boolean shouldDispose = false;
 	
-	public TruemoBall(Game game, Vector2 position){
+	public Projectile(Game game, Vector2 position, String type){
 			this.world = game.getWorld();
 			BodyDef bdef = new BodyDef();	
 			CircleShape shape = new CircleShape();
@@ -38,13 +38,11 @@ public class TruemoBall {
 			fdef.shape = shape;
 			
 			body = world.createBody(bdef);
-			body.setUserData(TRUEMOBALL);
+			body.setUserData(type);
 			body.createFixture(fdef);	
 			
-			
-
 			TextureAtlas atlas = Resources.getInstance().getTruemoAtlas();
-			this.sprite = new Sprite(atlas.findRegion(TRUEMOBALL+"1"));
+			this.sprite = new Sprite(atlas.findRegion(type+"1"));
 			sprite.setBounds(0, 0, 32 / PPM, 32 / PPM);	
 		}
 
@@ -64,8 +62,6 @@ public class TruemoBall {
 			if(timeSinceStart > maxTimeAlive || shouldDispose )
 				this.dispose();
 		}
-		
-	
 	}
 	
 	private void dispose() {
@@ -81,7 +77,5 @@ public class TruemoBall {
 	public void disposeNextUpdate() {
 		this.shouldDispose = true;
 	}
-	
-	
 	
 }

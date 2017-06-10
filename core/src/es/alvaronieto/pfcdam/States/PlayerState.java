@@ -1,48 +1,25 @@
 package es.alvaronieto.pfcdam.States;
 
-import java.io.Serializable;
-
 import com.badlogic.gdx.math.Vector2;
 
-public class PlayerState implements Serializable {
+public class PlayerState extends BodyState {
 	
-	private long userID;
-	private Vector2 bodyPosition;
-	private Vector2 velocity;
 	private String pj;
-	private int team;
 	
 	public PlayerState(){
-		
+		super();
 	}
 	
-	public PlayerState(Vector2 bodyPosition, Vector2 velocity, int team){
-		this.bodyPosition = bodyPosition;
-		this.velocity = velocity;
-	}
-	
-	public PlayerState(Vector2 bodyPosition, long userID, String pj, Vector2 velocity, int team){
-		this(bodyPosition, velocity, team);
-		this.userID = userID;
+	public PlayerState(Vector2 bodyPosition, Vector2 velocity, int team, String pj){
+		super(bodyPosition, velocity, team);
 		this.pj = pj;
 	}
 
-	public long getUserID() {
-		return userID;
+	public PlayerState(Vector2 bodyPosition, long userID, String pj, Vector2 velocity, int team){
+		super(bodyPosition, userID, velocity, team);
+		this.pj = pj;
 	}
-
-	public void setUserID(long userID) {
-		this.userID = userID;
-	}
-
-	public Vector2 getBodyPosition() {
-		return bodyPosition;
-	}
-
-	public void setBodyPosition(Vector2 bodyPosition) {
-		this.bodyPosition = bodyPosition;
-	}
-
+	
 	public String getPj() {
 		return pj;
 	}
@@ -50,23 +27,5 @@ public class PlayerState implements Serializable {
 	public void setPj(String pj) {
 		this.pj = pj;
 	}
-
-	public Vector2 getVelocity() {
-		return velocity;
-	}
-
-	public void setVelocity(Vector2 velocity) {
-		this.velocity = velocity;
-	}
-
-	@Override
-	public String toString() {
-		return "["+bodyPosition.x + ","+ bodyPosition.y +"]";
-	}
-
-	public int getTeam() {
-		return team;
-	}
-		
 	
 }

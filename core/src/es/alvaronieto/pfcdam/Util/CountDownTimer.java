@@ -39,7 +39,6 @@ public class CountDownTimer {
 			}
 		}
 	}
-	
 
 	private void stop() {
 		running = false;
