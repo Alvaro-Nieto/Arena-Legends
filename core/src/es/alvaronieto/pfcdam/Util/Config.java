@@ -17,11 +17,11 @@ public class Config {
 	 */
 	public String playerName;
 	
-	private Config(){
+	private Config() {
 		
 	}
 	
-	public static synchronized Config getInstance(){
+	public static synchronized Config getInstance() {
 		if(config == null) {
 			config = new Config();
 			config.readConfig();

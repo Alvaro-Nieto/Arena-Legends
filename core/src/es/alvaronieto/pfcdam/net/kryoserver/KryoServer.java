@@ -43,27 +43,18 @@ import es.alvaronieto.pfcdam.net.Packets.Packet16LobbyUpdate;
 import es.alvaronieto.pfcdam.net.Util;
 
 public class KryoServer extends Listener {
-	// Connection info
-	int serverPort = SERVER_PORT;
 	
-	// Kryonet "Server" object
 	private Server server;
 	
 	private HashMap<Long, ConnectedClient> clients;
 	private HashMap<Long, PlayerState> initialPlayerStates;
 	
 	private LobbyState lobbyState;
-	//private HashMap<Long, PlayerSlot> slotsTeam1;
-	//private HashMap<Long, PlayerSlot> slotsTeam2;
-	
-	
+
 	private Game game;
-	//private World world;
-	
-	//
+
 	private Random rnd;
 	private SimpleDateFormat dateFormat;
-	//private final int MAX_CLIENTS;
 	
 	private boolean gameStarted;
 	
@@ -82,11 +73,6 @@ public class KryoServer extends Listener {
 		
 		this.initialPlayerStates = new HashMap<Long, PlayerState>();
 		
-		//MAX_CLIENTS = gameRules.getMaxPlayers();
-		//game = new Game(gameRules);
-		
-		//
-		
 		rnd = new Random();
 		dateFormat = new SimpleDateFormat("HH:mm:ss");
 		
@@ -95,7 +81,7 @@ public class KryoServer extends Listener {
 		server.addListener(this);
 
 		try {
-			server.bind(serverPort, serverPort);
+			server.bind(SERVER_PORT, SERVER_PORT);
 		} catch(BindException be){
 			System.err.println("en uso");
 		} catch (IOException e) {
@@ -193,11 +179,14 @@ public class KryoServer extends Listener {
 	}
 
 	private void processConnectionRequest(Connection connection, Packet02ConnectionRequest request) {
-		if(clients.size() >=  lobbyState.getMaxPlayersPerTeam()*2)
+		if(gameStarted)
+			rejectConnection(connection, "Game is already started");
+		
+		else if(clients.size() >=  lobbyState.getMaxPlayersPerTeam()*2)
 			rejectConnection(connection, "Lobby full");
-		else {
+		
+		else 
 			acceptConnection(connection, request.adminToken == this.adminToken, request.clientName);
-		}
 	}
 	
 	private void processSlotUpdate(Connection connection, Packet15SlotUpdate packet) {
@@ -224,7 +213,6 @@ public class KryoServer extends Listener {
 		gameStarted = true;
 		
 		Gdx.app.postRunnable(new Runnable(){
-
 			@Override
 			public void run() {
 				game = new Game(lobbyState);
@@ -255,7 +243,6 @@ public class KryoServer extends Listener {
 	}
 
 	private void acceptConnection(Connection connection, boolean admin, String clientName) {
-		
 		long userID = getNewUserID();
 		if(lobbyState.newPlayer(userID, clientName)){
 			final Packet03ConnectionAccepted accepted = new Packet03ConnectionAccepted();
@@ -325,6 +312,5 @@ public class KryoServer extends Listener {
 			;
 		return userID;
 	}
-	
 	
 }

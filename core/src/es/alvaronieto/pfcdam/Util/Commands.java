@@ -9,6 +9,7 @@ import es.alvaronieto.pfcdam.Screens.ScreenManager;
 import es.alvaronieto.pfcdam.gameobjects.GameRules;
 
 public class Commands extends CommandExecutor {
+	
 	private static Commands instance;
 	
 	private Commands(){
@@ -33,9 +34,7 @@ public class Commands extends CommandExecutor {
 			console.log(fieldName+" = "+field.get(Config.getInstance()));
 		} catch (NoSuchFieldException e) {
 			console.log(fieldName + " doesn't exist.", LogLevel.ERROR);
-		} catch (Exception e) {
-			
-		}
+		} catch (Exception e) {}
 	}
 	
 	public void demo(){
@@ -52,14 +51,19 @@ public class Commands extends CommandExecutor {
 		try {
 			field = Config.class.getField(fieldName);
 			Class<?> clazz = field.getType();
+			
 			if ( clazz.equals(String.class) )
 				field.set(config, value);
+			
 			else if ( clazz.equals(int.class) )
 				field.setInt(config, Integer.parseInt(value));
+			
 			else if ( clazz.equals(float.class) )
 				field.setFloat(config, Float.parseFloat(value));
+			
 			else
 				console.log("Type not available", LogLevel.ERROR);
+			
 		} catch (NoSuchFieldException e) {
 			console.log(fieldName + " doesn't exist.", LogLevel.ERROR);
 		} catch (IllegalArgumentException e) {
