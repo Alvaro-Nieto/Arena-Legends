@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -28,6 +29,7 @@ import es.alvaronieto.pfcdam.net.Packets.Packet12GameStarted;
 import es.alvaronieto.pfcdam.net.Packets.Packet13StartRequest;
 import es.alvaronieto.pfcdam.net.Packets.Packet14GameRulesChangeRequest;
 import es.alvaronieto.pfcdam.net.Packets.Packet16LobbyUpdate;
+import es.alvaronieto.pfcdam.net.Packets.Packet17Attack1Request;
 import es.alvaronieto.pfcdam.net.Util;
 
 public class KryoClient extends Listener {
@@ -165,6 +167,13 @@ public class KryoClient extends Listener {
 
 	public void stop() {
 		client.stop();
+	}
+
+	public void sendAttack1Request(Vector2 dir, long userID) {
+		Packet17Attack1Request attack = new Packet17Attack1Request();
+		attack.userID = userID;
+		attack.dir = dir;
+		client.sendUDP(attack);
 	}
 	
 }

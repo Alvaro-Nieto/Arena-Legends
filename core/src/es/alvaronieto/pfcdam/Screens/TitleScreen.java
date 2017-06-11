@@ -17,7 +17,6 @@ public class TitleScreen extends MenuScreen {
 
 	public TitleScreen(ScreenManager screenManager) {
 		super(screenManager);
-		Resources.getInstance().getConsole().log("- Arena Legends -");
 		Config.getInstance();
 	}
 
