@@ -1,5 +1,6 @@
 package es.alvaronieto.pfcdam.desktop;
 
+import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
@@ -11,6 +12,8 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.height = Constants.V_HEIGHT;
 		config.width = Constants.V_WIDTH;
+		config.title = "Arena Legends";
+		config.addIcon("icon.png", FileType.Internal);
 		//config.vSyncEnabled = false; // Setting to false disables vertical sync
 		//config.foregroundFPS = 0; // Setting to 0 disables foreground fps throttling
 		//config.backgroundFPS = 0; // Setting to 0 disables background fps throttling

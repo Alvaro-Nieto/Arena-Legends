@@ -50,7 +50,7 @@ public class Hud implements Disposable {
         table.setFillParent(true);
         table.add(timeLabel).top().expandY();
         stage.addActor(table);
-        stage.setDebugAll(true);
+        //stage.setDebugAll(true);
     }
     
     public void buildHealthBars(Player player, Game gameVida){
@@ -58,6 +58,7 @@ public class Hud implements Disposable {
     	table1.pad(5f);
         table1.setFillParent(true);
         table1.left();
+        
         Table table2 = new Table();
     	table2.pad(5f);
         table2.setFillParent(true);
