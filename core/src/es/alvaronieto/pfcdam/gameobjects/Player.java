@@ -47,6 +47,14 @@ public class Player implements Disposable {
 	private int maxHealth;
 	private int team;
 	
+	public int getTeam() {
+		return team;
+	}
+
+	public void setTeam(int team) {
+		this.team = team;
+	}
+
 	public Player(Game game, Vector2 position, long userID, String pj, int team){
 		this.position = position;
 		this.userID = userID;
