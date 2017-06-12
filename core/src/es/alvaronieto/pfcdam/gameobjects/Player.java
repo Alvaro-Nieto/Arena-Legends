@@ -1,6 +1,7 @@
 package es.alvaronieto.pfcdam.gameobjects;
 
 import static es.alvaronieto.pfcdam.Util.Constants.FIROG;
+import static es.alvaronieto.pfcdam.Util.Constants.VENETO;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -189,6 +190,9 @@ public class Player implements Disposable {
 		switch(pj){
 			case FIROG:
 				maxHealth = 80;
+				break;
+			case VENETO:
+				maxHealth = 90;
 				break;
 			default: maxHealth = 100;
 		}

@@ -3,6 +3,9 @@ package es.alvaronieto.pfcdam.Util;
 public class Constants {
 	public static final String TRUEMO = "truemo";
 	public static final String FIROG = "firog";
+	public static final String VENETO = "veneto";
+	public static final String VENETOCHAOS = "venetochaos";
+	public static final String VENETOACID = "venetoacid";
 	public static final String FIROGEMBER = "firogember";
 	public static final String FIROGBLAZE = "firogblaze";
 	public static final String TRUEMOBALL = "truemoball";

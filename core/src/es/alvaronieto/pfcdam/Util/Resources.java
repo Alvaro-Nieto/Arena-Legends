@@ -27,12 +27,14 @@ public class Resources {
 	private static Resources resources;
 	private TextureAtlas truemoAtlas;
 	private TextureAtlas firogAtlas;
+	private TextureAtlas venetoAtlas;
 	private Skin skin;
 	private Console console;
 	
 	private Resources(){
 		this.truemoAtlas = new TextureAtlas("truemo.pack");
 		this.firogAtlas = new TextureAtlas("firog.pack");
+		this.venetoAtlas = new TextureAtlas("veneto.pack");
 		this.skin = new Skin(Gdx.files.internal("ui/star-soldier-ui.json"));
 		this.console = new GUIConsole();
 		setCommandExecutor();
@@ -55,11 +57,16 @@ public class Resources {
 	public TextureAtlas getFirogAtlas(){
 		return this.firogAtlas;
 	}
+	public TextureAtlas getVenetoAtlas(){
+		return this.venetoAtlas;
+	}
 	
 	public TextureAtlas getPjAtlas(String pj){
 		switch (pj){
 			case FIROG:
 				return getFirogAtlas();
+			case VENETO:
+				return getVenetoAtlas();
 			default:
 				return getTruemoAtlas();
 		}

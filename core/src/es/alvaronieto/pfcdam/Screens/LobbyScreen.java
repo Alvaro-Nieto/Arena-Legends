@@ -248,7 +248,7 @@ public class LobbyScreen extends MenuScreen{
 	private void playerConfigBar(Table team1, Table team2){
 		
 		Table configTable = new Table();
-		String[] characters = {"Truemo", "Firog"};
+		String[] characters = {"Truemo", "Firog", "Veneto"};
 		
 		characterList = new SelectBox(getSkin());
 		characterList.setItems(characters);
@@ -307,8 +307,10 @@ public class LobbyScreen extends MenuScreen{
 		String pj;
 		if(characterList.getSelectedIndex() == 0)
 			pj = TRUEMO;
-		else
+		else if(characterList.getSelectedIndex() == 1)
 			pj = FIROG;
+		else
+			pj = VENETO;
 		PlayerSlot slot = lobbyState.getPlayerSlots().get(userID);
 		slot.setPj(pj);
 		
