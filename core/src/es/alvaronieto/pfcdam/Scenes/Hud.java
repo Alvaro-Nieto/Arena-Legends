@@ -1,6 +1,7 @@
 package es.alvaronieto.pfcdam.Scenes;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
@@ -31,6 +32,7 @@ public class Hud implements Disposable {
     private Label namePlayer;
     private Game game;
     private Skin customSkin;
+    private HashMap<Long, ProgressBar> healthBars;
 
     public Hud(SpriteBatch sb, Game game, Player player) {
     	this.game = game;
@@ -39,15 +41,8 @@ public class Hud implements Disposable {
     	
         viewport = new FitViewport(Constants.V_WIDTH,Constants.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, sb);
-        
-        /*final ProgressBar healthBar = new ProgressBar(0, player.getMaxHealth(), 1, false, customSkin);
-        healthBar.setValue(0f);
-        healthBar.sizeBy(5f);
-        healthBar.getStyle().background.setMinHeight(34f);
-        healthBar.getStyle().knobBefore.setMinHeight(30f);
-        healthBar.setAnimateDuration(1f);
-        healthBar.setValue(player.getHealth());*/
-        crearVidas(player, game);
+        this.healthBars = new HashMap<>();
+        buildHealthBars(player, game);
         
         timeLabel = new Label(game.getTimer().toString(), skin);
         Table table = new Table();
@@ -55,55 +50,54 @@ public class Hud implements Disposable {
         table.setFillParent(true);
         table.add(timeLabel).top().expandY();
         stage.addActor(table);
-        
+        stage.setDebugAll(true);
     }
-    public void crearVidas(Player player, Game gameVida){
-    	int nplayers=game.getPlayers().size();
-    	Set<Long> ids=game.getPlayers().keySet();
-    	Object obj[]=ids.toArray();
-    	Long[] arr = Arrays.asList(obj).toArray(new Long[obj.length]);
+    
+    public void buildHealthBars(Player player, Game gameVida){
     	Table table1 = new Table();
     	table1.pad(5f);
         table1.setFillParent(true);
+        table1.left();
         Table table2 = new Table();
     	table2.pad(5f);
         table2.setFillParent(true);
-    	while(nplayers>0){
-    		ProgressBar healthBar = new ProgressBar(0, game.getPlayers().get(arr[nplayers-1]).getMaxHealth(), 1, false, customSkin);
+        table2.right();
+        
+        HashMap<Long, Player> players = game.getPlayers();
+        for(Long userID : players.keySet()) {
+        	Player tempPlayer = players.get(userID);
+        	ProgressBar healthBar = new ProgressBar(0, tempPlayer.getMaxHealth(), 1, false, customSkin);
             healthBar.setValue(0f);
             healthBar.sizeBy(5f);
             healthBar.getStyle().background.setMinHeight(34f);
             healthBar.getStyle().knobBefore.setMinHeight(30f);
             healthBar.setAnimateDuration(1f);
-            healthBar.setValue(game.getPlayers().get(arr[nplayers-1]).getHealth());
-            //System.out.println(player.getUserID());
-            namePlayer = new Label(game.getPlayers().get(arr[nplayers-1]).getPj(), Resources.getInstance().getSkin());
-            //game.getPlayers().get(nplayers).getTeam()==1
+            healthBar.setValue(tempPlayer.getHealth());
+            healthBars.put(userID, healthBar);
+            namePlayer = new Label( tempPlayer.getPlayerName(), Resources.getInstance().getSkin());
             
-            if(game.getPlayers().get(arr[nplayers-1]).getTeam()==1){
-            	table1.left();
+            if(tempPlayer.getTeam() == 1){
             	table1.add(namePlayer);
             	table1.row();
                 table1.add(healthBar);
                 table1.row();
-                System.out.println("hola");
-            }else{
-            	table2.right();
+            }
+            else {
             	table2.add(namePlayer);
             	table2.row();
                 table2.add(healthBar);
                 table2.row();
-                System.out.println("hola");
             }
-                       
-    		nplayers--; 
-    	}
+        }
     	stage.addActor(table1);
     	stage.addActor(table2);
     }
     public void update(float dt){
         timeLabel.setText(game.getTimer().toString());
         stage.act();
+        for(Long userID : healthBars.keySet()) {
+        	healthBars.get(userID).setValue(game.getPlayer(userID).getHealth());
+        }
     }
     
     @Override

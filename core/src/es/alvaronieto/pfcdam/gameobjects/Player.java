@@ -49,12 +49,15 @@ public class Player implements Disposable {
 	
 	private long lastSeqNoAttack1;
 	
-	public Player(Game game, Vector2 position, long userID, String pj, int team){
+	private String playerName;
+	
+	public Player(Game game, Vector2 position, long userID, String pj, int team, String playerName){
 		this.position = position;
 		this.userID = userID;
 		this.pj = pj;
 		this.team = team;
 		this.lastSeqNoAttack1 = 0;
+		this.playerName = playerName;
 		
 		defineByPj(pj);
 		
@@ -71,6 +74,21 @@ public class Player implements Disposable {
 		prepareAnimations();
 		game.addPlayer(this);
 		
+	}
+	
+	public Player(Game game, Vector2 position, long userID, String pj, Vector2 velocity, int team, String playerName){
+		this(game, position, userID, pj, team, playerName);
+		this.body.setLinearVelocity(velocity);
+	}
+	
+	public Player(PlayerState playerState, Game game){
+		this(game, 
+			playerState.getBodyPosition(), 
+			playerState.getUserID(), 
+			playerState.getPj(), 
+			playerState.getVelocity(),
+			playerState.getTeam(),
+			playerState.getPlayerName());
 	}
 	
 	private void prepareAnimations() {
@@ -177,19 +195,6 @@ public class Player implements Disposable {
 		health = maxHealth;
 	}
 
-	public Player(Game game, Vector2 position, long userID, String pj, Vector2 velocity, int team){
-		this(game, position, userID, pj, team);
-		this.body.setLinearVelocity(velocity);
-	}
-	
-	public Player(PlayerState playerState, Game game){
-		this(game, 
-			playerState.getBodyPosition(), 
-			playerState.getUserID(), 
-			playerState.getPj(), 
-			playerState.getVelocity(),
-			playerState.getTeam());
-	}
 	
 	public void update(float dt){
 		this.setPosition(getBodyPosition());
@@ -255,7 +260,7 @@ public class Player implements Disposable {
 	}
 
 	public PlayerState getPlayerState(){
-		return new PlayerState(this.getBodyPosition(), userID, this.getPj(), body.getLinearVelocity(), team);
+		return new PlayerState(this.getBodyPosition(), userID, this.getPj(), body.getLinearVelocity(), team, playerName);
 	}
 	
 	public String getPj() {
@@ -303,6 +308,14 @@ public class Player implements Disposable {
 	public long newLastSeqNoAttack1() {
 		lastSeqNoAttack1++;
 		return lastSeqNoAttack1;
+	}
+
+	public String getPlayerName() {
+		return playerName;
+	}
+
+	public void hurt(int hp) {
+		health -= hp;
 	}
 	
 	

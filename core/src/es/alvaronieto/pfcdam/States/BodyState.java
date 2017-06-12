@@ -16,6 +16,7 @@ public class BodyState {
 	public BodyState(Vector2 bodyPosition, Vector2 velocity, int team){
 		this.bodyPosition = bodyPosition;
 		this.velocity = velocity;
+		this.team = team;
 	}
 	
 	public BodyState(Vector2 bodyPosition, long userID, Vector2 velocity, int team){

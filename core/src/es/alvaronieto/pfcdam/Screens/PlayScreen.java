@@ -266,9 +266,10 @@ public class PlayScreen implements Screen {
 		if(Gdx.input.isKeyJustPressed(Input.Keys.F8))
         	debugging  = !debugging;
 		
-		//if(Gdx.input.isKeyJustPressed(Input.Keys.F9))
-        	//
 		if(debugging){
+			if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+	        	player.hurt(10);
+			
 			if(Gdx.input.isKeyJustPressed(Input.Keys.F10))
 	        	debugHud.toggleFPS();
 			

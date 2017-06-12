@@ -6,12 +6,13 @@ import com.strongjoshua.console.CommandExecutor;
 import com.strongjoshua.console.LogLevel;
 
 import es.alvaronieto.pfcdam.Screens.ScreenManager;
+import es.alvaronieto.pfcdam.gameobjects.Game;
 import es.alvaronieto.pfcdam.gameobjects.GameRules;
 
 public class Commands extends CommandExecutor {
 	
 	private static Commands instance;
-	
+
 	private Commands(){
 		
 	}
@@ -74,4 +75,5 @@ public class Commands extends CommandExecutor {
 	public void loadConfig(String fileName){
 		Config.getInstance().readConfig(fileName);
 	}
+	
 }

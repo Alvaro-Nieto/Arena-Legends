@@ -53,10 +53,10 @@ public class Game implements Disposable {
 		this(lobbyState.getGameRules());
 		HashMap<Long, PlayerSlot> playerSlots = lobbyState.getPlayerSlots();
 		for(Long userID : playerSlots.keySet()){
-			// TODO Crear metodo para calcular la posición de comienzo
+			// TODO Crear metodo para calcular la posiciï¿½n de comienzo
 			Vector2 position = new Vector2(getMapWidth() / 2, getMapHeight() / 2);
 			PlayerSlot slot = playerSlots.get(userID);
-			this.players.put(userID, new Player(this, position, userID, slot.getPj(), slot.getTeam()));
+			this.players.put(userID, new Player(this, position, userID, slot.getPj(), slot.getTeam(), slot.getPlayerName()));
 		}
 	}
 
@@ -191,7 +191,6 @@ public class Game implements Disposable {
 				count++;
 			}
 		}
-		System.out.println(count);
 	}
 	
 	public float getMapWidth(){
