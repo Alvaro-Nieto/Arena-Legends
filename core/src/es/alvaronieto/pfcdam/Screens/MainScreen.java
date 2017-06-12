@@ -1,7 +1,9 @@
 package es.alvaronieto.pfcdam.Screens;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
@@ -40,6 +42,8 @@ public class MainScreen extends MenuScreen {
         table.pad(5f);
         table.setFillParent(true);
         
+        Label info = new Label("", getSkin());
+        
         TextButton clienteBtn = new TextButton("Unirse a partida", getSkin());
         clienteBtn.addListener(new InputListener(){
 			@Override
@@ -50,6 +54,16 @@ public class MainScreen extends MenuScreen {
 			}
 
         });
+        clienteBtn.addListener(new InputListener(){
+			@Override
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor){
+				changeText(info, "Busca y unete a un servidor");
+			}
+			@Override
+			public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor){
+				changeText(info, "");
+			};
+        });        
         TextButton serverBtn = new TextButton("Crear partida", getSkin());
         serverBtn.addListener(new InputListener(){
 			@Override
@@ -60,13 +74,25 @@ public class MainScreen extends MenuScreen {
 				return false;
 			}
         });
+        serverBtn.addListener(new InputListener(){
+			@Override
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor){
+				changeText(info, "Crea y configura un servidor");
+			}
+			@Override
+			public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor){
+				changeText(info, "");
+			};
+        });        
        
         clienteBtn.center();
         serverBtn.center();
         
         table.add(clienteBtn);
         table.row();
-        table.add(serverBtn);
+        table.add(serverBtn).padBottom(200f);
+        table.row();
+        table.add(info);
         stage.addActor(tableatras);
         stage.addActor(table);
 	}
