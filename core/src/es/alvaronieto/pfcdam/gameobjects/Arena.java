@@ -90,7 +90,7 @@ public class Arena implements Disposable {
 			numLayer = 1;
 		}
 		else{
-			numLayer = 3;
+			numLayer = 4;
 		}
 		
 		TiledMapTileSet tileset =  map.getTileSets().getTileSet("terrain_atlas");
