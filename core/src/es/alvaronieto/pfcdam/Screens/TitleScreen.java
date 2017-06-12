@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -27,6 +28,17 @@ public class TitleScreen extends MenuScreen {
 	    table.setFillParent(true);
 	
 	    Image logo = new Image(new Texture(Gdx.files.internal("logo.png")));
+	    logo.pack();
+	    logo.setOrigin(logo.getWidth() / 2, logo.getHeight() / 2);
+	    logo.addAction(
+    		Actions.forever(
+    			Actions.sequence(
+    				Actions.scaleBy(-0.1f, -0.1f, 0.5f), 
+    				Actions.scaleBy(0.1f, 0.1f, 0.5f)
+    			)
+    		)
+    	);
+	    
 	    TextButton startBtn = new TextButton("START", getSkin());
 	    startBtn.addListener(new InputListener(){
 			@Override
