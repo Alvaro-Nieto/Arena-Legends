@@ -89,10 +89,9 @@ public class PlayScreen implements Screen {
 	private ShapeRenderer sr;
 	
 	// Skills TEMP
-	private List<Projectile> projectiles;
 	private float skill1CD = 0.5f;
 	private float timeSinceSkill1 = skill1CD+1;
-	private boolean drawDebugBoxes = false;
+	private boolean debugging = false;
 	private boolean drawHud = true;
 
 	private Console console;
@@ -100,8 +99,7 @@ public class PlayScreen implements Screen {
 	public PlayScreen(ScreenManager screenManager, long userID, GameState gameState) {
 		this.screenManager = screenManager;
         this.juego = screenManager.getArenaLegends();
-        
-        this.projectiles = new ArrayList<Projectile>();
+
         this.currentTick = 0;
         
         // Game
@@ -139,7 +137,7 @@ public class PlayScreen implements Screen {
 	
 	private void createCollisionListener() {
 		// TODO some testing. this is temp
-        game.getWorld().setContactListener(new ContactListener() {
+        /*game.getWorld().setContactListener(new ContactListener() {
 
 			@Override
 			public void beginContact(Contact contact) {
@@ -169,7 +167,7 @@ public class PlayScreen implements Screen {
 
 			@Override
 			public void postSolve(Contact contact, ContactImpulse impulse) {}
-        });
+        });*/
     }
 
 	public void update(float dt) {
@@ -181,11 +179,11 @@ public class PlayScreen implements Screen {
 		while(accumulator >= STEP) {
 			tick(dt);
 			accumulator -= STEP;
-			updateAllPlayers(dt);
-			updateAllProjectiles(dt);
+			//updateAllPlayers(dt);
+			//updateAllProjectiles(dt);
 		}         
 		
-		game.update();
+		game.update(dt);
 		debugHud.update(dt);
 		hud.update(100);
 		
@@ -206,23 +204,6 @@ public class PlayScreen implements Screen {
 		}
 		
 		currentTick++;
-	}
-
-	private void updateAllProjectiles(float dt) {
-		for(Projectile projectile : projectiles)
-			projectile.update(dt);
-	}
-
-	private void updateAllPlayers(float dt) {
-		HashMap<Long, Player> players =  game.getPlayers();
-        for(Long userID : players.keySet()){
-			Player player = players.get(userID);
-			if(interpolating ){
-				// TODO interpolating
-			}
-			else
-				player.update(dt);
-		}
 	}
 
 	private void applyLastSnapshot() {
@@ -262,10 +243,10 @@ public class PlayScreen implements Screen {
 			inputSequenceNo++;
 			// TODO Hay que hacer algo decente
 			InputState inputState = new InputState(
-					Gdx.input.isKeyPressed(Input.Keys.UP), 
-					Gdx.input.isKeyPressed(Input.Keys.DOWN),
-					Gdx.input.isKeyPressed(Input.Keys.LEFT),
-					Gdx.input.isKeyPressed(Input.Keys.RIGHT), inputSequenceNo);
+					Gdx.input.isKeyPressed(Input.Keys.UP) || Gdx.input.isKeyPressed(Input.Keys.W), 
+					Gdx.input.isKeyPressed(Input.Keys.DOWN) || Gdx.input.isKeyPressed(Input.Keys.S),
+					Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A),
+					Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D), inputSequenceNo);
 			
 			screenManager.getTestClient().sendInputState(inputState, player.getUserID());
 			pendingInputs.add(inputState);
@@ -283,20 +264,21 @@ public class PlayScreen implements Screen {
 	private void handleInstantInput(float dt) {
 		// Debug HUD
 		if(Gdx.input.isKeyJustPressed(Input.Keys.F8))
-        	drawDebugBoxes  = !drawDebugBoxes;
+        	debugging  = !debugging;
 		
 		//if(Gdx.input.isKeyJustPressed(Input.Keys.F9))
         	//
+		if(debugging){
+			if(Gdx.input.isKeyJustPressed(Input.Keys.F10))
+	        	debugHud.toggleFPS();
 			
-		if(Gdx.input.isKeyJustPressed(Input.Keys.F10))
-        	debugHud.toggleFPS();
-		
-		if(Gdx.input.isKeyJustPressed(Input.Keys.F11))
-        	debugHud.toggleInfoPlayer();
-        	
-        if(Gdx.input.isKeyJustPressed(Input.Keys.F12))
-        	freeCameraEnabled = !freeCameraEnabled;
-        
+			if(Gdx.input.isKeyJustPressed(Input.Keys.F11))
+	        	debugHud.toggleInfoPlayer();
+	        	
+	        if(Gdx.input.isKeyJustPressed(Input.Keys.F12))
+	        	freeCameraEnabled = !freeCameraEnabled;
+		}
+
         // Pause Menu
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
         	pauseMenu.togglePauseMenu();
@@ -308,10 +290,13 @@ public class PlayScreen implements Screen {
 		Vector2 dir = new Vector2(click.x - position.x, click.y - position.y);
 		dir.nor();
 		
-		Projectile projectile = new Projectile(game, new Vector2(position.x+dir.x*40/PPM, position.y+dir.y*40/PPM), TRUEMOBALL);
-		projectile.getBody().setLinearVelocity(dir.scl(5f));
+		screenManager.getTestClient().sendAttack1Request(dir, player.getUserID());
+		
+		//game.newProjectile(dir, TRUEMOBALL, player.getUserID());
+		//Projectile projectile = new Projectile(game, dir, TRUEMOBALL, player.getUserID());
+		//projectile.getBody().setLinearVelocity(dir.scl(5f));
 
-		projectiles.add(projectile);
+		//projectiles.add(projectile);
 	}
 
 	private void moveFreeCamera(float dt) {
@@ -360,17 +345,17 @@ public class PlayScreen implements Screen {
         
         juego.batch.setProjectionMatrix(gamecam.combined);
         juego.batch.begin();
-        drawAllPlayers();
-        drawProjectiles();
+        game.draw(juego.batch);
         juego.batch.end();
         
-        if(drawDebugBoxes){
+        if(debugging){
         	b2dr.render(game.getWorld(), gamecam.combined);
             drawGhost();
+            juego.batch.setProjectionMatrix(debugHud.getProjectionMatrix());
+            debugHud.draw();
         }
         
-        juego.batch.setProjectionMatrix(debugHud.getProjectionMatrix());
-        debugHud.draw();
+       
         juego.batch.setProjectionMatrix(pauseMenu.getProjectionMatrix());
         pauseMenu.draw();
         
@@ -397,20 +382,6 @@ public class PlayScreen implements Screen {
             sr.rect(pos.x - 16f / PPM, pos.y - 16f / PPM, 32f / PPM, 32f / PPM);
             sr.end();
         } 
-	}
-
-	private void drawProjectiles() {
-		for(Projectile projectile : projectiles){
-			projectile.draw(juego.batch);
-		}		
-	}
-
-
-	private void drawAllPlayers() {
-		HashMap<Long, Player> players =  game.getPlayers();
-        for(Long userID : players.keySet()){
-			players.get(userID).draw(juego.batch);
-		}
 	}
 
 	@Override

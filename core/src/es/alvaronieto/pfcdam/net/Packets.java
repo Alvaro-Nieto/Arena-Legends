@@ -1,5 +1,7 @@
 package es.alvaronieto.pfcdam.net;
 
+import com.badlogic.gdx.math.Vector2;
+
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.InputState;
 import es.alvaronieto.pfcdam.States.LobbyState;
@@ -99,5 +101,10 @@ public class Packets {
 	public static class Packet16LobbyUpdate { 
 		public long timeStamp;
 		public LobbyState lobbyState;
+	}
+	
+	public static class Packet17Attack1Request {
+		public long userID;
+		public Vector2 dir;
 	}
 }

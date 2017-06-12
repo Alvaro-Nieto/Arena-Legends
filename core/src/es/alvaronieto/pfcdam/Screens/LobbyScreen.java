@@ -38,6 +38,7 @@ public class LobbyScreen extends MenuScreen{
 	private List team2List;
 	private SelectBox playersList;
 	private SelectBox mapsList;
+	private SelectBox characterList;
 	private TextField txtRounds;
 	
 	public LobbyScreen(final ScreenManager screenManager, boolean admin, LobbyState lobbyState, long userID){
@@ -206,7 +207,7 @@ public class LobbyScreen extends MenuScreen{
 		return index;
 	}
 	
-	private void teamLists(){ // Players would appear in these tables
+	private void teamLists(){ // Players will appear in these tables
 		Table team1 = new Table();
 		Table team2 = new Table();
 		
@@ -240,6 +241,44 @@ public class LobbyScreen extends MenuScreen{
 		stage.addActor(team1);
 		stage.addActor(team2);
 		
+		playerConfigBar(team1, team2);
+	}
+	
+	private void playerConfigBar(Table team1, Table team2){
+		
+		Table configTable = new Table();
+		String[] characters = {"Truemo", "Firog"};
+		
+		characterList = new SelectBox(getSkin());
+		characterList.setItems(characters);
+		
+		configTable.add(characterList);	
+		
+		TextButton changeCharBtn = new TextButton("Cambiar personaje", getSkin());
+		
+		changeCharBtn.addListener(new InputListener(){
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+				// TODO Cambiar personaje del jugador
+				return false;
+			}
+		});
+		
+		configTable.add(changeCharBtn);
+		
+		TextButton changeTeam = new TextButton("Cambiar de equipo", getSkin());
+		changeTeam.addListener(new InputListener(){
+			@Override
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+				
+				return false;
+			}
+		});
+		
+		configTable.setPosition((team1.getWidth()+team2.getWidth())/4, (team1.getHeight()+team2.getHeight())/8);
+		configTable.add(changeTeam);
+		
+		stage.addActor(configTable);
 	}
 	
 	private int getMapIndex(String arenaPath) {

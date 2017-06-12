@@ -1,5 +1,6 @@
 package es.alvaronieto.pfcdam.Screens;
 
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -23,6 +24,7 @@ public class ModeScreen extends MenuScreen {
         tableatras.pad(5f);
         tableatras.setFillParent(true);
 
+        Label info = new Label("", getSkin());
         Label label=new Label("SELECCIONA MODO DE JUEGO", getSkin());
         TextButton localBtn = new TextButton("Multijugador Local", getSkin());
         localBtn.addListener(new InputListener(){
@@ -32,6 +34,16 @@ public class ModeScreen extends MenuScreen {
 				return false;
 			}
         });
+        localBtn.addListener(new InputListener(){
+			@Override
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor){
+				changeText(info, "Juega con gente que se encuentre dentro de tu misma red");
+			}
+			@Override
+			public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor){
+				changeText(info, "");
+			};
+        });        
         TextButton onlineBtn = new TextButton("Online (No disponible)", getSkin());
         onlineBtn.addListener(new InputListener(){
 			@Override
@@ -41,6 +53,16 @@ public class ModeScreen extends MenuScreen {
 				return false;
 			}
         });
+        onlineBtn.addListener(new InputListener(){
+			@Override
+			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor){
+				changeText(info, "Juega con gente de alrededor del mundo");
+			}
+			@Override
+			public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor){
+				changeText(info, "");
+			};
+        });          
         TextButton atrasBtn = new TextButton("Atras", getSkin());
         atrasBtn.addListener(new InputListener(){
 			@Override
@@ -57,7 +79,9 @@ public class ModeScreen extends MenuScreen {
         table.row();
         table.add(localBtn);
         table.row();
-        table.add(onlineBtn);
+        table.add(onlineBtn).padBottom(200f);
+        table.row();
+        table.add(info);
         tableatras.top();
         tableatras.right();
         tableatras.add(atrasBtn);
