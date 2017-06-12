@@ -1,6 +1,6 @@
 package es.alvaronieto.pfcdam.net.kryoserver;
 
-import static es.alvaronieto.pfcdam.Util.Constants.SERVER_PORT;
+import static es.alvaronieto.pfcdam.Util.Constants.*;
 import static es.alvaronieto.pfcdam.Util.Constants.STEP;
 
 import java.io.IOException;
@@ -40,6 +40,7 @@ import es.alvaronieto.pfcdam.net.Packets.Packet13StartRequest;
 import es.alvaronieto.pfcdam.net.Packets.Packet14GameRulesChangeRequest;
 import es.alvaronieto.pfcdam.net.Packets.Packet15SlotUpdate;
 import es.alvaronieto.pfcdam.net.Packets.Packet16LobbyUpdate;
+import es.alvaronieto.pfcdam.net.Packets.Packet17Attack1Request;
 import es.alvaronieto.pfcdam.net.Util;
 
 public class KryoServer extends Listener {
@@ -62,6 +63,7 @@ public class KryoServer extends Listener {
 	private boolean isDemo;
 
 	private long adminToken;
+	private long lastTime = 0;
 
 	public KryoServer(GameRules gameRules, long adminToken, boolean isDemo) {
 		
@@ -106,10 +108,15 @@ public class KryoServer extends Listener {
 	}
 
 	private void tick() {
+		if(lastTime == 0)
+			lastTime = System.currentTimeMillis();
 		currentTick++;
-		game.update();
 		game.step();
+		long current = System.currentTimeMillis();
+		float delta = (current - lastTime) / 1000f;
+		game.update(delta);
 		sendSnapshot(currentTick);
+		lastTime = current;
 	}
 	
 	protected void sendSnapshot(long currentTick) {
@@ -152,6 +159,14 @@ public class KryoServer extends Listener {
 		
 		else if( obj instanceof Packet15SlotUpdate )
 			processSlotUpdate(connection, (Packet15SlotUpdate)obj);
+		
+		else if( obj instanceof Packet17Attack1Request )
+			proccessAttack1Request(connection, (Packet17Attack1Request)obj);
+	}
+
+	private void proccessAttack1Request(Connection connection, Packet17Attack1Request attack) {
+		// TODO
+		game.newProjectile(attack.dir, TRUEMOBALL, attack.userID);
 	}
 
 	private void sendSlotUpdate(PlayerSlot playerSlot) {

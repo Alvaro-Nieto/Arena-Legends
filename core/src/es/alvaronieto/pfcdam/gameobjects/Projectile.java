@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
+import es.alvaronieto.pfcdam.States.ProjectileState;
 import es.alvaronieto.pfcdam.Util.Resources;
 
 public class Projectile {
@@ -22,29 +23,76 @@ public class Projectile {
 	private float timeSinceStart = 0f;
 	private float maxTimeAlive = 2f;
 	private World world;
+	private Game game;
 	private boolean disposed = false;
 	private boolean shouldDispose = false;
+	private long userID;
+	private String type;
 	
-	public Projectile(Game game, Vector2 position, String type){
-			this.world = game.getWorld();
-			BodyDef bdef = new BodyDef();	
-			CircleShape shape = new CircleShape();
-			FixtureDef fdef = new FixtureDef();
-			
-			bdef.type = BodyDef.BodyType.DynamicBody; 
-			bdef.position.set(position); // Desde el centro (Coordenadas b2d)
-			
-			shape.setRadius(16f/PPM);
-			fdef.shape = shape;
-			
-			body = world.createBody(bdef);
-			body.setUserData(type);
-			body.createFixture(fdef);	
-			
-			TextureAtlas atlas = Resources.getInstance().getTruemoAtlas();
-			this.sprite = new Sprite(atlas.findRegion(type+"1"));
-			sprite.setBounds(0, 0, 32 / PPM, 32 / PPM);	
-		}
+	private float velocity = 5.0f;
+	private int team;
+	
+	private long seqNo;
+	
+	public Projectile(Game game, ProjectileState state){
+		this.game = game;
+		this.world = game.getWorld();
+		this.seqNo = state.getSeqNo();
+		BodyDef bdef = new BodyDef();	
+		CircleShape shape = new CircleShape();
+		FixtureDef fdef = new FixtureDef();
+		
+		this.type = state.getType();
+		this.team = state.getTeam();
+		
+		bdef.type = BodyDef.BodyType.DynamicBody; 
+		bdef.position.set(state.getBodyPosition());
+		
+		shape.setRadius(16f/PPM);
+		fdef.shape = shape;
+		
+		body = world.createBody(bdef);
+		body.setUserData(type);
+		body.createFixture(fdef);	
+		
+		body.setLinearVelocity(state.getVelocity());
+		
+		TextureAtlas atlas = Resources.getInstance().getTruemoAtlas();
+		this.sprite = new Sprite(atlas.findRegion(type+"1"));
+		sprite.setBounds(0, 0, 32 / PPM, 32 / PPM);	
+	}
+	
+	public Projectile(Game game, Vector2 dir, String type, long userID, long seqNo){
+		this.world = game.getWorld();
+		this.seqNo = seqNo;
+		BodyDef bdef = new BodyDef();	
+		CircleShape shape = new CircleShape();
+		FixtureDef fdef = new FixtureDef();
+		
+		Vector2 position = game.getPlayer(userID).getBodyPosition();
+		
+		this.type = type;
+		this.team = game.getPlayer(userID).getTeam();
+		
+		bdef.type = BodyDef.BodyType.DynamicBody; 
+		bdef.position.set(new Vector2(position.x+dir.x*40/PPM, position.y+dir.y*40/PPM));
+		
+		shape.setRadius(16f/PPM);
+		fdef.shape = shape;
+		
+		body = world.createBody(bdef);
+		body.setUserData(type);
+		body.createFixture(fdef);	
+		
+		body.setLinearVelocity(dir.scl(velocity));
+		
+		TextureAtlas atlas = Resources.getInstance().getTruemoAtlas();
+		this.sprite = new Sprite(atlas.findRegion(type+"1"));
+		sprite.setBounds(0, 0, 32 / PPM, 32 / PPM);	
+		
+		shape.dispose();
+	}
+	
 
 	public Body getBody() {
 		return body;
@@ -65,8 +113,8 @@ public class Projectile {
 	}
 	
 	private void dispose() {
-		world.destroyBody(body);
-		disposed  = true;
+		//game.removeProjectile(this);
+		disposed = true;
 	}
 
 	public void draw(Batch batch){
@@ -76,6 +124,52 @@ public class Projectile {
 
 	public void disposeNextUpdate() {
 		this.shouldDispose = true;
+	}
+
+	public long getUserID() {
+		return userID;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public int getTeam() {
+		return team;
+	}
+
+	public long getSeqNo() {
+		return seqNo;
+	}
+
+	public ProjectileState getProjectileState() {
+		return new ProjectileState(body.getPosition(), userID, body.getLinearVelocity(), team, type, seqNo);
+	}
+	
+	public void setBody(Vector2 position, Vector2 velocity){
+		if(!disposed){
+			BodyDef bdef = new BodyDef();	
+			CircleShape shape = new CircleShape();
+			FixtureDef fdef = new FixtureDef();
+			
+			bdef.type = BodyDef.BodyType.DynamicBody; 
+			bdef.position.set(position);
+			
+			shape.setRadius(16f/PPM);
+			fdef.shape = shape;
+			
+			body = world.createBody(bdef);
+			body.setUserData(type);
+			body.createFixture(fdef);	
+			
+			body.setLinearVelocity(velocity);
+
+			shape.dispose();
+		}
+	}
+
+	public boolean isDisposed() {
+		return disposed;
 	}
 	
 }
