@@ -7,8 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
-import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
-
 public class ModeScreen extends MenuScreen {
 	
 	public ModeScreen(final ScreenManager screenManager){
@@ -24,7 +22,7 @@ public class ModeScreen extends MenuScreen {
         tableatras.pad(5f);
         tableatras.setFillParent(true);
 
-        Label info = new Label("", getSkin());
+        final Label info = new Label("", getSkin());
         Label label=new Label("SELECCIONA MODO DE JUEGO", getSkin());
         TextButton localBtn = new TextButton("Multijugador Local", getSkin());
         localBtn.addListener(new InputListener(){

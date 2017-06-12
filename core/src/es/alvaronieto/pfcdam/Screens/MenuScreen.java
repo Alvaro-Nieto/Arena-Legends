@@ -1,5 +1,6 @@
 package es.alvaronieto.pfcdam.Screens;
 
+import static es.alvaronieto.pfcdam.Util.Constants.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -33,7 +34,7 @@ public abstract class MenuScreen implements Screen {
 
         // SET CAMERA
         gamecam = new OrthographicCamera();
-        viewPort = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera());
+        viewPort = new FitViewport(V_WIDTH, V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewPort, arenaLegends.batch);
         Gdx.input.setInputProcessor(stage);
         console.resetInputProcessing();

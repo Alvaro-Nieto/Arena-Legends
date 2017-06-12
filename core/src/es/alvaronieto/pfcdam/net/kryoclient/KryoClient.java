@@ -14,6 +14,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
 import es.alvaronieto.pfcdam.States.InputState;
+import es.alvaronieto.pfcdam.States.PlayerSlot;
 import es.alvaronieto.pfcdam.gameobjects.GameRules;
 import es.alvaronieto.pfcdam.net.ClientListener;
 import es.alvaronieto.pfcdam.net.Packets.Packet01Message;
@@ -28,6 +29,7 @@ import es.alvaronieto.pfcdam.net.Packets.Packet11InfoAnswer;
 import es.alvaronieto.pfcdam.net.Packets.Packet12GameStarted;
 import es.alvaronieto.pfcdam.net.Packets.Packet13StartRequest;
 import es.alvaronieto.pfcdam.net.Packets.Packet14GameRulesChangeRequest;
+import es.alvaronieto.pfcdam.net.Packets.Packet15SlotUpdate;
 import es.alvaronieto.pfcdam.net.Packets.Packet16LobbyUpdate;
 import es.alvaronieto.pfcdam.net.Packets.Packet17Attack1Request;
 import es.alvaronieto.pfcdam.net.Util;
@@ -174,6 +176,13 @@ public class KryoClient extends Listener {
 		attack.userID = userID;
 		attack.dir = dir;
 		client.sendUDP(attack);
+	}
+
+	public void sendSlotUpdate(PlayerSlot slot) {
+		Packet15SlotUpdate update = new Packet15SlotUpdate();
+		update.timeStamp = new Date().getTime();
+		update.playerSlot = slot;
+		client.sendTCP(update);
 	}
 	
 }

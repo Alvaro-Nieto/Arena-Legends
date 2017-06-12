@@ -2,6 +2,7 @@ package es.alvaronieto.pfcdam.Screens;
 
 import static es.alvaronieto.pfcdam.Util.Constants.*;
 
+import java.awt.SecondaryLoop;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -50,7 +51,7 @@ public class LobbyScreen extends MenuScreen{
 		this.userID = userID;
 		this.lobbyState = lobbyState;
 		applyLobbyStateToScene();
-		stage.setDebugAll(true);
+		//stage.setDebugAll(true);
 	}
 	
 
@@ -80,7 +81,7 @@ public class LobbyScreen extends MenuScreen{
 		
 		Label lblTitulo = new Label("Lobby", getSkin());
 		lblTitulo.setFontScale(1.5f);
-		lblTitulo.setPosition(Gdx.graphics.getWidth()/2 - lblTitulo.getWidth() / 2, Gdx.graphics.getHeight()-50f);
+		lblTitulo.setPosition(V_WIDTH/2 - lblTitulo.getWidth() / 2, V_HEIGHT-50f);
 		
 		stage.addActor(lblTitulo);
 		
@@ -99,7 +100,7 @@ public class LobbyScreen extends MenuScreen{
 		});
 		
 		startTable = new Table();
-		startTable.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		startTable.setSize(V_WIDTH, V_HEIGHT);
 		startTable.bottom().right();
 		startTable.add(startBtn);
 		
@@ -109,7 +110,7 @@ public class LobbyScreen extends MenuScreen{
 	
 	private void configurationBar(){ // TODO Hacer que los jugadores que no sean admins no puedan configurar la partida
 		//table.debugTable().debugCell();
-		table.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		table.setSize(V_WIDTH, V_HEIGHT);
 		table.top();
 		table.padTop(100);
 		
@@ -168,7 +169,6 @@ public class LobbyScreen extends MenuScreen{
 		
 		setMaxPlayers(playersList);
 		setArena(mapsList);
-		System.out.println(admin);
 	}
 	
 
@@ -214,8 +214,8 @@ public class LobbyScreen extends MenuScreen{
 		//team1.debugAll();
 		//team2.debugAll();
 		
-		team1.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		team2.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		team1.setSize(V_WIDTH, V_HEIGHT);
+		team2.setSize(V_WIDTH, V_HEIGHT);
 		
 		team1.padLeft(300);
 		team2.padRight(300);
@@ -227,13 +227,14 @@ public class LobbyScreen extends MenuScreen{
 		Label lblTeam1 = new Label("Team 1", getSkin());
 		Label lblTeam2 = new Label("Team 2", getSkin());
 		team1List = new List(getSkin());
+		team1List.setTouchable(Touchable.disabled);
 		
 		team1.add(lblTeam1);
 		team1.row();
 		team1.add(team1List).minWidth(250);
 		
 		team2List = new List(getSkin());
-		
+		team2List.setTouchable(Touchable.disabled);
 		team2.add(lblTeam2);
 		team2.row();
 		team2.add(team2List).minWidth(250);
@@ -259,7 +260,7 @@ public class LobbyScreen extends MenuScreen{
 		changeCharBtn.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-				// TODO Cambiar personaje del jugador
+				pjChange();
 				return false;
 			}
 		});
@@ -270,7 +271,7 @@ public class LobbyScreen extends MenuScreen{
 		changeTeam.addListener(new InputListener(){
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-				
+				changeTeam();
 				return false;
 			}
 		});
@@ -281,6 +282,40 @@ public class LobbyScreen extends MenuScreen{
 		stage.addActor(configTable);
 	}
 	
+	protected void changeTeam() {
+		System.out.println(lobbyState.getPlayersTeam1() + " : " + lobbyState.getPlayersTeam2());
+		
+		PlayerSlot slot = lobbyState.getPlayerSlots().get(userID);
+		if(slot.getTeam() == 1) {
+			if(lobbyState.getPlayersTeam2() < lobbyState.getMaxPlayersPerTeam()){
+				slot.setTeam(2);
+				screenManager.getTestClient().sendSlotUpdate(slot);
+				System.out.println("entra");
+			}
+		}
+		else {
+			if(lobbyState.getPlayersTeam1() < lobbyState.getMaxPlayersPerTeam()){
+				slot.setTeam(1);
+				screenManager.getTestClient().sendSlotUpdate(slot);
+				System.out.println("entra");
+			}
+		}
+	}
+
+
+	protected void pjChange() {
+		String pj;
+		if(characterList.getSelectedIndex() == 0)
+			pj = TRUEMO;
+		else
+			pj = FIROG;
+		PlayerSlot slot = lobbyState.getPlayerSlots().get(userID);
+		slot.setPj(pj);
+		
+		screenManager.getTestClient().sendSlotUpdate(slot);
+	}
+
+
 	private int getMapIndex(String arenaPath) {
 		int index = 0;
 		if(arenaPath.equals(ARENA_WATER))
@@ -300,10 +335,14 @@ public class LobbyScreen extends MenuScreen{
 		for(Long userID : slots.keySet()){
 			PlayerSlot slot = slots.get(userID);
 			if(slot.getTeam() == 1){
-				arrTeam1[t1Index] = slot.getPlayerName();
+				arrTeam1[t1Index] = slot.getPlayerName() + " (" + slot.getPj() + ")";
+				if(slot.getUserID() == this.userID)
+					arrTeam1[t1Index] = "> " + arrTeam1[t1Index];
 				t1Index++;
 			} else {
-				arrTeam2[t2Index] = slot.getPlayerName();
+				arrTeam2[t2Index] = slot.getPlayerName() + " (" + slot.getPj() + ")";
+				if(slot.getUserID() == this.userID)
+					arrTeam2[t2Index] = "> " + arrTeam2[t2Index];
 				t2Index++;
 			}
 		}
@@ -315,14 +354,20 @@ public class LobbyScreen extends MenuScreen{
 		for(int i = t2Index; i < arrTeam2.length; i++){
 			arrTeam2[i] = "Empty";
 		}
+		
 		team1List.setItems(arrTeam1);
 		team2List.setItems(arrTeam2);
+		
+		team1List.setSelectedIndex(-1);
+		team2List.setSelectedIndex(-1);
 		
 		playersList.setSelectedIndex(getIndexOfMaxPlayersList(lobbyState.getMaxPlayersPerTeam() * 2));
 
 		mapsList.setSelectedIndex(getMapIndex(lobbyState.getGameRules().getArenaPath()));
 		
 		txtRounds.setText(Integer.toString(lobbyState.getGameRules().getRounds()));
+		
+		
 	}
 
 	@Override

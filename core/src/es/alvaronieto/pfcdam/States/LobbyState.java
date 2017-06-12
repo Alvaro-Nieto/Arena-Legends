@@ -90,6 +90,8 @@ public class LobbyState {
 			int team = playersTeam1 <= playersTeam2 ? 1 : 2;
 			String pj = TRUEMO;
 			
+			playerName = getNonDuplicatedName(playerName);
+			
 			slots.put(userID, new PlayerSlot(team, pj, userID, playerName));
 			
 			if(team == 1)
@@ -102,6 +104,24 @@ public class LobbyState {
 		return false;
 	}
 	
+	private String getNonDuplicatedName(String playerName) {
+		for(Long userID : slots.keySet()){
+			if(slots.get(userID).getPlayerName().equals(playerName)){
+				int seqNo = 2;
+				System.out.println(playerName.charAt(playerName.length()-1));
+				if(Character.isDigit(playerName.charAt(playerName.length()-1))){
+					seqNo = Character.digit(playerName.charAt(playerName.length()-1), 10);
+					seqNo++;
+					playerName = playerName.substring(0, playerName.length()-1)+seqNo;
+				} else {
+					playerName = playerName+seqNo;
+				}
+				return getNonDuplicatedName(playerName);
+			}
+		}
+		return playerName;
+	}
+
 	public boolean removePlayer(long userID) {
 		if(slots.containsKey(userID)){
 			PlayerSlot slot = slots.get(userID);

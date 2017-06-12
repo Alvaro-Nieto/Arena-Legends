@@ -42,7 +42,7 @@ public class MainScreen extends MenuScreen {
         table.pad(5f);
         table.setFillParent(true);
         
-        Label info = new Label("", getSkin());
+        final Label info = new Label("", getSkin());
         
         TextButton clienteBtn = new TextButton("Unirse a partida", getSkin());
         clienteBtn.addListener(new InputListener(){
