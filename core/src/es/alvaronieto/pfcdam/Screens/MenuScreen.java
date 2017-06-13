@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -25,6 +27,8 @@ public abstract class MenuScreen implements Screen {
 	private Skin skin;
 	protected ScreenManager screenManager;
 	private Console console;
+	public Texture backgroundTexture;
+    public Sprite backgroundSprite;
 	
 	public MenuScreen(final ScreenManager screenManager){
 		this.screenManager = screenManager;
@@ -40,6 +44,8 @@ public abstract class MenuScreen implements Screen {
         console.resetInputProcessing();
         beforeBuild();
         buildStage();
+        backgroundTexture = new Texture("pana.png");
+        backgroundSprite = new Sprite(backgroundTexture);
 	}
 	
 	protected abstract void buildStage();
@@ -62,7 +68,10 @@ public abstract class MenuScreen implements Screen {
 		update(delta);
 		Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-    	arenaLegends.batch.setProjectionMatrix(stage.getCamera().combined);
+        arenaLegends.batch.setProjectionMatrix(stage.getCamera().combined);
+        arenaLegends.batch.begin();
+        backgroundSprite.draw(arenaLegends.batch);
+        arenaLegends.batch.end();
     	stage.draw();
         console.draw();
 	}
@@ -111,6 +120,5 @@ public abstract class MenuScreen implements Screen {
 	
 	protected void changeText(Label label, String text){
 		label.setText(text);
-	}
-	
+	}	
 }
