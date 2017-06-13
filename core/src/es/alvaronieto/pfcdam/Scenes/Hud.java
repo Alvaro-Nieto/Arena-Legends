@@ -36,6 +36,9 @@ public class Hud implements Disposable {
     private Game game;
     private Skin customSkin;
     private HashMap<Long, ProgressBar> healthBars;
+    private int victorias1 = 0;
+    private int victorias2 = 0;
+    private int rondaActual = 1;
 
     public Hud(SpriteBatch sb, Game game, Player player) {
     	this.game = game;
@@ -48,7 +51,7 @@ public class Hud implements Disposable {
         buildHealthBars(player, game);
         
         timeLabel = new Label(game.getTimer().toString(), skin);
-        nRonda = new Label( "Ronda 1/3", Resources.getInstance().getSkin());
+        nRonda = new Label( "Ronda "+rondaActual+"/"+game.getGameState().getGameRules().getRounds(), Resources.getInstance().getSkin());
         Table table = new Table();
         table.pad(5f);
         table.setFillParent(true);
@@ -84,7 +87,7 @@ public class Hud implements Disposable {
             namePlayer = new Label( tempPlayer.getPlayerName(), Resources.getInstance().getSkin());
             
             if(tempPlayer.getTeam() == 1){
-            	rondasde1 = new Label( "2 victorias", Resources.getInstance().getSkin());
+            	rondasde1 = new Label( victorias1 + " victorias", Resources.getInstance().getSkin());
             	table1.add(rondasde1);
             	table1.row();
             	table1.add(namePlayer);
@@ -93,7 +96,7 @@ public class Hud implements Disposable {
                 table1.row();
             }
             else {
-            	rondasde2 = new Label( "1 victorias", Resources.getInstance().getSkin());
+            	rondasde2 = new Label( victorias2 + " victorias", Resources.getInstance().getSkin());
             	table2.add(rondasde2);
             	table2.row();
             	table2.add(namePlayer);
