@@ -107,7 +107,7 @@ public class PlayScreen implements Screen {
         gamecam.position.set(game.getMapWidth() / 2 ,game.getMapHeight() / 2, 0);
         
         b2dr = new Box2DDebugRenderer();
-        createCollisionListener();
+
 	
         // Player
         player = game.getPlayer(userID);
@@ -139,40 +139,7 @@ public class PlayScreen implements Screen {
 		
 	}
 	
-	private void createCollisionListener() {
-		// TODO some testing. this is temp
-        /*game.getWorld().setContactListener(new ContactListener() {
 
-			@Override
-			public void beginContact(Contact contact) {
-				Fixture fixtureA = contact.getFixtureA();
-                Fixture fixtureB = contact.getFixtureB();
-                //TEMP
-                if(fixtureA.getBody().getUserData().equals(TRUEMOBALL)){
-                	for(Projectile projectile : projectiles){
-                		if(projectile.getBody().equals(fixtureA.getBody())){
-                			projectile.disposeNextUpdate();
-                		}
-                	}
-                } else if(fixtureB.getBody().getUserData().equals(TRUEMOBALL)){
-                	for(Projectile projectile : projectiles){
-                		if(projectile.getBody().equals(fixtureB.getBody())){
-                			projectile.disposeNextUpdate();
-                		}
-                	}
-                }
-			}
-
-			@Override
-			public void endContact(Contact contact) {}
-
-			@Override
-			public void preSolve(Contact contact, Manifold oldManifold) {}
-
-			@Override
-			public void postSolve(Contact contact, ContactImpulse impulse) {}
-        });*/
-    }
 
 	public void update(float dt) {
 		accumulator += dt;
@@ -182,8 +149,7 @@ public class PlayScreen implements Screen {
 		while(accumulator >= STEP) {
 			tick(dt);
 			accumulator -= STEP;
-			//updateAllPlayers(dt);
-			//updateAllProjectiles(dt);
+
 		}         
 		
 		game.update(dt);
@@ -255,7 +221,7 @@ public class PlayScreen implements Screen {
 			
 			// TODO implementar en net
 			if(Gdx.input.isTouched()){
-				ballTest(dt);
+				tryAttack1(dt);
 			}
 		}
 		
@@ -286,7 +252,7 @@ public class PlayScreen implements Screen {
         	pauseMenu.togglePauseMenu();
 	}
 
-	private void ballTest(float dt) {
+	private void tryAttack1(float dt) {
 		Vector2 position = player.getBodyPosition();
 		Vector3 click = gamecam.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 		Vector2 dir = new Vector2(click.x - position.x, click.y - position.y);
@@ -437,7 +403,9 @@ public class PlayScreen implements Screen {
 	}
 
 	public void destroyProjectile(long userID, long seqNo) {
-		game.removeProjectile(userID, seqNo);
+		Projectile p = game.getProjectile(userID, seqNo);
+		if(p!=null)
+			p.disposeNextUpdate();
 	}
 	
 }

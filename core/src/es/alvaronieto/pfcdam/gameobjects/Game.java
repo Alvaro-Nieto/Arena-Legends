@@ -67,7 +67,7 @@ public class Game implements Disposable {
 					Player player = getPlayer(bdataA.getUserID());
 					
 					if(!projectile.isDisposed()) {
-						System.out.println("contact dispose");
+						
 						player.hurt(10);
 						projectile.disposeNextUpdate();
 						server.sendProjectileDestroyed(projectile.getUserID(), projectile.getSeqNo());
@@ -329,10 +329,8 @@ public class Game implements Disposable {
 		projectiles.get(projectile.getUserID()).remove(projectile.getSeqNo());
 	}
 
-	public void removeProjectile(long userID, long seqNo) {
-		Projectile p = projectiles.get(userID).get(seqNo);
-		if(p!=null)
-			removeProjectile(p);
+	public Projectile getProjectile(long userID, long seqNo) {
+		return projectiles.get(userID).get(seqNo);
 	}
 
 }
