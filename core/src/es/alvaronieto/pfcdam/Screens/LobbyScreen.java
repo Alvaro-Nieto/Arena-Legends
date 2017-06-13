@@ -32,6 +32,7 @@ public class LobbyScreen extends MenuScreen{
 	private boolean admin;
 	private int totalPlayers;
 	private String level;
+	private int rounds;
 	private LobbyState lobbyState;
 	private long userID;
 	
@@ -40,7 +41,7 @@ public class LobbyScreen extends MenuScreen{
 	private SelectBox playersList;
 	private SelectBox mapsList;
 	private SelectBox characterList;
-	private TextField txtRounds;
+	private SelectBox roundsList;
 	
 	public LobbyScreen(final ScreenManager screenManager, boolean admin, LobbyState lobbyState, long userID){
 		super(screenManager);
@@ -137,20 +138,13 @@ public class LobbyScreen extends MenuScreen{
 		Label duelMode = new Label("Duelo por \nequipos", getSkin());
 		table.add(duelMode);
 		
-		Label rounds = new Label("Rondas: ", getSkin());
-		table.add(rounds).minWidth(40).minHeight(50);
-		txtRounds = new TextField("", getSkin());
-		txtRounds.setTextFieldFilter(new TextFieldFilter(){
-			
-			@Override
-			public boolean acceptChar(TextField textField, char c) {
-				return Character.isDigit(c);
-			}
-			
-		});
-		txtRounds.setMaxLength(1);
-		txtRounds.setText("1");
-		table.add(txtRounds).maxWidth(60);
+		Label roundslbl = new Label("Rondas: ", getSkin());
+		table.add(roundslbl).minWidth(40).minHeight(50);
+		roundsList = new SelectBox(getSkin());
+		String[] roundsCount = {"3","5","7","9","11","13","15"};
+		roundsList.setItems(roundsCount);
+		table.add(roundsList).minWidth(60);
+		roundsList.setSelectedIndex(0);
 				
 		TextButton acceptBtn = new TextButton("Aplicar", getSkin());
 		acceptBtn.center();
@@ -159,7 +153,9 @@ public class LobbyScreen extends MenuScreen{
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
 				setMaxPlayers(playersList);
 				setArena(mapsList);
-				screenManager.getTestClient().sendGameRulesUpdate(new GameRules(level, totalPlayers, 0, 30, Integer.parseInt(txtRounds.getText())), SecurityUtility.getAdminToken());
+				setRounds(roundsList);
+				System.out.println(rounds);
+				screenManager.getTestClient().sendGameRulesUpdate(new GameRules(level, totalPlayers, 0, 30, rounds), SecurityUtility.getAdminToken());
 				return false;
 			}
 		});
@@ -169,6 +165,7 @@ public class LobbyScreen extends MenuScreen{
 		
 		setMaxPlayers(playersList);
 		setArena(mapsList);
+		setRounds(roundsList);
 	}
 	
 
@@ -191,6 +188,31 @@ public class LobbyScreen extends MenuScreen{
 				break;
 			case 2: 
 				totalPlayers = 10;
+		}
+	}
+	
+	private void setRounds(final SelectBox roundsList){
+		switch(roundsList.getSelectedIndex()){
+			case 0: 
+				rounds = 3;
+				break;
+			case 1: 
+				rounds = 5;
+				break;
+			case 2: 
+				rounds = 7;
+				break;
+			case 3: 
+				rounds = 9;
+				break;
+			case 4:
+				rounds = 11;
+				break;
+			case 5: 
+				rounds = 13;
+				break;
+			case 6:
+				rounds = 15;
 		}
 	}
 	
@@ -367,9 +389,31 @@ public class LobbyScreen extends MenuScreen{
 
 		mapsList.setSelectedIndex(getMapIndex(lobbyState.getGameRules().getArenaPath()));
 		
-		txtRounds.setText(Integer.toString(lobbyState.getGameRules().getRounds()));
-		
-		
+		roundsList.setSelectedIndex(getRoundsIndex(lobbyState.getGameRules().getRounds()));
+	}
+	
+	private int getRoundsIndex(int rounds){
+		int index = 0;
+		switch(rounds){
+			case 5: 
+				index = 1;
+				break;
+			case 7: 
+				index = 2;
+				break;
+			case 9: 
+				index = 3;
+				break;
+			case 11:
+				index = 4;
+				break;
+			case 13: 
+				index = 5;
+				break;
+			case 15: 
+				index = 6;
+		}
+		return index;
 	}
 
 	@Override
