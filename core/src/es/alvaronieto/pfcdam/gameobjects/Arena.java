@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.maps.Map;
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -61,6 +63,12 @@ public class Arena implements Disposable {
         createBodies();
         
         searchTiles(path);
+        
+        /*Vector2[] v = getRespawnPoints();
+        
+        for(int i=0; i<v.length; i++){
+        	System.out.println(v[i].x +", " +v[i].y);
+        }*/
 	}
 	
 	private void createBodies(){
@@ -150,6 +158,16 @@ public class Arena implements Disposable {
 			}
 			elapsedSinceAnimation = 0.0f;
 		}
+	}
+	
+	public ArrayList<Vector2> getRespawnPoints(){
+		ArrayList<Vector2> respawnPositions = new ArrayList<Vector2>();
+		for(MapObject object: map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)){
+			if(object!=null){
+				respawnPositions.add(new Vector2(((float)object.getProperties().get("x"))/PPM, ((float)object.getProperties().get("y"))/PPM));
+			}
+		}
+		return respawnPositions; 
 	}
 
 	@Override
