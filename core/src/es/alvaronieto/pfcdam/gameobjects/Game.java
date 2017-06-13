@@ -211,6 +211,9 @@ public class Game implements Disposable {
 			case FIROG:
 				sm.playFirogBall();
 				break;
+			case VENETO:
+				sm.playVenetoBall();
+				break;
 		}
 	}
 
@@ -330,7 +333,11 @@ public class Game implements Disposable {
 	}
 
 	public Projectile getProjectile(long userID, long seqNo) {
-		return projectiles.get(userID).get(seqNo);
+		if(projectiles.get(userID)!=null){
+			if(projectiles.get(userID).get(seqNo)!=null)
+				return projectiles.get(userID).get(seqNo);
+		}
+		return null;		
 	}
 
 }

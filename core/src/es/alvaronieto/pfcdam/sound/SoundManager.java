@@ -15,6 +15,7 @@ public class SoundManager {
 	private Sound punch;
 	private Sound start;
 	private Sound truemoball;
+	private Sound venetoBall;
 	
 	private Music lava;
 	private Music lobby;
@@ -28,7 +29,8 @@ public class SoundManager {
 		this.punch = Gdx.audio.newSound((Gdx.files.internal("sounds/fx/punch.mp3")));
 		this.start = Gdx.audio.newSound((Gdx.files.internal("sounds/fx/start.wav")));
 		this.truemoball = Gdx.audio.newSound((Gdx.files.internal("sounds/fx/truemoball.wav")));
-	
+		this.venetoBall = Gdx.audio.newSound((Gdx.files.internal("sounds/fx/venetoball.wav")));
+		
 		this.lava = Gdx.audio.newMusic(Gdx.files.internal("sounds/music/lava.mp3"));
 		this.lobby = Gdx.audio.newMusic(Gdx.files.internal("sounds/music/lobby.mp3"));
 		this.water = Gdx.audio.newMusic(Gdx.files.internal("sounds/music/water.mp3"));
@@ -58,6 +60,11 @@ public class SoundManager {
 	public void playFirogBall(){
 		if(!muted)
 			firogball.play(1f);
+	}
+	
+	public void playVenetoBall(){
+		if(!muted)
+			venetoBall.play(1f);
 	}
 	
 	public void startLobby(){
