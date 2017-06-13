@@ -181,7 +181,6 @@ public class Game implements Disposable {
 			if(players.containsKey(userID)) {
 				Player player = players.get(userID);
 				player.updateState(playerStates.get(userID), world);
-				
 			}
 			else
 				players.put(userID, new Player(playerStates.get(userID), this));
@@ -265,6 +264,7 @@ public class Game implements Disposable {
 		for(Long userID : players.keySet()){
 			Player player = players.get(userID);
 			player.update(dt);
+			
 		}
 		
 		for(Long userID : projectiles.keySet()){
@@ -275,6 +275,8 @@ public class Game implements Disposable {
 					this.removeProjectile(projectile);
 			}
 		}
+		
+		
 		
 		timer.update();
 		

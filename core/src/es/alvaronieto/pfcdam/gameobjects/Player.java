@@ -57,6 +57,7 @@ public class Player implements Disposable {
 	
 	private float skill1CD = 0.5f;
 	private float timeSinceSkill1 = skill1CD+1;
+	private boolean dead = false;
 	
 	public Player(Game game, Vector2 position, long userID, String pj, int team, String playerName){
 		this.position = position;
@@ -208,37 +209,53 @@ public class Player implements Disposable {
 
 	
 	public void update(float dt){
-		this.setPosition(getBodyPosition());
-		setCurrentFrame(dt);
-		timeSinceSkill1 += dt;
+		if(health <= 0) {
+			dead = true;
+			//if(body.isActive())
+				//game.getWorld().destroyBody(body);
+		}
+		if(!dead){
+			this.setPosition(getBodyPosition());
+			setCurrentFrame(dt);
+			timeSinceSkill1 += dt;
+			
+		}
+		
 	}
 	
 	public void setBody(Vector2 position, World world) {
-		BodyDef bdef = new BodyDef();	
-		PolygonShape shape = new PolygonShape();
-		FixtureDef fdef = new FixtureDef();
+		if(!dead) {
+			BodyDef bdef = new BodyDef();	
+			PolygonShape shape = new PolygonShape();
+			FixtureDef fdef = new FixtureDef();
+			
+			bdef.type = BodyDef.BodyType.DynamicBody; 
+			bdef.position.set(position); // Desde el centro (Coordenadas b2d)
+			
+			shape.setAsBox(16 / Constants.PPM, 16 / Constants.PPM);
+			fdef.shape = shape;
+			
+			body = world.createBody(bdef);
+			body.setUserData(new BodyData(userID, "player", team));
+			body.createFixture(fdef);	
+			body.setLinearDamping(10f);
+			
+			shape.dispose();
+		}
 		
-		bdef.type = BodyDef.BodyType.DynamicBody; 
-		bdef.position.set(position); // Desde el centro (Coordenadas b2d)
-		
-		shape.setAsBox(16 / Constants.PPM, 16 / Constants.PPM);
-		fdef.shape = shape;
-		
-		body = world.createBody(bdef);
-		body.setUserData(new BodyData(userID, "player", team));
-		body.createFixture(fdef);	
-		body.setLinearDamping(10f);
-		
-		shape.dispose();
 	}
 	
 	public void setBody(PlayerState playerState, World world){
-		this.setBody(playerState.getBodyPosition(), world);
-		this.body.setLinearVelocity(playerState.getVelocity());
+		if(!dead) {
+			this.setBody(playerState.getBodyPosition(), world);
+			this.body.setLinearVelocity(playerState.getVelocity());
+		}
+		
 	}
 
 	public void draw(Batch batch){
-		sprite.draw(batch);
+		if(!dead)
+			sprite.draw(batch);
 	}
 
 	public long getUserID() {
@@ -331,10 +348,13 @@ public class Player implements Disposable {
 	}
 	
 	public void attack1(Vector2 dir){
-		if(skill1CD < timeSinceSkill1){
-			game.newProjectile(dir, pj, userID);
-			timeSinceSkill1 = 0;
+		if(!dead) {
+			if(skill1CD < timeSinceSkill1){
+				game.newProjectile(dir, pj, userID);
+				timeSinceSkill1 = 0;
+			}
 		}
+		
 	}
 	
 	public void setHealth(int health) {
@@ -342,7 +362,12 @@ public class Player implements Disposable {
 	}
 
 	public void updateState(PlayerState playerState, World world) {
-		this.setBody(playerState, world);
+		if(!dead)
+			this.setBody(playerState, world);
 		this.setHealth(playerState.getHealth());
+	}
+
+	public boolean isDead() {
+		return dead ;
 	}
 }

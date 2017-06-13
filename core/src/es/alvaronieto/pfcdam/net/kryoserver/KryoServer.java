@@ -118,10 +118,35 @@ public class KryoServer extends Listener {
 		long current = System.currentTimeMillis();
 		float delta = (current - lastTime) / 1000f;
 		game.update(delta);
+		//checkPlayerKills();
+		
 		sendSnapshot(currentTick);
 		lastTime = current;
 	}
 	
+	private void checkPlayerKills() {
+		HashMap<Long, Player> players = game.getPlayers();
+		for(Long userID : players.keySet()) {
+			Player player = players.get(userID);
+			if(player.isDead()) {
+				sendPlayerKilled(userID);
+			}
+		}
+		checkRoundEnd();
+	}
+
+	private void sendPlayerKilled(Long userID) {
+		
+	}
+
+	private void checkRoundEnd() {
+		checkGameFinish();
+	}
+
+	private void checkGameFinish() {
+		
+	}
+
 	protected void sendSnapshot(long currentTick) {
 		for(Map.Entry<Long, ConnectedClient> entry : clients.entrySet()){
 			Packet08GameUpdate snapshot = new Packet08GameUpdate();
@@ -285,8 +310,8 @@ public class KryoServer extends Listener {
 		ConnectedClient client = clients.get(inputPacket.userID);
 	
 		client.setLastInputAccepted(inputPacket.inputState.getSequenceNumber());
-		
-		InputManager.applyInputToPlayer(input, player);
+		if(!player.isDead())
+			InputManager.applyInputToPlayer(input, player);
 	}
 	
 	private void TCPBroadcastExcept(Object object, Connection exceptionConnection){

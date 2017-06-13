@@ -156,6 +156,8 @@ public class PlayScreen implements Screen {
 		debugHud.update(dt);
 		hud.update(100);
 		
+		if(player.isDead())
+			freeCameraEnabled = true;
 		if(!freeCameraEnabled){
 			camFollowPlayer();
 		}

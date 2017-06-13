@@ -30,15 +30,13 @@ public class Hud implements Disposable {
     private Viewport viewport;
     private Label timeLabel;
     private Label namePlayer;
-    private Label nRonda;
-    private Label rondasde1;
-    private Label rondasde2;
     private Game game;
     private Skin customSkin;
     private HashMap<Long, ProgressBar> healthBars;
 
     public Hud(SpriteBatch sb, Game game, Player player) {
     	this.game = game;
+    	
     	Skin skin = Resources.getInstance().getSkin();
     	customSkin = new Skin(Gdx.files.internal("ui/custom/custom.json"));
     	
@@ -48,13 +46,10 @@ public class Hud implements Disposable {
         buildHealthBars(player, game);
         
         timeLabel = new Label(game.getTimer().toString(), skin);
-        nRonda = new Label( "Ronda 1/3", Resources.getInstance().getSkin());
         Table table = new Table();
         table.pad(5f);
         table.setFillParent(true);
         table.add(timeLabel).top().expandY();
-        table.row().bottom();
-        table.add(nRonda).bottom().expandY();
         stage.addActor(table);
         //stage.setDebugAll(true);
     }
@@ -84,18 +79,12 @@ public class Hud implements Disposable {
             namePlayer = new Label( tempPlayer.getPlayerName(), Resources.getInstance().getSkin());
             
             if(tempPlayer.getTeam() == 1){
-            	rondasde1 = new Label( "2 victorias", Resources.getInstance().getSkin());
-            	table1.add(rondasde1);
-            	table1.row();
             	table1.add(namePlayer);
             	table1.row();
                 table1.add(healthBar);
                 table1.row();
             }
             else {
-            	rondasde2 = new Label( "1 victorias", Resources.getInstance().getSkin());
-            	table2.add(rondasde2);
-            	table2.row();
             	table2.add(namePlayer);
             	table2.row();
                 table2.add(healthBar);

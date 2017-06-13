@@ -113,4 +113,16 @@ public class Packets {
 		public long seqNo;
 	}
 	
+	public static class Packet19PlayerKilled {
+		public long userID;
+	}
+
+	public static class Packet20RoundFinished {
+		
+	}
+	
+	public static class Packet21GameFinished {
+		
+	}
+	
 }
