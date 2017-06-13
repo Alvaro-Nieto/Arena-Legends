@@ -30,6 +30,7 @@ import es.alvaronieto.pfcdam.Util.BodyData;
 import es.alvaronieto.pfcdam.Util.CountDownTimer;
 import es.alvaronieto.pfcdam.Util.ProjectileContact;
 import es.alvaronieto.pfcdam.net.kryoserver.KryoServer;
+import es.alvaronieto.pfcdam.sound.SoundManager;
 
 public class Game implements Disposable {
 	
@@ -194,12 +195,25 @@ public class Game implements Disposable {
 						projectiles.get(userID).get(seqNo).updateState(state);
 				}
 				else {
-						addProjectile(new Projectile(this, state));
+					addProjectile(new Projectile(this, state));
+					playSound(state.getType());
 				}
 			}
 		}
 	}
 	
+	private void playSound(String type) {
+		SoundManager sm = SoundManager.getInstance();
+		switch(type) {
+			case TRUEMO:
+				sm.playTruemoBall();
+				break;
+			case FIROG:
+				sm.playFirogBall();
+				break;
+		}
+	}
+
 	private void addProjectile(Projectile projectile){
 		long userID = projectile.getUserID();
 		long seqNo = projectile.getSeqNo();

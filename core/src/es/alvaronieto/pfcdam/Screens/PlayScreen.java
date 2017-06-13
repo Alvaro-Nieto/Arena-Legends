@@ -1,10 +1,7 @@
 package es.alvaronieto.pfcdam.Screens;
 
-import static es.alvaronieto.pfcdam.Util.Constants.PPM;
-import static es.alvaronieto.pfcdam.Util.Constants.STEP;
-import static es.alvaronieto.pfcdam.Util.Constants.TRUEMOBALL;
-import static es.alvaronieto.pfcdam.Util.Constants.V_HEIGHT;
-import static es.alvaronieto.pfcdam.Util.Constants.V_WIDTH;
+import static es.alvaronieto.pfcdam.Util.Constants.*;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +42,7 @@ import es.alvaronieto.pfcdam.Util.SecurityUtility;
 import es.alvaronieto.pfcdam.gameobjects.Game;
 import es.alvaronieto.pfcdam.gameobjects.Player;
 import es.alvaronieto.pfcdam.gameobjects.Projectile;
+import es.alvaronieto.pfcdam.sound.SoundManager;
 
 public class PlayScreen implements Screen {
 
@@ -131,6 +129,14 @@ public class PlayScreen implements Screen {
         
         console = Resources.getInstance().getConsole();
         console.resetInputProcessing();
+        
+        SoundManager sm = SoundManager.getInstance();
+        sm.stopLobby();
+        if(gameState.getGameRules().getArenaPath().equals(ARENA_LAVA))
+        	sm.startLava();
+        else
+        	sm.startWater();
+		
 	}
 	
 	private void createCollisionListener() {

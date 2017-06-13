@@ -9,6 +9,7 @@ import es.alvaronieto.pfcdam.Screens.ScreenManager;
 import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
 import es.alvaronieto.pfcdam.gameobjects.Game;
 import es.alvaronieto.pfcdam.gameobjects.GameRules;
+import es.alvaronieto.pfcdam.sound.SoundManager;
 
 public class Commands extends CommandExecutor {
 	
@@ -81,6 +82,11 @@ public class Commands extends CommandExecutor {
 	
 	public void loadConfig(String fileName){
 		Config.getInstance().readConfig(fileName);
+	}
+	
+	public void mute() {
+		SoundManager sm = SoundManager.getInstance();
+		sm.mute(!sm.isMuted());
 	}
 	
 }

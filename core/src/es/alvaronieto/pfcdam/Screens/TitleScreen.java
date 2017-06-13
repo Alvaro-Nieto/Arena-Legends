@@ -13,12 +13,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
 import es.alvaronieto.pfcdam.Util.Config;
 import es.alvaronieto.pfcdam.Util.Resources;
+import es.alvaronieto.pfcdam.sound.SoundManager;
 
 public class TitleScreen extends MenuScreen {
 
 	public TitleScreen(ScreenManager screenManager) {
 		super(screenManager);
 		Config.getInstance();
+		SoundManager.getInstance().startLobby();
 	}
 
 	@Override
