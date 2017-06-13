@@ -1,6 +1,7 @@
 package es.alvaronieto.pfcdam.States;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.badlogic.gdx.utils.Array;
 
@@ -30,7 +31,7 @@ public class GameState {
 		playerStates.put(playerState.getUserID(), playerState);
 	}
 
-	public GameState(HashMap<Long, Player> players, HashMap<Long, HashMap<Long, Projectile>> projectiles, GameRules gameRules) {
+	public GameState(HashMap<Long, Player> players, HashMap<Long, ConcurrentHashMap<Long, Projectile>> projectiles, GameRules gameRules) {
 		this(gameRules);
 		for(Long userID : players.keySet()){
 			playerStates.put(userID, players.get(userID).getPlayerState());
