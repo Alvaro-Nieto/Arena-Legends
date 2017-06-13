@@ -6,6 +6,7 @@ import com.strongjoshua.console.Console;
 import com.strongjoshua.console.LogLevel;
 
 import es.alvaronieto.pfcdam.ArenaLegends;
+import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
 import es.alvaronieto.pfcdam.States.GameState;
 import es.alvaronieto.pfcdam.States.LobbyState;
 import es.alvaronieto.pfcdam.States.PlayerState;
@@ -199,6 +200,10 @@ public class ScreenManager implements ClientListener {
 	
 	public void showCharSelectionScreen() {
 		// TODO
+	}
+
+	public Screens getCurrentScreen() {
+		return currentScreen;
 	}
 
 }

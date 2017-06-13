@@ -3,14 +3,14 @@ size: 238, 102
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-truemoball1
+projectile1
   rotate: false
   xy: 1, 1
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-truemoball2
+projectile2
   rotate: false
   xy: 1, 35
   size: 32, 32

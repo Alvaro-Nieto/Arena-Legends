@@ -6,6 +6,7 @@ import com.strongjoshua.console.CommandExecutor;
 import com.strongjoshua.console.LogLevel;
 
 import es.alvaronieto.pfcdam.Screens.ScreenManager;
+import es.alvaronieto.pfcdam.Screens.ScreenManager.Screens;
 import es.alvaronieto.pfcdam.gameobjects.Game;
 import es.alvaronieto.pfcdam.gameobjects.GameRules;
 
@@ -40,10 +41,16 @@ public class Commands extends CommandExecutor {
 	
 	public void demo(){
 		ScreenManager sm = ScreenManager.getInstance();
-		long adminToken = SecurityUtility.getAdminToken();
-		sm.launchDemoServer(GameRules.getDefault(), adminToken);
-		sm.launchGameClient().connect("localhost", adminToken, Config.getInstance().playerName);
-		sm.getTestClient().sendStartRequest(adminToken);
+		if(sm.getCurrentScreen() != Screens.PlayScreen && sm.getCurrentScreen() != Screens.LobbyScreen) {
+			long adminToken = SecurityUtility.getAdminToken();
+			sm.launchDemoServer(GameRules.getDefault(), adminToken);
+			sm.launchGameClient().connect("localhost", adminToken, Config.getInstance().playerName);
+			sm.getTestClient().sendStartRequest(adminToken);
+		} 
+		else {
+			console.log("Can't do that right now", LogLevel.ERROR);
+		}
+		
 	}
 	
 	public void set(String fieldName, String value){

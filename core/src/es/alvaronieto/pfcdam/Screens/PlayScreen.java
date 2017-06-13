@@ -88,9 +88,7 @@ public class PlayScreen implements Screen {
 	// Used to render debugging stuff
 	private ShapeRenderer sr;
 	
-	// Skills TEMP
-	private float skill1CD = 0.5f;
-	private float timeSinceSkill1 = skill1CD+1;
+
 	private boolean debugging = false;
 	private boolean drawHud = true;
 
@@ -171,7 +169,6 @@ public class PlayScreen implements Screen {
     }
 
 	public void update(float dt) {
-		timeSinceSkill1 += dt;
 		accumulator += dt;
 		if(dt > 0.30f) dt = 0.30f;
 		if(!console.isVisible())
@@ -207,8 +204,7 @@ public class PlayScreen implements Screen {
 	}
 
 	private void applyLastSnapshot() {
-		game.destroyBodies();
-		game.fillWorld(lastSnapshot);
+		game.updateWorld(lastSnapshot);
 		PlayerState playerState = lastSnapshot.getPlayers().get(player.getUserID());
 		stateReconciliation(playerState);
 	}
@@ -252,9 +248,8 @@ public class PlayScreen implements Screen {
 			pendingInputs.add(inputState);
 			
 			// TODO implementar en net
-			if(Gdx.input.isTouched() && skill1CD < timeSinceSkill1){
+			if(Gdx.input.isTouched()){
 				ballTest(dt);
-				timeSinceSkill1 = 0;
 			}
 		}
 		
@@ -293,11 +288,6 @@ public class PlayScreen implements Screen {
 		
 		screenManager.getTestClient().sendAttack1Request(dir, player.getUserID());
 		
-		//game.newProjectile(dir, TRUEMOBALL, player.getUserID());
-		//Projectile projectile = new Projectile(game, dir, TRUEMOBALL, player.getUserID());
-		//projectile.getBody().setLinearVelocity(dir.scl(5f));
-
-		//projectiles.add(projectile);
 	}
 
 	private void moveFreeCamera(float dt) {

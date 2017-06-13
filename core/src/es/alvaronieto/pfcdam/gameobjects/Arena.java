@@ -22,6 +22,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 
+import es.alvaronieto.pfcdam.Util.BodyData;
 import es.alvaronieto.pfcdam.Util.Constants;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
@@ -75,7 +76,7 @@ public class Arena implements Disposable {
         	bdef.type = BodyDef.BodyType.StaticBody;
         	bdef.position.set((rect.getX() + rect.getWidth() / 2) / PPM, (rect.getY() + rect.getHeight()/2)/PPM);
         	body = world.createBody(bdef);
-        	body.setUserData("WALL");
+        	body.setUserData(new BodyData(0, "WALL", 0));
         	shape.setAsBox((rect.getWidth() / 2) / PPM, (rect.getHeight() / 2) / PPM);        	
         	fdef.shape = shape;        	
         	body.createFixture(fdef);

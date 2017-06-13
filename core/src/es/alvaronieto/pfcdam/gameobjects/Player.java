@@ -3,6 +3,7 @@ package es.alvaronieto.pfcdam.gameobjects;
 import static es.alvaronieto.pfcdam.Util.Constants.FIROG;
 import static es.alvaronieto.pfcdam.Util.Constants.VENETO;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 
 import es.alvaronieto.pfcdam.States.PlayerState;
+import es.alvaronieto.pfcdam.Util.BodyData;
 import es.alvaronieto.pfcdam.Util.Constants;
 import es.alvaronieto.pfcdam.Util.Resources;
 
@@ -51,6 +53,10 @@ public class Player implements Disposable {
 	private long lastSeqNoAttack1;
 	
 	private String playerName;
+	private Game game;
+	
+	private float skill1CD = 0.5f;
+	private float timeSinceSkill1 = skill1CD+1;
 	
 	public Player(Game game, Vector2 position, long userID, String pj, int team, String playerName){
 		this.position = position;
@@ -59,6 +65,7 @@ public class Player implements Disposable {
 		this.team = team;
 		this.lastSeqNoAttack1 = 0;
 		this.playerName = playerName;
+		this.game = game;
 		
 		defineByPj(pj);
 		
@@ -203,6 +210,7 @@ public class Player implements Disposable {
 	public void update(float dt){
 		this.setPosition(getBodyPosition());
 		setCurrentFrame(dt);
+		timeSinceSkill1 += dt;
 	}
 	
 	public void setBody(Vector2 position, World world) {
@@ -217,7 +225,7 @@ public class Player implements Disposable {
 		fdef.shape = shape;
 		
 		body = world.createBody(bdef);
-		body.setUserData("PLAYER"+userID);
+		body.setUserData(new BodyData(userID, "player", team));
 		body.createFixture(fdef);	
 		body.setLinearDamping(10f);
 		
@@ -264,7 +272,7 @@ public class Player implements Disposable {
 	}
 
 	public PlayerState getPlayerState(){
-		return new PlayerState(this.getBodyPosition(), userID, this.getPj(), body.getLinearVelocity(), team, playerName);
+		return new PlayerState(this.getBodyPosition(), userID, this.getPj(), body.getLinearVelocity(), team, playerName, health);
 	}
 	
 	public String getPj() {
@@ -322,5 +330,19 @@ public class Player implements Disposable {
 		health -= hp;
 	}
 	
+	public void attack1(Vector2 dir){
+		if(skill1CD < timeSinceSkill1){
+			game.newProjectile(dir, pj, userID);
+			timeSinceSkill1 = 0;
+		}
+	}
 	
+	public void setHealth(int health) {
+		this.health = health;
+	}
+
+	public void updateState(PlayerState playerState, World world) {
+		this.setBody(playerState, world);
+		this.setHealth(playerState.getHealth());
+	}
 }

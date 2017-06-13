@@ -3,14 +3,14 @@ size: 191, 102
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
-fire1
+projectile1
   rotate: false
   xy: 162, 1
   size: 28, 30
   orig: 32, 32
   offset: 2, 2
   index: -1
-fire2
+projectile2
   rotate: false
   xy: 161, 35
   size: 29, 30

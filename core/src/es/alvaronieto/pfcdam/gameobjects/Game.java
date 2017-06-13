@@ -1,6 +1,6 @@
 package es.alvaronieto.pfcdam.gameobjects;
 
-import static es.alvaronieto.pfcdam.Util.Constants.STEP;
+import static es.alvaronieto.pfcdam.Util.Constants.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +11,11 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
@@ -20,7 +25,9 @@ import es.alvaronieto.pfcdam.States.LobbyState;
 import es.alvaronieto.pfcdam.States.PlayerSlot;
 import es.alvaronieto.pfcdam.States.PlayerState;
 import es.alvaronieto.pfcdam.States.ProjectileState;
+import es.alvaronieto.pfcdam.Util.BodyData;
 import es.alvaronieto.pfcdam.Util.CountDownTimer;
+import es.alvaronieto.pfcdam.Util.ProjectileContact;
 
 public class Game implements Disposable {
 	
@@ -31,7 +38,7 @@ public class Game implements Disposable {
 	private Arena arena;
 	private CountDownTimer timer;
 	
-	
+
 	public Game(GameRules gameRules){
 		this.gameRules = gameRules;
 		this.world = new World(Vector2.Zero, true);
@@ -40,6 +47,43 @@ public class Game implements Disposable {
 		this.arena = new Arena(gameRules.getArenaPath(), world);
 		this.timer = new CountDownTimer(gameRules.getGameLengthMinutes(),
 										gameRules.getGameLengthSeconds());
+	}
+
+	public void activeContactListener() {
+		this.world.setContactListener(new ContactListener(){
+			@Override
+			public void beginContact(Contact contact) {
+				Body ba = contact.getFixtureA().getBody();
+				Body bb = contact.getFixtureB().getBody();
+				BodyData bdataA = (BodyData)ba.getUserData();
+				BodyData bdataB = (BodyData)bb.getUserData();
+				if(isProjectile(bdataB.getType()) && isPlayer(bdataA.getType()) &&
+						bdataB.getTeam() != bdataA.getTeam()){
+					
+					Projectile projectile = projectiles.get(bdataB.getUserID()).get(bdataB.getSeqNo());
+					Player player = getPlayer(bdataA.getUserID());
+					
+					if(!projectile.isDisposed()) {
+						player.hurt(10);
+						projectile.dispose();
+					}
+					
+				}
+		
+			}
+			private boolean isPlayer(String type) {
+				return type.equals("player");
+			}
+			private boolean isProjectile(String type) {
+				return type.equals("projectile");
+			}
+			@Override
+			public void endContact(Contact contact) {}
+			@Override
+			public void preSolve(Contact contact, Manifold oldManifold) {}
+			@Override
+			public void postSolve(Contact contact, ContactImpulse impulse) {}
+		});
 	}
 	
 	public Game(GameState gameState){
@@ -105,12 +149,17 @@ public class Game implements Disposable {
 		world.dispose();
 		arena.dispose();
 	}
-
-	public void fillWorld(GameState gameState) {
+	
+	public void updateWorld(GameState gameState){
+		destroyBodies();
+		
 		HashMap<Long, PlayerState> playerStates = gameState.getPlayers();
 		for(Long userID : playerStates.keySet()){
-			if(players.containsKey(userID))
-				players.get(userID).setBody(playerStates.get(userID), world);
+			if(players.containsKey(userID)) {
+				Player player = players.get(userID);
+				player.updateState(playerStates.get(userID), world);
+				
+			}
 			else
 				players.put(userID, new Player(playerStates.get(userID), this));
 		}
@@ -126,7 +175,6 @@ public class Game implements Disposable {
 				}
 			}
 		}
-		
 	}
 	
 	private void addProjectile(Projectile projectile){
@@ -147,7 +195,7 @@ public class Game implements Disposable {
 		return world;
 	}
 
-	public void destroyBodies() {
+	private void destroyBodies() {
 		for (Map.Entry<Long, Player> entry : players.entrySet()) {
 			Body body = entry.getValue().getBody();
 			if(body.isActive()){
@@ -173,6 +221,7 @@ public class Game implements Disposable {
 	}
 	
 	public void update(float dt){
+		
 		for(Long userID : players.keySet()){
 			Player player = players.get(userID);
 			player.update(dt);
@@ -189,13 +238,6 @@ public class Game implements Disposable {
 		
 		timer.update();
 		
-		/*int count = 0;
-		for(Long userID : projectiles.keySet()){
-			for(Long seqNo : projectiles.get(userID).keySet()){
-				count++;
-			}
-		}
-		System.out.println(Thread.currentThread().getName() + " -> "+ count);*/
 	}
 	
 	public float getMapWidth(){

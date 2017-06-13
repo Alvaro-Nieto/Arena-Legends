@@ -6,8 +6,8 @@ public class Constants {
 	public static final String VENETO = "veneto";
 	public static final String VENETOCHAOS = "venetochaos";
 	public static final String VENETOACID = "venetoacid";
-	public static final String FIROGEMBER = "firogember";
-	public static final String FIROGBLAZE = "firogblaze";
+	public static final String FIROGEMBER = "fire";
+	public static final String FIROGBLAZE = "fire";
 	public static final String TRUEMOBALL = "truemoball";
 	public static final String TRUEMOTHUNDER = "truemothunder";
 	public static final int V_WIDTH = 1280;

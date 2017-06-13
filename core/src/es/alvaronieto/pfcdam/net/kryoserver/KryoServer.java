@@ -166,7 +166,7 @@ public class KryoServer extends Listener {
 
 	private void proccessAttack1Request(Connection connection, Packet17Attack1Request attack) {
 		// TODO
-		game.newProjectile(attack.dir, TRUEMOBALL, attack.userID);
+		game.getPlayer(attack.userID).attack1(attack.dir);
 	}
 
 	private void sendSlotUpdate(PlayerSlot playerSlot) {
@@ -227,6 +227,7 @@ public class KryoServer extends Listener {
 			@Override
 			public void run() {
 				game = new Game(lobbyState);
+				game.activeContactListener();
 				System.out.println("[Debug] Players: "+game.getPlayers().size());
 				for(Map.Entry<Long, ConnectedClient> entry : clients.entrySet()){
 					Packet12GameStarted gameStarted = new Packet12GameStarted();

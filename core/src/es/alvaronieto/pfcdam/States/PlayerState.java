@@ -6,22 +6,17 @@ public class PlayerState extends BodyState {
 	
 	private String pj;
 	private String playerName;
+	private int health;
 	
 	public PlayerState(){
 		super();
 	}
-	
-	public PlayerState(Vector2 bodyPosition, Vector2 velocity, int team, String pj, String playerName){
-		super(bodyPosition, velocity, team);
-		this.pj = pj;
-		this.playerName = playerName;
-	}
 
-	public PlayerState(Vector2 bodyPosition, long userID, String pj, Vector2 velocity, int team, String playerName){
+	public PlayerState(Vector2 bodyPosition, long userID, String pj, Vector2 velocity, int team, String playerName, int health){
 		super(bodyPosition, userID, velocity, team);
 		this.pj = pj;
 		this.playerName = playerName;
-		
+		this.health = health;
 	}
 	
 	public String getPj() {
@@ -34,6 +29,10 @@ public class PlayerState extends BodyState {
 
 	public String getPlayerName() {
 		return playerName;
+	}
+
+	public int getHealth() {
+		return health;
 	}
 	
 }
