@@ -29,6 +29,7 @@ import es.alvaronieto.pfcdam.States.ProjectileState;
 import es.alvaronieto.pfcdam.Util.BodyData;
 import es.alvaronieto.pfcdam.Util.CountDownTimer;
 import es.alvaronieto.pfcdam.Util.ProjectileContact;
+import es.alvaronieto.pfcdam.net.kryoserver.KryoServer;
 
 public class Game implements Disposable {
 	
@@ -50,7 +51,7 @@ public class Game implements Disposable {
 										gameRules.getGameLengthSeconds());
 	}
 
-	public void activeContactListener() {
+	public void activeContactListener(final KryoServer server) {
 		this.world.setContactListener(new ContactListener(){
 			@Override
 			public void beginContact(Contact contact) {
@@ -65,8 +66,10 @@ public class Game implements Disposable {
 					Player player = getPlayer(bdataA.getUserID());
 					
 					if(!projectile.isDisposed()) {
+						System.out.println("contact dispose");
 						player.hurt(10);
-						projectile.dispose();
+						projectile.disposeNextUpdate();
+						server.sendProjectileDestroyed(projectile.getUserID(), projectile.getSeqNo());
 					}
 					
 				}
@@ -187,10 +190,11 @@ public class Game implements Disposable {
 		for(Long userID : projectileStates.keySet()){
 			for(Long seqNo : projectileStates.get(userID).keySet()){
 				ProjectileState state = projectileStates.get(userID).get(seqNo);
-				if(projectiles.containsKey(userID) && projectiles.get(userID).containsKey(seqNo))
-					projectiles.get(userID).get(seqNo).setBody(state.getBodyPosition(), state.getVelocity());
+				if(projectiles.containsKey(userID) && projectiles.get(userID).containsKey(seqNo)){
+						projectiles.get(userID).get(seqNo).updateState(state);
+				}
 				else {
-					addProjectile(new Projectile(this, state));
+						addProjectile(new Projectile(this, state));
 				}
 			}
 		}
@@ -257,6 +261,13 @@ public class Game implements Disposable {
 		
 		timer.update();
 		
+		int count = 0;
+		for(Long userID : projectiles.keySet()){
+			for(Long seqNo : projectiles.get(userID).keySet()){
+				count++;
+			}
+		}
+		//System.out.println(count + " > " + Thread.currentThread().getName());
 	}
 	
 	public float getMapWidth(){
@@ -302,6 +313,12 @@ public class Game implements Disposable {
 	public void removeProjectile(Projectile projectile) {
 		world.destroyBody(projectile.getBody());
 		projectiles.get(projectile.getUserID()).remove(projectile.getSeqNo());
+	}
+
+	public void removeProjectile(long userID, long seqNo) {
+		Projectile p = projectiles.get(userID).get(seqNo);
+		if(p!=null)
+			removeProjectile(p);
 	}
 
 }

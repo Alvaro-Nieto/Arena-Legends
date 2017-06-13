@@ -40,6 +40,7 @@ public class Projectile {
 		this.world = game.getWorld();
 		this.seqNo = state.getSeqNo();
 		this.userID = state.getUserID();
+		
 		BodyDef bdef = new BodyDef();	
 		CircleShape shape = new CircleShape();
 		FixtureDef fdef = new FixtureDef();
@@ -59,9 +60,13 @@ public class Projectile {
 		
 		body.setLinearVelocity(state.getVelocity());
 		
+		body.setBullet(true);
+		
 		TextureAtlas atlas = getAtlas();
 		this.sprite = new Sprite(atlas.findRegion("projectile1"));
 		sprite.setBounds(0, 0, 32 / PPM, 32 / PPM);	
+		if(state.isDisposed())
+			dispose();
 	}
 	
 	public Projectile(Game game, Vector2 dir, String type, long userID, long seqNo){
@@ -88,6 +93,8 @@ public class Projectile {
 		body.createFixture(fdef);	
 		
 		body.setLinearVelocity(dir.scl(velocity));
+		
+		body.setBullet(true);
 		
 		TextureAtlas atlas = getAtlas();
 		this.sprite = new Sprite(atlas.findRegion("projectile1"));
@@ -137,8 +144,9 @@ public class Projectile {
 	}
 
 	public void draw(Batch batch){
-		if(!disposed)
+		if(!disposed && !shouldDispose) {
 			sprite.draw(batch);
+		}
 	}
 
 	public void disposeNextUpdate() {
@@ -162,9 +170,16 @@ public class Projectile {
 	}
 
 	public ProjectileState getProjectileState() {
-		return new ProjectileState(body.getPosition(), userID, body.getLinearVelocity(), team, type, seqNo);
+		return new ProjectileState(body.getPosition(), userID, body.getLinearVelocity(), team, type, seqNo, disposed);
 	}
 	
+	public void updateState(ProjectileState state) {
+		setBody(state.getBodyPosition(), state.getVelocity());
+		if(state.isDisposed()) {
+			System.out.println("LO HACEEEEEEEEEEE");
+			this.dispose();
+		}
+	}
 	public void setBody(Vector2 position, Vector2 velocity){
 		if(!disposed){
 			BodyDef bdef = new BodyDef();	
@@ -183,6 +198,8 @@ public class Projectile {
 			
 			body.setLinearVelocity(velocity);
 
+			body.setBullet(true);
+			
 			shape.dispose();
 		}
 	}

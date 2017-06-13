@@ -206,4 +206,11 @@ public class ScreenManager implements ClientListener {
 		return currentScreen;
 	}
 
+	@Override
+	public void packetDestroyed(long userID, long seqNo) {
+		if(currentScreen == Screens.PlayScreen){
+			playScreen.destroyProjectile(userID, seqNo);
+		}
+	}
+
 }

@@ -32,6 +32,7 @@ import es.alvaronieto.pfcdam.net.Packets.Packet14GameRulesChangeRequest;
 import es.alvaronieto.pfcdam.net.Packets.Packet15SlotUpdate;
 import es.alvaronieto.pfcdam.net.Packets.Packet16LobbyUpdate;
 import es.alvaronieto.pfcdam.net.Packets.Packet17Attack1Request;
+import es.alvaronieto.pfcdam.net.Packets.Packet18ProjectileDestroyed;
 import es.alvaronieto.pfcdam.net.Util;
 
 public class KryoClient extends Listener {
@@ -124,6 +125,11 @@ public class KryoClient extends Listener {
 		else if( obj instanceof Packet16LobbyUpdate){
 			Packet16LobbyUpdate lobbyUpdate = (Packet16LobbyUpdate)obj;
 			clientListener.lobbyUpdate(lobbyUpdate.lobbyState);
+		}
+		
+		else if( obj instanceof Packet18ProjectileDestroyed){
+			Packet18ProjectileDestroyed des = (Packet18ProjectileDestroyed)obj;
+			clientListener.packetDestroyed(des.userID, des.seqNo);
 		}
 		
 	}

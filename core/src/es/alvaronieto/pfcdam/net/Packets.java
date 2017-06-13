@@ -107,4 +107,10 @@ public class Packets {
 		public long userID;
 		public Vector2 dir;
 	}
+	
+	public static class Packet18ProjectileDestroyed {
+		public long userID;
+		public long seqNo;
+	}
+	
 }

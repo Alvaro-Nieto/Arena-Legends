@@ -41,6 +41,7 @@ import es.alvaronieto.pfcdam.net.Packets.Packet14GameRulesChangeRequest;
 import es.alvaronieto.pfcdam.net.Packets.Packet15SlotUpdate;
 import es.alvaronieto.pfcdam.net.Packets.Packet16LobbyUpdate;
 import es.alvaronieto.pfcdam.net.Packets.Packet17Attack1Request;
+import es.alvaronieto.pfcdam.net.Packets.Packet18ProjectileDestroyed;
 import es.alvaronieto.pfcdam.net.Util;
 
 public class KryoServer extends Listener {
@@ -64,9 +65,11 @@ public class KryoServer extends Listener {
 
 	private long adminToken;
 	private long lastTime = 0;
+	
+	private final KryoServer thisInstance;
 
 	public KryoServer(GameRules gameRules, long adminToken, boolean isDemo) {
-		
+		this.thisInstance = this;
 		this.adminToken = adminToken;
 		this.isDemo = isDemo;
 		this.lobbyState = new LobbyState(gameRules);
@@ -227,7 +230,7 @@ public class KryoServer extends Listener {
 			@Override
 			public void run() {
 				game = new Game(lobbyState);
-				game.activeContactListener();
+				game.activeContactListener(thisInstance);
 				System.out.println("[Debug] Players: "+game.getPlayers().size());
 				for(Map.Entry<Long, ConnectedClient> entry : clients.entrySet()){
 					Packet12GameStarted gameStarted = new Packet12GameStarted();
@@ -327,5 +330,12 @@ public class KryoServer extends Listener {
 	
 	public void stop() {
 		server.stop();
+	}
+
+	public void sendProjectileDestroyed(long userID, long seqNo) {
+		Packet18ProjectileDestroyed des = new Packet18ProjectileDestroyed();
+		des.userID = userID;
+		des.seqNo = seqNo;
+		UDPBroadcast(des);
 	}
 }

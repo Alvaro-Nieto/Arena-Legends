@@ -21,4 +21,6 @@ public interface ClientListener {
 	public void connectionRejected(String ipAddress, String reason);
 	
 	public void lobbyUpdate(LobbyState lobbyState);
+
+	public void packetDestroyed(long userID, long seqNo);
 }

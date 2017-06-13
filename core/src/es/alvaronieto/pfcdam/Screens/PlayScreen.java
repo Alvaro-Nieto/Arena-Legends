@@ -429,5 +429,9 @@ public class PlayScreen implements Screen {
 	public long getCurrentTick() {
 		return currentTick;
 	}
+
+	public void destroyProjectile(long userID, long seqNo) {
+		game.removeProjectile(userID, seqNo);
+	}
 	
 }

@@ -41,7 +41,7 @@ public class GameState {
 				Projectile projectile = projectiles.get(userID).get(seqNo);
 				if(!projectileStates.containsKey(userID))
 					projectileStates.put(userID, new HashMap<Long, ProjectileState>());
-				if(!projectile.isDisposed())
+				if(!projectile.isDisposed() || !projectile.shouldDispose())
 					projectileStates.get(userID).put(seqNo, projectile.getProjectileState());
 			}
 		}
