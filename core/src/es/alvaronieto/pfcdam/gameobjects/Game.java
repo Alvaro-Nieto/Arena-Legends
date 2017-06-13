@@ -2,6 +2,7 @@ package es.alvaronieto.pfcdam.gameobjects;
 
 import static es.alvaronieto.pfcdam.Util.Constants.STEP;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,14 +53,32 @@ public class Game implements Disposable {
 	public Game(LobbyState lobbyState) {
 		this(lobbyState.getGameRules());
 		HashMap<Long, PlayerSlot> playerSlots = lobbyState.getPlayerSlots();
+		ArrayList<Vector2> positions = arena.getRespawnPoints();
+		
 		for(Long userID : playerSlots.keySet()){
 			// TODO Crear metodo para calcular la posici�n de comienzo
-			Vector2 position = new Vector2(getMapWidth() / 2, getMapHeight() / 2);
 			PlayerSlot slot = playerSlots.get(userID);
-			this.players.put(userID, new Player(this, position, userID, slot.getPj(), slot.getTeam(), slot.getPlayerName()));
+			if(slot.getTeam()==1){
+				for(Vector2 p: positions){
+					if(p.y<(getMapHeight() / 2)){
+						this.players.put(userID, new Player(this, p, userID, slot.getPj(), slot.getTeam(), slot.getPlayerName()));
+						positions.remove(p);
+						break;
+					}
+				}
+			}
+			else{
+				for(Vector2 p: positions){
+					if(p.y>(getMapHeight() / 2)){
+						this.players.put(userID, new Player(this, p, userID, slot.getPj(), slot.getTeam(), slot.getPlayerName()));
+						positions.remove(p);
+						break;
+					}
+				}
+			}
 		}
 	}
-
+	
 	public void addPlayer(Player player){
 		players.put(player.getUserID(), player);
 	}
