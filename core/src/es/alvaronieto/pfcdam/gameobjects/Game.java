@@ -5,6 +5,7 @@ import static es.alvaronieto.pfcdam.Util.Constants.STEP;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -25,7 +26,7 @@ import es.alvaronieto.pfcdam.Util.CountDownTimer;
 public class Game implements Disposable {
 	
 	private HashMap<Long, Player> players;
-	private HashMap<Long, HashMap<Long, Projectile>> projectiles;
+	private HashMap<Long, ConcurrentHashMap<Long, Projectile>> projectiles;
 	private World world;
 	private GameRules gameRules;
 	private Arena arena;
@@ -35,7 +36,7 @@ public class Game implements Disposable {
 	public Game(GameRules gameRules){
 		this.gameRules = gameRules;
 		this.world = new World(Vector2.Zero, true);
-		this.projectiles = new HashMap<Long, HashMap<Long, Projectile>>();
+		this.projectiles = new HashMap<Long, ConcurrentHashMap<Long, Projectile>>();
 		this.players = new HashMap<Long, Player>();
 		this.arena = new Arena(gameRules.getArenaPath(), world);
 		this.timer = new CountDownTimer(gameRules.getGameLengthMinutes(),
@@ -151,7 +152,7 @@ public class Game implements Disposable {
 		long userID = projectile.getUserID();
 		long seqNo = projectile.getSeqNo();
 		if(!projectiles.containsKey(userID))
-			projectiles.put(userID, new HashMap<Long, Projectile>());
+			projectiles.put(userID, new ConcurrentHashMap<Long, Projectile>());
 		projectiles.get(userID).put(seqNo, projectile);
 	}
 	
@@ -198,18 +199,22 @@ public class Game implements Disposable {
 		
 		for(Long userID : projectiles.keySet()){
 			for(Long seqNo : projectiles.get(userID).keySet()){
-				projectiles.get(userID).get(seqNo).update(dt);
+				Projectile projectile = projectiles.get(userID).get(seqNo);
+				projectile.update(dt);
+				if(projectile.isDisposed())
+					this.removeProjectile(projectile);
 			}
 		}
 		
 		timer.update();
 		
-		int count = 0;
+		/*int count = 0;
 		for(Long userID : projectiles.keySet()){
 			for(Long seqNo : projectiles.get(userID).keySet()){
 				count++;
 			}
 		}
+		System.out.println(Thread.currentThread().getName() + " -> "+ count);*/
 	}
 	
 	public float getMapWidth(){
